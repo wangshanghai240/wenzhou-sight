@@ -5,8 +5,8 @@
       <div class="chosen-master-content-wrapper">
         <img class="chosen-master-img" alt="" src="@/assets/img/banner/pic1.jpeg"/>
         <div class="chosen-master-info-wrapper">
-          <span class="master-name">周欣欣</span>
-          <span class="desc">简介：电话/微信 xxxxxxx</span>
+          <span class="master-name">{{masterName}}</span>
+          <span class="desc">简介：{{masterDesc}}</span>
         </div>
 
       </div>
@@ -15,65 +15,9 @@
     <div class="master-list-wrapper">
       <div class="master-list-content-wrapper">
        <div class="master-list-info-mask-wrapper">
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
-         </div>
-         <div class="master-info-box">
-           <img alt="" class="master-img" src="@/assets/img/banner/pic1.jpeg"/>
-           <span class="master-name">周欣欣</span>
+         <div class="master-info-box" v-for="(master, index) in masterList" v-bind:key="master.id" @click="showMasterInfo(index)">
+           <img alt="" class="master-img" :src="master.avatar"/>
+           <span class="master-name">{{master.cname}}</span>
          </div>
        </div>
       </div>
@@ -85,11 +29,30 @@
 
 <script>
 import PicGroupViewer from '@c/PicGroupViewer'
+import { masters } from '@/api/index'
 
 export default {
   name: "master",
   components: {
     'pic-group-viewer': PicGroupViewer
+  },
+  data() {
+	  return {
+		  masterList: [],
+		  masterName: '',
+		  masterDesc: ''
+	  }
+  },
+  methods: {
+	  showMasterInfo(index) {
+		  this.masterName = this.masterList[index].cname
+		  this.masterDesc = this.masterList[index].desc
+	  }
+  },
+  created() {
+	  masters().then(res => {
+		  this.masterList = res.data.masters
+	  })
   }
 }
 </script>
@@ -187,6 +150,7 @@ export default {
           margin-right: 37px;
           margin-bottom: 30px;
           align-items: center;
+		  cursor: pointer;
 
           .master-img{
             height: 64px;

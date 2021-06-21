@@ -11,11 +11,7 @@
         <div class="hot-search-key-wrapper">
           <span class="desc">热门关键词</span>
           <div class="hot-search-key-box">
-            <span class="hot-search-key">航拍</span>
-            <span class="hot-search-key">风景</span>
-            <span class="hot-search-key">党建</span>
-            <span class="hot-search-key">城市</span>
-            <span class="hot-search-key">旅游</span>
+            <span class="hot-search-key" v-for="hotKeyword in hotSearchKeywords" v-bind:key="hotKeyword.id">{{hotKeyword.keyword}}</span>
           </div>
         </div>
       </div>
@@ -25,7 +21,7 @@
           <span class="c-desc">热门专题</span>
         </div>
         <div class="topic-info-list-box">
-          <div class="topic-info-box" @click="toTopicDetail(topic.hotId)" v-for="topic in hotTopics" v-bind:key="topic.hotId">
+          <div class="topic-info-box" @click="toTopicDetail(topic.hotId, topic.picture, topic.title)" v-for="topic in hotTopics" v-bind:key="topic.hotId">
             <img class="topic-img" :src="topic.picture" alt=""/>
             <span class="topic-name">{{topic.title}}</span>
           </div>
@@ -39,7 +35,7 @@
 
 <script>
 import HomeBanner from "@/components/HomeBanner";
-import { hotTopicList } from '@/api/index'
+import { hotTopicList, hotSearchs, hotKeywords } from '@/api/index'
 
 export default {
   name: "topic-list",
@@ -47,18 +43,22 @@ export default {
     HomeBanner
   },
   methods:{
-    toTopicDetail:function(hotId){
-      this.$router.push("/topic-detail?hotId=" + hotId);
+    toTopicDetail:function(hotId, picture, title){
+      this.$router.push("/topic-detail?hotId=" + hotId + "&picture=" + picture + '&title=' + title);
     }
   },
   data() {
 	  return {
-		  hotTopics: []
+		  hotTopics: [],
+		  hotSearchKeywords: []
 	  }
   },
   created() {
   	hotTopicList().then(res => {
 		this.hotTopics = res.data
+	})
+	hotKeywords().then(res => {
+		this.hotSearchKeywords = res.data.records
 	})
   }
 }

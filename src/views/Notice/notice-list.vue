@@ -5,34 +5,10 @@
     </div>
     <div class="notice-item-list-wrapper">
       <div>
-        <div class="notice-item-wrapper" @click="seeDetail()">
-          <img class="notice-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
+        <div v-for="(notice, index) in noticeList" v-bind:key="notice.id" class="notice-item-wrapper" @click="seeDetail(notice.id)">
+          <!-- <img class="notice-img" alt="公告图片" src="notice.pic"/> -->
           <div class="notice-item-content-wrapper">
-            <span class="notice-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="notice-item-wrapper">
-          <img class="notice-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="notice-item-content-wrapper">
-            <span class="notice-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="notice-item-wrapper">
-          <img class="notice-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="notice-item-content-wrapper">
-            <span class="notice-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="notice-item-wrapper">
-          <img class="notice-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="notice-item-content-wrapper">
-            <span class="notice-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="notice-item-wrapper">
-          <img class="notice-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="notice-item-content-wrapper">
-            <span class="notice-title">1.中国野生生物影像年赛——摄影单元征稿</span>
+            <span class="notice-title">{{index + 1}}.{{notice.title}}</span>
           </div>
         </div>
       </div>
@@ -40,7 +16,7 @@
       <div class="pagination-wrapper">
         <a-pagination
             :default-current="1"
-            :total="3"
+            :total="total"
         />
       </div>
 
@@ -49,12 +25,30 @@
 </template>
 
 <script>
+import { announcements, hotSearchs } from '@/api/index' 
+
 export default {
   name: "notice-list",
   methods:{
-    seeDetail:function (){
-      this.$router.push("/notice-detail")
+    seeDetail:function (id){
+      this.$router.push("/notice-detail?id=" + id)
     }
+  },
+  data() {
+	  return {
+		  noticeList: [],
+		  total: 0
+	  }
+  },
+  created() {
+	  announcements().then(res => {
+		  this.noticeList = res.data.records
+		  this.total = res.data.total
+	  })
+	  hotSearchs().then(res => {
+		  this.hotSearchs = res.data
+	  })
+	  
   }
 }
 </script>

@@ -25,3 +25,41 @@ export function hotTopicDetail(params) {
 	  }
 	})
 }
+
+export function masters() {
+	return request({
+	  url: 'index/master',
+	  method: 'get'
+	})
+}
+
+export function announcements() {
+	return request({
+		url: '/announcement',
+		method: 'get'
+	})
+}
+
+export function announcementDetail(id) {
+	return request({
+		url: '/announcement/' + id,
+		method: 'get'
+	})
+}
+
+export function hotSearchs() {
+	return request({
+		url: '/hotSearch',
+		method: 'get'
+	})
+}
+
+export function hotKeywords() {
+	return request({
+		url: '/hotKeyword',
+		method: 'get'
+	})
+}
+
+
+

@@ -1,12 +1,12 @@
 <template>
   <div class="topic-detail-wrapper">
     <div class="topic-intro-wrapper">
-      <img alt="" class="topic-img" src="@/assets/img/banner/pic3.jpeg"/>
-      <span class="topic-name">-网信发展历程-</span>
+      <img alt="" class="topic-img" :src="topic.picture"/>
+      <span class="topic-name">-{{topic.title}}-</span>
       <span class="topic-intro">专题简介</span>
       <span class="back-button" @click="backToTopcList()">返回热门专题</span>
     </div>
-    <pic-group-viewer :picGroups="topicPicGroups" :total="total"></pic-group-viewer>
+    <pic-group-viewer :picGroups="topicPicGroups" :total="total" @changePicGroupPage="changePicGroupPage"></pic-group-viewer>
   </div>
 </template>
 
@@ -17,32 +17,48 @@ import { hotTopicDetail } from '@/api/index'
 export default {
   name: "topic-detail",
   components:{
-    'pic-group-viewer':PicGroupViewer
+    'pic-group-viewer': PicGroupViewer
   },
   methods:{
     backToTopcList:function(){
       this.$router.push("/topic-list")
-    }
+    },
+	changePicGroupPage(e) {
+		console.log(e)
+		hotTopicDetail({type: 1, ids: [this.topic.hotId], cType: 1, curPage: e}).then(res => {
+			this.topicPicGroups = res.data.records.map(topicPicGroup => {return {
+				id: topicPicGroup.id,
+				num: topicPicGroup.groupTotal,
+				picture: topicPicGroup.oss176,
+				title: topicPicGroup.title
+			}})
+			this.total = res.data.total
+		})
+	}
   },
   data() {
 	return {
 		topicPicGroups: [
 			
 		],
-		total: 0
+		total: 0,
+		topic: {
+			hotId: 0,
+			picture: '',
+			title: ''
+		}
 	}
   },
   created() {
-	const hotId = this.$route.query.hotId
-  	hotTopicDetail({type: 1, ids: [hotId], cType: 1}).then(res => {
-		this.topicPicGroups = res.data.records.map(topicPicGroup => {return {
-			id: topicPicGroup.id,
-			num: topicPicGroup.groupTotal,
-			picture: topicPicGroup.oss176,
-			title: topicPicGroup.title
-		}})
-		this.total = res.data.total
-	})
+	var hotId = this.$route.query.hotId
+	var picture = this.$route.query.picture
+	var title = this.$route.query.title
+	this.topic = {
+		hotId: hotId,
+		picture: picture,
+		title: title
+	}
+  	this.changePicGroupPage(1)
   }
 }
 </script>

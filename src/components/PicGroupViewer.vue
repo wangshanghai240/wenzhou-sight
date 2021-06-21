@@ -72,6 +72,7 @@
             showQuickJumper
             :default-current="1"
             :total="total"
+			@change="changePicGroupPage"
         />
       </div>
     </div>
@@ -95,6 +96,11 @@ export default {
 	  total: {
 		  type: Number,
 		  default: 0
+	  }
+  },
+  methods: {
+	  changePicGroupPage(e) {
+		  this.$emit('changePicGroupPage', e) 
 	  }
   },
   data() {

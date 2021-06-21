@@ -11,12 +11,12 @@
           <div class="search-wrapper">
             <div class="search-box">
               <img alt="" class="search-icon" src="@/assets/img/home/search.png"/>
-              <input placeholder="查找大美温州"/>
+              <input placeholder="查找大美温州" @keydown="seeSearchResult"/>
             </div>
             <div class="hot-search-key-wrapper">
               <span class="desc">热门关键词</span>
               <div class="hot-search-key-box">
-                <span class="hot-search-key" v-for="hotSearch in hotSearchs" v-bind:key="hotSearch.id">{{hotSearch.title}}</span>
+                <span class="hot-search-key" v-for="hotSearchKeyword in hotSearchKeywords" v-bind:key="hotSearchKeyword.id">{{hotSearchKeyword.keyword}}</span>
               </div>
             </div>
           </div>
@@ -66,7 +66,7 @@
             </div>
             <div class="content-wrapper">
               <div class="link-list-wrapper">
-                <span class="link-info" @click="seeSearchDetail()" v-for="(hotSearch, index) in hotSearchs" v-bind:key="hotSearch.id">{{index + 1}}.{{hotSearch.title}}</span>
+                <span class="link-info" @click="seeSearchDetail()" v-for="(hotSearch, index) in hotSearches" v-bind:key="hotSearch.id">{{index + 1}}.{{hotSearch.title}}</span>
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@
             <div class="content-wrapper">
               <div class="master-list-box">
                 <div class="master-info-box" v-for="master in masters" v-bind:key="master.id">
-                  <img alt="" class="master-img" :src="master.customIndexImage"/>
+                  <img alt="" class="master-img" src="@/assets/img/master.png"/>
                   <span class="master-name">{{master.cname}}</span>
                 </div>
               </div>
@@ -143,7 +143,9 @@
         <div class="content-wrapper">
           <div class="well-chosen-list-box">
             <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
-              <img alt="" class="well-chosen-img" :src="pic.oss176"/>
+              <div class="well-chosen-img-div">
+				  <img alt="" class="well-chosen-img" :src="pic.oss176"/>
+			  </div>
               <span class="well-chosen-name">{{pic.title}}</span>
               <span class="well-chosen-date">{{pic.createdAt}}</span>
               <div class="well-chosen-pic-info-box">
@@ -170,9 +172,10 @@ export default {
   data: () => {
     return {
 		carouses: [],
-		activities: [],
+		activities: [{}],
 		announcements: [],
-		hotSearchs: [],
+		hotSearches: [],
+		hotSearchKeywords: [],
 		hotTopics: [],
 		masters: [],
 		carefullyChosenPics: []
@@ -191,6 +194,9 @@ export default {
     seeSearchDetail: function (){
       this.$router.push("/search-detail");
     },
+	seeSearchResult: function (){
+	  this.$router.push("/search-result");
+	},
     seeTopicDetail:function (){
       this.$router.push("/topic-detail")
     },
@@ -202,12 +208,12 @@ export default {
     }
   },
   created() {
-	 console.log('created')
      index().then(res => {
 		const data = res.data
      	this.carouses = data.carouses
 		this.activities = data.activities.slice(0, 3)
-		this.hotSearchs = data.hotSearchs
+		this.hotSearchKeywords = data.hotKeywords
+		this.hotSearches = data.hotSearches
 		this.announcements = data.announcements
 		this.hotTopics = data.hotTopics.slice(0, 4)
 		this.masters = data.masters
@@ -317,14 +323,13 @@ export default {
               flex-grow: 1;
               margin-right: 11px;
               position: relative;
+			  width: calc(25% - 3px);
               cursor: pointer;
-			  height: 210px;
-			  display: flex;
 
               .topic-img {
-                width: 220px;
+                height: 230px;
+                width: 100%;
                 border-radius: 10px;
-				object-fit: contain;
               }
 
               .topic-name {
@@ -430,7 +435,7 @@ export default {
               height: 565px;
               width: 100%;
               border-radius: 10px;
-              object-fit: contain;
+              object-fit: cover;
             }
 
             .new-activity-name {
@@ -490,6 +495,8 @@ export default {
             flex-wrap: wrap;
             justify-content: space-between;
             margin-top: 80px;
+			height: 850px;
+			overflow: scroll;
 
             .master-info-box {
               display: inline-flex;
@@ -543,16 +550,29 @@ export default {
           display: inline-flex;
           flex-direction: column;
           width: calc(~"25% - 8px");
+		  // width: 280px;
+		  // height: 350px;
           margin-right: 10px;
           text-align: left;
           margin-bottom: 30px;
 
-          .well-chosen-img {
-            height: 300px;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border-radius: 6px;
-          }
+		  .well-chosen-img-div {
+			  display: inline-flex;
+			  flex-direction: column;
+			  justify-content: center;
+			  // max-width: calc(~"100% - 4px");
+			  // height: 300px;
+			  overflow: hidden;
+			  
+			  .well-chosen-img {
+			    height: 230px;
+				width: 100%;
+				
+			    object-fit: cover;
+			    margin-bottom: 15px;
+			    border-radius: 6px;
+			  }
+		  }
 
           .well-chosen-name {
             font-size: 22px;
