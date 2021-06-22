@@ -121,7 +121,7 @@
               <div class="master-list-box">
                 <div class="master-info-box" v-for="master in masters" v-bind:key="master.id">
                   <img alt="" class="master-img" src="@/assets/img/master.png"/>
-                  <span class="master-name">{{master.cname}}</span>
+                  <span class="master-name">{{master.name}}</span>
                 </div>
               </div>
 
@@ -137,8 +137,12 @@
             <span class="head-label">精选图片</span>
           </div>
 		  
-		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="-7 -7 31 51" width="1em" height="1em" aria-hidden="true"><path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2020)"></path></svg>
-		  <svg @click="switchPicShowType('WIDTH_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="-7 -7 31 31" aria-hidden="true"><path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2020)"></path></svg>        
+		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+			  <path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2035)"></path>
+		  </svg>
+		  <svg @click="switchPicShowType('WIDTH_EQUAL')" style="margin-right:20px;" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+			  <path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2035)"></path>
+		  </svg>        
 		<!--  <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
           <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/> -->
           <span class="more-button">更多></span>
@@ -543,7 +547,7 @@ export default {
       .show-type-icon {
         // height: 18px;
         // width: 18px;
-        margin-right: 0px;
+        margin-right: 10px;
       }
 
       .show-type-icon:last-child {
@@ -656,13 +660,13 @@ export default {
   }
   
   .MuiSvgIcon-root {
-	  width: 1em;
-	  height: 1em;
+	  width: 2em;
+	  height: 2em;
 	  display: inline-block;
-	  font-size: 3rem;
 	  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 	  flex-shrink: 0;
 	  user-select: none;
+	  overflow: unset;
 	  fill: #b3b4c0;
 	  
 	  .selected {

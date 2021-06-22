@@ -35,14 +35,14 @@ export function masters() {
 
 export function announcements() {
 	return request({
-		url: '/announcement',
+		url: '/index/announcement',
 		method: 'get'
 	})
 }
 
 export function announcementDetail(id) {
 	return request({
-		url: '/announcement/' + id,
+		url: '/index/announcement/' + id,
 		method: 'get'
 	})
 }

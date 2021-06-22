@@ -16,8 +16,8 @@
       <div class="master-list-content-wrapper">
        <div class="master-list-info-mask-wrapper">
          <div class="master-info-box" v-for="(master, index) in masterList" v-bind:key="master.id" @click="showMasterInfo(index)">
-           <img alt="" class="master-img" :src="master.avatar"/>
-           <span class="master-name">{{master.cname}}</span>
+           <img alt="" class="master-img" :src="master.photo"/>
+           <span class="master-name">{{master.name}}</span>
          </div>
        </div>
       </div>
@@ -45,8 +45,8 @@ export default {
   },
   methods: {
 	  showMasterInfo(index) {
-		  this.masterName = this.masterList[index].cname
-		  this.masterDesc = this.masterList[index].desc
+		  this.masterName = this.masterList[index].name
+		  this.masterDesc = this.masterList[index].remark
 	  }
   },
   created() {
