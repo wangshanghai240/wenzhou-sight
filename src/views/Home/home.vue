@@ -137,10 +137,10 @@
             <span class="head-label">精选图片</span>
           </div>
 		  
-		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等高">
 			  <path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2035)"></path>
 		  </svg>
-		  <svg @click="switchPicShowType('WIDTH_EQUAL')" style="margin-right:20px;" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+		  <svg @click="switchPicShowType('WIDTH_EQUAL')" style="margin-right:20px;" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等宽">
 			  <path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2035)"></path>
 		  </svg>        
 		<!--  <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
@@ -148,12 +148,12 @@
           <span class="more-button">更多></span>
         </div>
         <div class="content-wrapper">
-          <div class="well-chosen-list-box">
+         <div class="well-chosen-list-box" v-show="picShowType==='WIDTH_EQUAL'" >
             <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
               <div class="well-chosen-img-div">
-				  <img alt="" class="well-chosen-img" :src="pic.oss176"/>
+				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss176"/>
 			  </div>
-              <span class="well-chosen-name">{{pic.title}}</span>
+              <span class="well-chosen-name"><nobr>{{pic.title}}</nobr></span>
               <span class="well-chosen-date">{{pic.createdAt}}</span>
               <div class="well-chosen-pic-info-box">
                 <img alt="" class="well-chosen-pic-info-icon" src="@/assets/img/home/picture.png">
@@ -162,6 +162,28 @@
               </div>
             </div>
           </div>
+		  
+		  <div class="well-chosen-list-box-height" v-show="picShowType==='HEIGHT_EQUAL'">
+			  <div class="well-chosen-info-box-height jss117" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
+				  <a class="MuiButtonBase-root MuiCardActionArea-root" target="_self">
+					 <div class="MuiCardMedia-root jss119" :title="pic.title">
+						 <img :src="pic.oss400" class="lazyload" alt="pic.title">
+					 </div> 
+					 <div class="MuiCardContent-root picText">
+						 <h2 class="MuiTypography-root jss122 MuiTypography-subtitle2">{{pic.title}}</h2>
+							<p class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom">
+								{{pic.createdAt}}
+							</p>
+					 </div>
+					 <span class="MuiTypography-root picNums MuiTypography-caption MuiTypography-gutterBottom">
+						 <svg class="MuiSvgIcon-root jss123" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+							 <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"></path>
+						 </svg>{{pic.groupTotal}}
+					 </span>
+					 <span class="MuiCardActionArea-focusHighlight"></span>
+				  </a>
+			  </div>
+		  </div>
 
         </div>
       </div>
@@ -215,7 +237,6 @@ export default {
       this.$router.push("/master")
     },
 	switchPicShowType(picShowType) {
-		console.log(picShowType)
 		this.picShowType = picShowType
 	}
   },
@@ -241,7 +262,7 @@ export default {
   background: #fff;
 
   .home-content-wrapper {
-    padding: 20px 140px;
+    padding: 20px 100px;
 
     .home-content-top-wrapper {
       display: flex;
@@ -591,6 +612,8 @@ export default {
             font-weight: 500;
             color: #333333;
             margin-bottom: 15px;
+			text-overflow: ellipsis;
+			overflow: hidden;
           }
 
           .well-chosen-date {
@@ -659,6 +682,20 @@ export default {
     }
   }
   
+  .well-chosen-list-box-height {
+    display: flex;
+    flex-wrap: wrap;
+  
+    .well-chosen-info-box-height {
+      display: inline-flex;
+      flex-direction: column;
+  	  height: 300px;
+      margin-right: 10px;
+      text-align: left;
+      margin-bottom: 30px;
+	}
+  }
+  
   .MuiSvgIcon-root {
 	  width: 2em;
 	  height: 2em;
@@ -672,6 +709,125 @@ export default {
 	  .selected {
 		  fill: #f84949;
 	  }
+  }
+  
+  .jss117 {
+      // width: 386px;
+      height: 100%;
+      display: flex;
+      box-shadow: none;
+      border-radius: 0;
+      flex-direction: column;
+  }
+  
+  .MuiButtonBase-root {
+      color: inherit;
+      border: 0;
+      cursor: pointer;
+      margin: 0;
+      display: inline-flex;
+      outline: 0;
+      padding: 0;
+      position: relative;
+      align-items: center;
+      user-select: none;
+      border-radius: 0;
+      vertical-align: middle;
+      -moz-appearance: none;
+      justify-content: center;
+      text-decoration: none;
+      background-color: transparent;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+  }
+  
+  .MuiCardActionArea-root {
+      width: 100%;
+      display: block;
+      /* text-align: inherit; */
+  }
+  
+  .MuiCardContent-root {
+      padding: 16px;
+  }
+  
+  .MuiCardMedia-root {
+      display: block;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+  }
+  
+  .jss119 img {
+      width: 100%;
+      height: 300px;
+      display: block;
+      object-fit: cover;
+  }
+  
+  .picText {
+      color: #fff;
+      width: 100%;
+      bottom: 0;
+      position: absolute;
+      background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
+  }
+  
+  .picNums {
+      top: 10px;
+      color: #fff;
+      left: 10px;
+      display: flex;
+      padding: 0 6px;
+      position: absolute;
+      flex-wrap: nowrap;
+      align-items: center;
+      border-radius: 4px;
+      background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .MuiTypography-gutterBottom {
+      margin-bottom: 0.35em;
+  }
+  
+  .MuiTypography-caption {
+      font-size: 0.75rem;
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      font-weight: 400;
+      line-height: 1.66;
+      letter-spacing: 0.03333em;
+  }
+  
+  .jss122 {
+      overflow: hidden;
+      max-height: 42px;
+  }
+  
+  .MuiTypography-subtitle2 {
+	  color: #fff;
+      font-size: 0.875rem;
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      font-weight: 500;
+      line-height: 1.57;
+      letter-spacing: 0.00714em;
+  }
+  
+  .MuiTypography-root {
+      margin: 0;
+  }
+  
+  .MuiCardActionArea-focusHighlight {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      overflow: hidden;
+      position: absolute;
+      transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      border-radius: inherit;
+      pointer-events: none;
+      background-color: currentcolor;
   }
 
 }

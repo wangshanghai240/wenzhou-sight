@@ -13,25 +13,27 @@ import PicGroupViewer from '@c/PicGroupViewer'
 export default {
 	methods: {
 		search() {
-			hotTopicDetail({
+			this.changePicGroupPage({
 				keyWord: this.keyword,
 				curPage: this.curPage,
 				size: this.size,
 				type: 1,
 				cType: 1
-			}).then(res => {
+			})
+		},
+		changePicGroupPage(params) {
+			params.keyWord = this.keyword
+			hotTopicDetail(params).then(res => {
 				this.searchResult = res.data.records.map(topicPicGroup => {return {
 					id: topicPicGroup.id,
 					num: topicPicGroup.groupTotal,
 					picture: topicPicGroup.oss176,
-					title: topicPicGroup.title
+					pictureHeight: topicPicGroup.oss800,
+					title: topicPicGroup.title,
+					time: topicPicGroup.createdAt
 				}})
 				this.total = res.data.total
 			})
-		},
-		changePicGroupPage(e) {
-			this.curPage = e
-			this.search()
 		}
 	},
 	components: {

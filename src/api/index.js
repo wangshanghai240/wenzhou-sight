@@ -26,6 +26,25 @@ export function hotTopicDetail(params) {
 	})
 }
 
+export function searchSingles(params) {
+	return request({
+	  url: 'index/single',
+	  method: 'get',
+	  params,
+	  paramsSerializer: function(params) {
+		return qs.stringify(params, {arrayFormat: 'repeat'})
+	  }
+	})
+}
+
+export function getGroupPics(groupId, params) {
+	return request({
+	  url: 'index/groupList/' + groupId,
+	  method: 'get',
+	  params
+	})
+}
+
 export function masters() {
 	return request({
 	  url: 'index/master',

@@ -23,9 +23,10 @@ export default {
     backToTopcList:function(){
       this.$router.push("/topic-list")
     },
-	changePicGroupPage(e) {
-		console.log(e)
-		hotTopicDetail({type: 1, ids: [this.topic.hotId], cType: 1, curPage: e}).then(res => {
+	changePicGroupPage(params) {
+		params[ids] = [this.topic.hotId]
+		// {type: 1, ids: [this.topic.hotId], cType: 1, curPage: e}
+		hotTopicDetail(params).then(res => {
 			this.topicPicGroups = res.data.records.map(topicPicGroup => {return {
 				id: topicPicGroup.id,
 				num: topicPicGroup.groupTotal,
