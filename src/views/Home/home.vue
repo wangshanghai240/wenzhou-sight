@@ -136,8 +136,11 @@
           <div class="head-label-box">
             <span class="head-label">精选图片</span>
           </div>
-          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
-          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/>
+		  
+		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="-7 -7 31 51" width="1em" height="1em" aria-hidden="true"><path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2020)"></path></svg>
+		  <svg @click="switchPicShowType('WIDTH_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="-7 -7 31 31" aria-hidden="true"><path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2020)"></path></svg>        
+		<!--  <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
+          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/> -->
           <span class="more-button">更多></span>
         </div>
         <div class="content-wrapper">
@@ -178,7 +181,8 @@ export default {
 		hotSearchKeywords: [],
 		hotTopics: [],
 		masters: [],
-		carefullyChosenPics: []
+		carefullyChosenPics: [],
+		picShowType: 'HEIGHT_EQUAL'
 	}
   },
   methods: {
@@ -205,7 +209,11 @@ export default {
     },
     seeMasterMore:function(){
       this.$router.push("/master")
-    }
+    },
+	switchPicShowType(picShowType) {
+		console.log(picShowType)
+		this.picShowType = picShowType
+	}
   },
   created() {
      index().then(res => {
@@ -533,13 +541,13 @@ export default {
     .well-chosen-wrapper {
 
       .show-type-icon {
-        height: 18px;
-        width: 18px;
-        margin-right: 22px;
+        // height: 18px;
+        // width: 18px;
+        margin-right: 0px;
       }
 
       .show-type-icon:last-child {
-        margin-right: 42px;
+        margin-right: 38px;
       }
 
       .well-chosen-list-box {
@@ -645,6 +653,21 @@ export default {
     .content-wrapper {
       margin-top: 25px;
     }
+  }
+  
+  .MuiSvgIcon-root {
+	  width: 1em;
+	  height: 1em;
+	  display: inline-block;
+	  font-size: 3rem;
+	  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	  flex-shrink: 0;
+	  user-select: none;
+	  fill: #b3b4c0;
+	  
+	  .selected {
+		  fill: #f84949;
+	  }
   }
 
 }

@@ -8,8 +8,8 @@
           <span class="choose-tab">单图(3)</span>
         </div>
         <div class="right-wrapper">
-          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
-          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/>
+          <img class="show-type-icon" alt="等高" src="@/assets/img/home/arrange-active.png"/>
+          <img class="show-type-icon" alt="等宽" src="@/assets/img/home/arrange.png"/>
         </div>
       </div>
       <div class="search-filter-wrapper">
