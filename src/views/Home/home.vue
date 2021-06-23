@@ -11,7 +11,7 @@
           <div class="search-wrapper">
             <div class="search-box">
               <img alt="" class="search-icon" src="@/assets/img/home/search.png"/>
-              <input placeholder="查找大美温州" @keydown="seeSearchResult"/>
+              <input v-model="searchKeyword" placeholder="查找大美温州" @keydown="searchResult"/>
             </div>
             <div class="hot-search-key-wrapper">
               <span class="desc">热门关键词</span>
@@ -145,13 +145,13 @@
 		  </svg>        
 		<!--  <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
           <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/> -->
-          <span class="more-button">更多></span>
+          <span class="more-button" @click="seeSearchResult" >更多></span>
         </div>
         <div class="content-wrapper">
          <div class="well-chosen-list-box" v-show="picShowType==='WIDTH_EQUAL'" >
             <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
               <div class="well-chosen-img-div">
-				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss176"/>
+				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss800"/>
 			  </div>
               <span class="well-chosen-name"><nobr>{{pic.title}}</nobr></span>
               <span class="well-chosen-date">{{pic.createdAt}}</span>
@@ -208,7 +208,8 @@ export default {
 		hotTopics: [],
 		masters: [],
 		carefullyChosenPics: [],
-		picShowType: 'HEIGHT_EQUAL'
+		picShowType: 'HEIGHT_EQUAL',
+		searchKeyword: ''
 	}
   },
   methods: {
@@ -218,12 +219,17 @@ export default {
     seeSearchMore: function () {
       this.$router.push("/search-list");
     },
-    seeNoticeDetail: function (){
-      this.$router.push("/notice-detail");
+    seeNoticeDetail: function (id){
+      this.$router.push("/notice-detail?id=" + id);
     },
     seeSearchDetail: function (){
       this.$router.push("/search-detail");
     },
+	searchResult: function(e) {
+		if(e.key == 'Enter') {
+			this.$router.push("/search-result?keyword=" + this.searchKeyword);
+		}
+	},
 	seeSearchResult: function (){
 	  this.$router.push("/search-result");
 	},
@@ -372,6 +378,7 @@ export default {
                 font-size: 18px;
                 font-weight: 500;
                 color: #FFFFFF;
+				text-align: left;
               }
             }
 
@@ -478,6 +485,7 @@ export default {
               font-size: 24px;
               font-weight: 500;
               color: #FFFFFF;
+			  text-align: left;
             }
           }
         }
@@ -507,6 +515,7 @@ export default {
                 font-size: 18px;
                 font-weight: 500;
                 color: #FFFFFF;
+				text-align: left;
               }
             }
 
@@ -685,6 +694,7 @@ export default {
   .well-chosen-list-box-height {
     display: flex;
     flex-wrap: wrap;
+	justify-content: space-between;
   
     .well-chosen-info-box-height {
       display: inline-flex;

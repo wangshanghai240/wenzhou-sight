@@ -3,10 +3,10 @@
     <div class="topic-intro-wrapper">
       <img alt="" class="topic-img" :src="topic.picture"/>
       <span class="topic-name">-{{topic.title}}-</span>
-      <span class="topic-intro">专题简介</span>
+      <span class="topic-intro">{{topic.details}}</span>
       <span class="back-button" @click="backToTopcList()">返回热门专题</span>
     </div>
-    <pic-group-viewer :picGroups="topicPicGroups" :total="total" @changePicGroupPage="changePicGroupPage"></pic-group-viewer>
+    <pic-group-viewer :otherParams="otherParams"></pic-group-viewer>
   </div>
 </template>
 
@@ -22,20 +22,7 @@ export default {
   methods:{
     backToTopcList:function(){
       this.$router.push("/topic-list")
-    },
-	changePicGroupPage(params) {
-		params[ids] = [this.topic.hotId]
-		// {type: 1, ids: [this.topic.hotId], cType: 1, curPage: e}
-		hotTopicDetail(params).then(res => {
-			this.topicPicGroups = res.data.records.map(topicPicGroup => {return {
-				id: topicPicGroup.id,
-				num: topicPicGroup.groupTotal,
-				picture: topicPicGroup.oss176,
-				title: topicPicGroup.title
-			}})
-			this.total = res.data.total
-		})
-	}
+    }
   },
   data() {
 	return {
@@ -47,6 +34,9 @@ export default {
 			hotId: 0,
 			picture: '',
 			title: ''
+		},
+		otherParams: {
+			
 		}
 	}
   },
@@ -59,7 +49,9 @@ export default {
 		picture: picture,
 		title: title
 	}
-  	this.changePicGroupPage(1)
+	this.otherParams={
+		ids: [this.topic.hotId]
+	}
   }
 }
 </script>

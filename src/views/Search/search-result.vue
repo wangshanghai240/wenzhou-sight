@@ -27,7 +27,7 @@ export default {
 				this.searchResult = res.data.records.map(topicPicGroup => {return {
 					id: topicPicGroup.id,
 					num: topicPicGroup.groupTotal,
-					picture: topicPicGroup.oss176,
+					picture: topicPicGroup.oss800,
 					pictureHeight: topicPicGroup.oss800,
 					title: topicPicGroup.title,
 					time: topicPicGroup.createdAt
@@ -43,7 +43,7 @@ export default {
 		return {
 			keyword: '',
 			curPage: 1,
-			size :10,
+			size :30,
 			searchResult: [],
 			total: 0
 		}

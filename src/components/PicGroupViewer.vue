@@ -16,7 +16,7 @@
           </svg>
         </div>
       </div>
-      <div class="search-filter-wrapper">
+      <div class="search-filter-wrapper" ref="searchResultDiv">
         <div class="search-filter-item">
           <span class="label">入库时间</span>
           <a-date-picker @change="changeUploadTimeFrom" placeholder="开始时间" style="width: 120px" />
@@ -67,11 +67,14 @@
       </div>
       <div class="pic-group-info-list-wrapper">
         <div class="pic-group-info-wrapper" v-for="picGroup in picGroups" v-bind:key="picGroup.id" v-show="picShowType==='WIDTH_EQUAL'">
-          <img alt="" class="pic-group-img" :src="picGroup.picture">
+          <img :alt="picGroup.title" class="pic-group-img" 
+		  :src="picGroup.picture" />
+		  <!-- v-lazy="picGroup.picture" :key="picGroup.picture" -->
+		  
           <div class="pic-group-info-box">
             <span class="pic-group-name">{{picGroup.title}}</span>
             <span class="pic-group-date">{{picGroup.time}}</span>
-            <div class="pic-count-info-box">
+            <div v-if="searchType !== 'SINGLE'" class="pic-count-info-box">
               <img alt="" class="pic-info-icon" src="@/assets/img/home/picture.png">
               <span class="value">{{picGroup.num}}</span>
               <span class="unit">张</span>
@@ -83,7 +86,10 @@
 			  <div class="well-chosen-info-box-height jss117" v-for="pic in picGroups" v-bind:key="pic.id">
 				  <a class="MuiButtonBase-root MuiCardActionArea-root" target="_self">
 					 <div class="MuiCardMedia-root jss119" :title="pic.title">
-						 <img :src="pic.pictureHeight" class="lazyload" alt="pic.title">
+						 <img 
+						
+						 :src="pic.pictureHeight"
+						 class="IMG_HEIGHT lazyload" :alt="pic.title"/>
 					 </div> 
 					 <div class="MuiCardContent-root picText">
 						 <h2 class="MuiTypography-root jss122 MuiTypography-subtitle2">{{pic.title}}</h2>
@@ -91,7 +97,7 @@
 								{{pic.time}}
 							</p>
 					 </div>
-					 <span class="MuiTypography-root picNums MuiTypography-caption MuiTypography-gutterBottom">
+					 <span v-if="searchType !== 'SINGLE'" class="MuiTypography-root picNums MuiTypography-caption MuiTypography-gutterBottom">
 						 <svg class="MuiSvgIcon-root jss123" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
 							 <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"></path>
 						 </svg>{{pic.num}}
@@ -106,6 +112,7 @@
             showQuickJumper
             :default-current="1"
             :total="total"
+			:pageSize="30"
 			@change="changePicGroupPage"
         />
       </div>
@@ -116,8 +123,13 @@
 <script>
 import city from '@/store/area'
 import { hotTopicDetail, searchSingles } from '@/api/index'
+// import echo from '@/utils/echo'
 
 city.unshift({"value": "-1", "label": "请选择", "children": [{"value": "-1", "label": "请选择"}]})
+// Echo.init({
+// 	offset: 0,//离可视区域多少像素的图片可以被加载
+// 	throttle: 0 //图片延时多少毫秒加载
+// })
 
 export default {
   name: "PicGroupViewer",
@@ -129,6 +141,10 @@ export default {
 	  total: {
 		  type: Number,
 		  default: 0
+	  },
+	  otherParams: {
+		  type: Object,
+		  default: () => {}
 	  }
   },
   methods: {
@@ -152,6 +168,54 @@ export default {
 		  this.pageIndex = e
 		  this.search()
 	  },
+	  adjustImageHeight() {
+		  var totalWidth = document.getElementsByClassName('search-filter-wrapper')[0].clientWidth
+		  var imgs = document.getElementsByClassName('IMG_HEIGHT')
+		  var newLineWidth = 0
+		  var newLineIndex = 0
+		  var widthHeightRatios = 0
+		  for(var i = 0; i < imgs.length; i++) {
+		  	newLineWidth += imgs[i].width * 0.6
+		  	if(newLineWidth > totalWidth) {
+		  		// var maxHeight = 0
+		  		// for(var j=newLineIndex; j<i; j++) {
+		  		// 	if(maxHeight < imgs[j].height) {
+		  		// 		maxHeight = imgs[j].height
+		  		// 	}
+		  		// }
+		  		// var totalWidth = 0
+		  		// for(var j=newLineIndex; j<i; j++) {
+		  		// 	totalWidth = maxHeight
+		  		// }
+		  		// for(var j=newLineIndex; j<i; j++) {
+		  		// 	imgs[j].height = maxHeight
+		  		// }
+		  		var height = (totalWidth - (i - newLineIndex) * 11)/widthHeightRatios
+		  		for(var j=newLineIndex; j<i; j++) {
+					var preRatio = imgs[j].width.toFixed(2) / imgs[j].height
+		  			// imgs[j].height = height 
+					imgs[j].style.height  =  height + 'px'
+					imgs[j].style.width  =  (preRatio * height) + 'px'
+					
+					imgs[j].setAttribute('height', height + 'px' )
+					imgs[j].setAttribute('width', (preRatio * height) + 'px')
+					
+					// imgs[j].setAttribute('height', height + 'px')
+					// imgs[j].setAttribute('width', (preRatio * height) + 'px')
+					
+					// var image = new Image()
+					// image.src = imgs[j].src
+					// image.height = height + 'px'
+					console.log(imgs[j].width + ':' + imgs[j].height + ':' + height)
+		  		}
+		  		console.log('--------------')
+		  		newLineIndex = i
+		  		widthHeightRatios = 0
+		  		newLineWidth = 0
+		  	}
+			widthHeightRatios += imgs[i].width / imgs[i].height
+		  }
+	  },
 	  search() {
 		  var areas = ''
 		  if(this.firstCityIndex > 0) {
@@ -160,15 +224,22 @@ export default {
 				  areas += ',' + city[this.firstCityIndex].children[this.secondCityIndex].label
 			  }
 		  }
+		  if(areas.length > 0) {
+			  areas = '中国,' + areas
+		  }
 		  var params = {
 			  type: 1,
-			  CType: 1,
+			  cType: 1,
 			  curPage: this.pageIndex,
+			  size: 30,
 			  uploadTimeFrom: this.uploadTimeFrom,
 			  uploadTimeTo: this.uploadTimeTo,
 			  shootTimeFrom: this.shootTimeFrom,
 			  shootTimeTo: this.shootTimeTo,
 			  areas: areas
+		  }
+		  for(var key in this.otherParams) {
+			  params[key] = this.otherParams[key]
 		  }
 		  // this.$emit('changePicGroupPage', ) 
 		  if(this.searchType == 'GROUP' || this.searchType == 'ALL' ) {
@@ -176,27 +247,38 @@ export default {
 				this.picGroups = res.data.records.map(topicPicGroup => {return {
 					id: topicPicGroup.id,
 					num: topicPicGroup.groupTotal,
-					picture: topicPicGroup.oss176,
+					picture: topicPicGroup.oss800,
 					pictureHeight: topicPicGroup.oss800,
 					title: topicPicGroup.title,
 					time: topicPicGroup.createdAt
 				}})
 				this.total = res.data.total
+				// this.$nextTick(() => {
+					// this.adjustImageHeight()
+				// })
 			  })
 		  } else {
-			  var sortStrs = this.sortStr.split()
+			  var sortStrs = this.sortStr.split(',')
 			  params['sort'] = parseInt(sortStrs[0])
 			  params['sortRule'] = parseInt(sortStrs[1])
 			  searchSingles(params).then(res => {
-				this.picGroups = res.data.records.map(topicPicGroup => {return {
-					id: topicPicGroup.id,
-					num: topicPicGroup.groupTotal,
-					picture: topicPicGroup.oss176,
-					pictureHeight: topicPicGroup.oss800,
-					title: topicPicGroup.title,
-					time: topicPicGroup.createdAt
-				}})
-				this.total = res.data.total
+				if(res.data) {
+					this.picGroups = res.data.groupLists.map(topicPicGroup => {return {
+						id: topicPicGroup.id,
+						picture: topicPicGroup.oss800,
+						pictureHeight: topicPicGroup.oss800,
+						title: topicPicGroup.keywords,
+						time: topicPicGroup.createdAt
+					}})
+					this.total = res.data.total
+				} else {
+					this.picGroups = []
+					this.total = 0
+				}
+				
+				// this.$nextTick(() => {
+					// this.adjustImageHeight()
+				// })
 			  })
 		  }
 	  },
@@ -205,7 +287,7 @@ export default {
 	  },
 	  switchSearchType(searchType) {
 		  this.searchType = searchType
-		  this.search()
+		  this.changePicGroupPage(1)
 	  }
   },
   data() {
@@ -219,7 +301,8 @@ export default {
 	  uploadTimeTo: '',
 	  shootTimeFrom: '',
 	  shootTimeTo: '',
-	  sortStr: '1,2'
+	  sortStr: '1,2',
+	  pageIndex: 1
     };
   },
   created() {
@@ -306,6 +389,7 @@ export default {
         width: calc(~'(100% - 45px) / 4');
         background: #fff;
         margin-bottom: 15px;
+		justify-content: space-between;
 
         .pic-group-img{
           background: #fff;
@@ -365,6 +449,7 @@ export default {
   .well-chosen-list-box-height {
     display: flex;
     flex-wrap: wrap;
+	justify-content: space-between;
   
     .well-chosen-info-box-height {
       display: inline-flex;
@@ -394,7 +479,7 @@ export default {
   .jss117 {
       // width: 386px;
       // height: 100%;
-	  width: calc(33% - 4px);
+	  width: calc(32%);
       display: flex;
       box-shadow: none;
       border-radius: 0;

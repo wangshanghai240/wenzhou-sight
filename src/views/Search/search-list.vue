@@ -5,42 +5,19 @@
     </div>
     <div class="search-item-list-wrapper">
       <div>
-        <div class="search-item-wrapper" @click="seeDetail()">
-          <img class="search-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
+        <div class="search-item-wrapper" @click="seeDetail(hotSearch.id)" v-for="(hotSearch, index) in list" v-bind:key="hotSearch.id">
           <div class="search-item-content-wrapper">
-            <span class="search-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="search-item-wrapper">
-          <img class="search-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="search-item-content-wrapper">
-            <span class="search-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="search-item-wrapper">
-          <img class="search-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="search-item-content-wrapper">
-            <span class="search-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="search-item-wrapper">
-          <img class="search-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="search-item-content-wrapper">
-            <span class="search-title">1.中国野生生物影像年赛——摄影单元征稿</span>
-          </div>
-        </div>
-        <div class="search-item-wrapper">
-          <img class="search-img" alt="公告图片" src="@/assets/img/banner/pic2.jpeg"/>
-          <div class="search-item-content-wrapper">
-            <span class="search-title">1.中国野生生物影像年赛——摄影单元征稿</span>
+            <span class="search-title">{{index + 1}}.{{hotSearch.title}}</span>
           </div>
         </div>
       </div>
 
       <div class="pagination-wrapper">
         <a-pagination
+			showQuickJumper
             :default-current="1"
-            :total="3"
+			:pageSize=30
+            :total="total"
         />
       </div>
 
@@ -49,12 +26,30 @@
 </template>
 
 <script>
+import { hotSearchs } from '@/api/index'
+
 export default {
   name: "search-list",
   methods:{
-    seeDetail:function (){
-      this.$router.push("/search-detail")
+    seeDetail:function (id){
+      this.$router.push("/search-detail?id=" + id)
     }
+  },
+  data() {
+	  return {
+		  list: [],
+		  total: 0,
+		  curPage: 1
+	  }
+  },
+  created() {
+	  hotSearchs({
+		  curPage: this.curPage,
+		  size: 30
+	  }).then(res => {
+		  this.list = res.data.records
+		  this.total = res.data.total
+	  })
   }
 }
 </script>

@@ -68,14 +68,21 @@ export function announcementDetail(id) {
 
 export function hotSearchs() {
 	return request({
-		url: '/hotSearch',
+		url: '/index/hotSearch',
+		method: 'get'
+	})
+}
+
+export function hotSearch(id) {
+	return request({
+		url: '/index/hotSearch/' + id,
 		method: 'get'
 	})
 }
 
 export function hotKeywords() {
 	return request({
-		url: '/hotKeyword',
+		url: '/index/hotKeyword',
 		method: 'get'
 	})
 }

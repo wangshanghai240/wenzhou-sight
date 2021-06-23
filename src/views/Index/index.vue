@@ -7,7 +7,7 @@
         <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-else src="@/assets/img/home/logo-color.jpg"
              alt=""/>
         <div class="head-menu-list">
-          <span class="head-menu">大美温州</span>
+          <span class="head-menu" @click="$router.push('/index')">大美温州</span>
           <span class="head-menu">动感温州</span>
           <span class="head-menu">魅力温州</span>
         </div>
@@ -81,6 +81,7 @@ export default {
           font-weight: bold;
           color: #FFFFFF;
           margin-right: 105px;
+		  cursor: pointer;
         }
       }
     }
