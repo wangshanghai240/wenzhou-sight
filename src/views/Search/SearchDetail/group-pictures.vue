@@ -50,12 +50,12 @@
 							<a-select-option value="1,1">
 							  入库时间正序
 							</a-select-option>
-							<a-select-option value="3,2">
+							<!-- <a-select-option value="3,2">
 							 拍摄时间倒序
 							</a-select-option>
 							<a-select-option value="3,1">
 							 拍摄时间正序
-							</a-select-option>
+							</a-select-option> -->
 					    </a-select>
 					  </div>
 					  <span class="overview-info">共{{total}}个资源</span>
@@ -120,7 +120,7 @@
 								<p class="jss107">{{pic.id}}</p>
 								<div class="jss109">{{pic.caption}}</div>
 								<div class="jss107">{{pic.createdAt}}</div>
-								<div class="jss107">{{pic.picWidth}}x{{pic.picHeight}}/2.75 MB</div>
+								<div class="jss107">{{pic.size}}</div>
 							</div>
 						</div>
 					</div>
@@ -212,7 +212,20 @@ export default {
 		},
 		changePicGroupPage(e) {
 			this.curPage = e
-			getGroupPics(this.groupId, {curPage: this.curPage, size: 30}).then(res => {
+			var sortStrs = this.sortStr.split(',')
+			var params = {
+				  type: 1,
+				  cType: 1,
+				  curPage: this.curPage,
+				  size: 30,
+				  uploadTimeFrom: this.uploadTimeFrom,
+				  uploadTimeTo: this.uploadTimeTo,
+				  shootTimeFrom: this.shootTimeFrom,
+				  shootTimeTo: this.shootTimeTo,
+				  sort: parseInt(sortStrs[0]),
+				  sortRule: parseInt(sortStrs[1])
+			}
+			getGroupPics(this.groupId, params).then(res => {
 				this.pics = res.data.groupLists
 				this.pics.forEach(item => {
 					var groupIds = item.viewSortStr.split(',')

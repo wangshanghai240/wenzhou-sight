@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
 	<div class="pic-group-viewer-wrapper">
 		<div class="pic-group-viewer-info-wrapper">
 			<div class="top-wrapper">
@@ -81,7 +81,7 @@
 				<span class="overview-info">共{{total}}个资源</span>
 			</div>
 			
-			<pic-group-viewer :otherParams.sync="otherParams" ref="searchResultView"></pic-group-viewer>
+			<pic-group-viewer ref="searchResultView"></pic-group-viewer>
 			
 		</div>
 		<div class="pagination-wrapper">
@@ -92,6 +92,7 @@
 </template>
 
 <script>
+	import { hotTopicDetail, searchSingles } from '@/api/index'
 	import city from '@/store/area'
 	import PicGroupViewer from '@c/PicGroupViewer'
 
@@ -138,85 +139,95 @@
 			},
 			changePicGroupPage(e) {
 				this.pageIndex = e
-				this.search()
-			},
-			search() {
+				
 				var areas = ''
-				if (this.firstCityIndex > 0) {
-					areas = city[this.firstCityIndex].label
-					if (this.secondCityIndex > 0) {
-						areas += ',' + city[this.firstCityIndex].children[this.secondCityIndex].label
-					}
+				if(this.firstCityIndex > 0) {
+				  areas = city[this.firstCityIndex].label 
+				  if(this.secondCityIndex > 0) {
+					  areas += ',' + city[this.firstCityIndex].children[this.secondCityIndex].label
+				  }
 				}
-				if (areas.length > 0) {
+				if(areas.length > 0) {
 					areas = '中国,' + areas
 				}
 				var params = {
-					type: 1,
-					cType: 1,
-					curPage: this.pageIndex,
-					size: 30,
-					uploadTimeFrom: this.uploadTimeFrom,
-					uploadTimeTo: this.uploadTimeTo,
-					shootTimeFrom: this.shootTimeFrom,
-					shootTimeTo: this.shootTimeTo,
-					areas: areas
+					  type: 1,
+					  cType: 1,
+					  curPage: this.pageIndex,
+					  size: 30,
+					  uploadTimeFrom: this.uploadTimeFrom,
+					  uploadTimeTo: this.uploadTimeTo,
+					  shootTimeFrom: this.shootTimeFrom,
+					  shootTimeTo: this.shootTimeTo,
+					  areas: areas
 				}
-				for (var key in this.otherParams) {
+				for(var key in this.otherParams) {
 					params[key] = this.otherParams[key]
 				}
-				if (this.searchType == 'GROUP' || this.searchType == 'ALL') {
-					hotTopicDetail(params).then(res => {
-						this.picGroups = res.data.records.map(topicPicGroup => {
-							var sizes = topicPicGroup.size.split('/')[0].split('x')
-							return {
-								id: topicPicGroup.id,
-								num: topicPicGroup.groupTotal,
-								picture: topicPicGroup.oss400,
-								src: topicPicGroup.oss400,
-								width: parseInt(sizes[0]),
-								height: parseInt(sizes[1]),
-								title: topicPicGroup.title,
-								time: topicPicGroup.createdAt
-							}
-						})
-						this.total = res.data.total
-						this.init()
-					})
-				} else {
+				
+				if (this.searchType == 'SINGLE') {
 					var sortStrs = this.sortStr.split(',')
 					params['sort'] = parseInt(sortStrs[0])
 					params['sortRule'] = parseInt(sortStrs[1])
-					searchSingles(params).then(res => {
-						if (res.data) {
-							this.picGroups = res.data.groupLists.map(topicPicGroup => {
-								var sizes = topicPicGroup.size.split('/')[0].split('x')
-								return {
-									id: topicPicGroup.id,
-									picture: topicPicGroup.oss400,
-									src: topicPicGroup.oss400,
-									title: topicPicGroup.keywords,
-									time: topicPicGroup.createdAt,
-									width: parseInt(sizes[0]),
-									height: parseInt(sizes[1])
-								}
-							})
-							this.total = res.data.total
-						} else {
-							this.picGroups = []
-							this.total = 0
-						}
-						this.init()
-					})
 				}
+				
+				this.search(params)
 			},
 			switchPicShowType(picShowType) {
 				this.picShowType = picShowType
+				this.$refs.searchResultView.picShowType = picShowType
 			},
 			switchSearchType(searchType) {
 				this.searchType = searchType
+				this.$refs.searchResultView.searchType = searchType
 				this.changePicGroupPage(1)
+			},
+			search(params) {
+				if(this.searchType == 'GROUP' || this.searchType == 'ALL' ) {
+				  hotTopicDetail(params).then(res => {
+					  if(res.data) {
+						  this.$refs.searchResultView.picGroups = res.data.records.map(topicPicGroup => {
+						  	var sizes = topicPicGroup.size.split('/')[0].split('x')
+						  	return {
+						  		id: topicPicGroup.id,
+						  		num: topicPicGroup.groupTotal,
+						  		picture: topicPicGroup.oss400,
+						  		width: parseInt(sizes[0]),
+						  		height: parseInt(sizes[1]),
+						  		title: topicPicGroup.title,
+						  		time: topicPicGroup.createdAt
+						  	}
+						  })
+						  this.total = res.data.total
+					  } else {
+						this.$refs.searchResultView.picGroups = []
+						this.total = 0
+					  }
+					  this.$refs.searchResultView.init()
+				  })
+				} else {
+				  searchSingles(params).then(res => {
+					if(res.data) {
+						this.$refs.searchResultView.picGroups = res.data.groupLists.map(topicPicGroup => {
+							var sizes = topicPicGroup.size.split('/')[0].split('x')
+							return {
+								id: topicPicGroup.id,
+								picture: topicPicGroup.oss400,
+								title: topicPicGroup.keywords,
+								time: topicPicGroup.createdAt,
+								width: parseInt(sizes[0]),
+								height: parseInt(sizes[1])
+							}
+						})
+						this.total = res.data.total
+					} else {
+						this.$refs.searchResultView.picGroups = []
+						this.total = 0
+					}
+					this.$refs.searchResultView.init()
+				})
 			}
+		  }
 		},
 		data() {
 			return {
@@ -224,7 +235,6 @@
 				firstCityIndex: 0,
 				secondCityIndex: 0,
 				picShowType: 'HEIGHT_EQUAL',
-				list: [],
 				searchType: 'ALL',
 				uploadTimeFrom: '',
 				uploadTimeTo: '',
@@ -232,7 +242,7 @@
 				shootTimeTo: '',
 				sortStr: '1,2',
 				pageIndex: 1,
-				gap: 10
+				total: 0
 			};
 		}
 	}
@@ -387,4 +397,3 @@
 		text-align: center;
 	}
 </style>
- -->

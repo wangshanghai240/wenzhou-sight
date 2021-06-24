@@ -15,7 +15,7 @@
 		  </div>
 		</div>
 		<div class="search-list-wrapper">
-		  <pic-group-viewer :otherParams.sync="otherParams" ref="searchResultView"></pic-group-viewer>
+		  <pic-group-search-viewer :otherParams.sync="otherParams" ref="searchResultView"></pic-group-search-viewer>
 		</div>
 	  </div>
 	</div>
@@ -23,13 +23,13 @@
 
 <script>
 import { hotTopicDetail, hotKeywords } from '@/api/index'
-import PicGroupViewer from '@c/PicGroupViewer'
+import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
 
 export default {
 	methods: {
 	},
 	components: {
-		'pic-group-viewer': PicGroupViewer
+		'pic-group-search-viewer': PicGroupSearchViewer
 	},
 	data() {
 		return {

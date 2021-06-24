@@ -147,44 +147,10 @@
           <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/> -->
           <span class="more-button" @click="seeSearchResult" >更多></span>
         </div>
-        <div class="content-wrapper">
-         <div class="well-chosen-list-box" v-show="picShowType==='WIDTH_EQUAL'" >
-            <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id"  @click="seePicGroup(pic.id)">
-              <div class="well-chosen-img-div">
-				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss400"/>
-			  </div>
-              <span class="well-chosen-name"><nobr>{{pic.title}}</nobr></span>
-              <span class="well-chosen-date">{{pic.createdAt}}</span>
-              <div class="well-chosen-pic-info-box">
-                <img alt="" class="well-chosen-pic-info-icon" src="@/assets/img/home/picture.png">
-                <span class="value">{{pic.groupTotal}}</span>
-                <span class="unit">张</span>
-              </div>
-            </div>
-          </div>
-		  
-		  <div class="well-chosen-list-box-height" v-show="picShowType==='HEIGHT_EQUAL'">
-			  <div class="well-chosen-info-box-height jss117" v-for="pic in carefullyChosenPics" v-bind:key="pic.id"  @click="seePicGroup(pic.id)">
-				  <a class="MuiButtonBase-root MuiCardActionArea-root" target="_self">
-					 <div class="MuiCardMedia-root jss119" :title="pic.title">
-						 <img :src="pic.oss400" class="lazyload" alt="pic.title">
-					 </div> 
-					 <div class="MuiCardContent-root picText">
-						 <h2 class="MuiTypography-root jss122 MuiTypography-subtitle2">{{pic.title}}</h2>
-							<p class="MuiTypography-root MuiTypography-caption MuiTypography-gutterBottom">
-								{{pic.createdAt}}
-							</p>
-					 </div>
-					 <span class="MuiTypography-root picNums MuiTypography-caption MuiTypography-gutterBottom">
-						 <svg class="MuiSvgIcon-root jss123" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-							 <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"></path>
-						 </svg>{{pic.groupTotal}}
-					 </span>
-					 <span class="MuiCardActionArea-focusHighlight"></span>
-				  </a>
-			  </div>
-		  </div>
-
+        <div class="content-wrapper pic-group-viewer-wrapper">
+			<div class="pic-group-viewer-info-wrapper">
+				<PicGroupViewer ref="searchResultView"></PicGroupViewer>
+			</div>
         </div>
       </div>
     </div>
@@ -193,11 +159,16 @@
 
 <script>
 import HomeBanner from "@/components/HomeBanner";
+import PicGroupViewer from '@c/PicGroupViewer'
+
 import { index } from '@/api/index'
 
 export default {
   name: "home",
-  components: {HomeBanner},
+  components: {
+  	PicGroupViewer
+	,HomeBanner
+  },
   data: () => {
     return {
 		carouses: [],
@@ -207,15 +178,11 @@ export default {
 		hotSearchKeywords: [],
 		hotTopics: [],
 		masters: [],
-		carefullyChosenPics: [],
 		picShowType: 'HEIGHT_EQUAL',
 		searchKeyword: ''
 	}
   },
   methods: {
-	seePicGroup(id) {
-		this.$router.push('/group-pictures?id=' + id)
-	},
     seeNoticeMore: function () {
       this.$router.push("/notice-list");
     },
@@ -247,6 +214,7 @@ export default {
     },
 	switchPicShowType(picShowType) {
 		this.picShowType = picShowType
+		this.$refs.searchResultView.picShowType = picShowType
 	}
   },
   created() {
@@ -259,7 +227,20 @@ export default {
 		this.announcements = data.announcements
 		this.hotTopics = data.hotTopics.slice(0, 4)
 		this.masters = data.masters
-		this.carefullyChosenPics = data.carefullyChosenPics
+		
+		this.$refs.searchResultView.picGroups = data.carefullyChosenPics.map(topicPicGroup => {
+			var sizes = topicPicGroup.size.split('/')[0].split('x')
+			return {
+				id: topicPicGroup.id,
+				num: topicPicGroup.groupTotal,
+				picture: topicPicGroup.oss400,
+				width: parseInt(sizes[0]),
+				height: parseInt(sizes[1]),
+				title: topicPicGroup.title,
+				time: topicPicGroup.createdAt
+			}
+		})
+		this.$refs.searchResultView.init()
      })
   }
 }
@@ -587,74 +568,6 @@ export default {
       .show-type-icon:last-child {
         margin-right: 38px;
       }
-
-      .well-chosen-list-box {
-        display: flex;
-        flex-wrap: wrap;
-
-        .well-chosen-info-box {
-          display: inline-flex;
-          flex-direction: column;
-          width: calc(~"25% - 8px");
-		  // width: 280px;
-		  // height: 350px;
-          margin-right: 10px;
-          text-align: left;
-          margin-bottom: 30px;
-
-		  .well-chosen-img-div {
-			  display: inline-flex;
-			  flex-direction: column;
-			  justify-content: center;
-			  // max-width: calc(~"100% - 4px");
-			  // height: 300px;
-			  overflow: hidden;
-			  
-			  .well-chosen-img {
-			    height: 230px;
-				width: 100%;
-				
-			    object-fit: cover;
-			    margin-bottom: 15px;
-			    border-radius: 6px;
-			  }
-		  }
-
-          .well-chosen-name {
-            font-size: 22px;
-            font-weight: 500;
-            color: #333333;
-            margin-bottom: 15px;
-			text-overflow: ellipsis;
-			overflow: hidden;
-          }
-
-          .well-chosen-date {
-            font-size: 16px;
-            font-weight: 500;
-            color: #999999;
-            margin-bottom: 10px;
-          }
-
-          .well-chosen-pic-info-box {
-            font-size: 16px;
-            font-weight: 500;
-            color: #999999;
-            display: flex;
-            align-items: center;
-
-            .well-chosen-pic-info-icon {
-              height: 16px;
-              width: 16px;
-              margin-right: 8px;
-            }
-          }
-        }
-
-        .well-chosen-info-box:nth-child(4n) {
-          margin-right: 0;
-        }
-      }
     }
   }
 
@@ -695,20 +608,20 @@ export default {
     }
   }
   
-  .well-chosen-list-box-height {
-    display: flex;
-    flex-wrap: wrap;
-	justify-content: space-between;
+ //  .well-chosen-list-box-height {
+ //    display: flex;
+ //    flex-wrap: wrap;
+	// justify-content: space-between;
   
-    .well-chosen-info-box-height {
-      display: inline-flex;
-      flex-direction: column;
-  	  height: 300px;
-      margin-right: 10px;
-      text-align: left;
-      margin-bottom: 30px;
-	}
-  }
+ //    .well-chosen-info-box-height {
+ //      display: inline-flex;
+ //      flex-direction: column;
+ //  	  height: 300px;
+ //      margin-right: 10px;
+ //      text-align: left;
+ //      margin-bottom: 30px;
+	// }
+ //  }
   
   .MuiSvgIcon-root {
 	  width: 2em;
@@ -779,26 +692,26 @@ export default {
       object-fit: cover;
   }
   
-  .picText {
-      color: #fff;
-      width: 100%;
-      bottom: 0;
-      position: absolute;
-      background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
-  }
+  // .picText {
+  //     color: #fff;
+  //     width: 100%;
+  //     bottom: 0;
+  //     position: absolute;
+  //     background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
+  // }
   
-  .picNums {
-      top: 10px;
-      color: #fff;
-      left: 10px;
-      display: flex;
-      padding: 0 6px;
-      position: absolute;
-      flex-wrap: nowrap;
-      align-items: center;
-      border-radius: 4px;
-      background-color: rgba(0, 0, 0, 0.4);
-  }
+  // .picNums {
+  //     top: 10px;
+  //     color: #fff;
+  //     left: 10px;
+  //     display: flex;
+  //     padding: 0 6px;
+  //     position: absolute;
+  //     flex-wrap: nowrap;
+  //     align-items: center;
+  //     border-radius: 4px;
+  //     background-color: rgba(0, 0, 0, 0.4);
+  // }
   
   .MuiTypography-gutterBottom {
       margin-bottom: 0.35em;

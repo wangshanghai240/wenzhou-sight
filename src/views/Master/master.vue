@@ -23,18 +23,18 @@
       </div>
     </div>
 
-    <pic-group-viewer :otherParams.sync="otherParams" ref="masterPics"></pic-group-viewer>
+    <pic-group-search-viewer ref="masterPics"></pic-group-search-viewer>
   </div>
 </template>
 
 <script>
-import PicGroupViewer from '@c/PicGroupViewer'
+import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
 import { masters } from '@/api/index'
 
 export default {
   name: "master",
   components: {
-    'pic-group-viewer': PicGroupViewer
+    'pic-group-search-viewer': PicGroupSearchViewer
   },
   data() {
 	  return {
@@ -49,9 +49,9 @@ export default {
 		  this.masterName = this.masterList[index].name
 		  this.masterDesc = this.masterList[index].remark
 		  this.otherParams = {
-			  ids: [this.masterList[index].id]
+			  ids: [this.masterList[index].topicId]
 		  }
-		  console.log(this.otherParams)
+		  this.$refs.masterPics.otherParams = this.otherParams
 		  this.$refs.masterPics.changePicGroupPage(1)
 	  }
   },
