@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <pic-group-viewer></pic-group-viewer>
+    <pic-group-viewer :otherParams.sync="otherParams" ref="masterPics"></pic-group-viewer>
   </div>
 </template>
 
@@ -40,18 +40,24 @@ export default {
 	  return {
 		  masterList: [],
 		  masterName: '',
-		  masterDesc: ''
+		  masterDesc: '',
+		  otherParams: {}
 	  }
   },
   methods: {
 	  showMasterInfo(index) {
 		  this.masterName = this.masterList[index].name
 		  this.masterDesc = this.masterList[index].remark
+		  this.otherParams = {
+			  ids: [this.masterList[index].id]
+		  }
+		  console.log(this.otherParams)
+		  this.$refs.masterPics.changePicGroupPage(1)
 	  }
   },
   created() {
-	  masters().then(res => {
-		  this.masterList = res.data.masters
+	  masters({curPage: 1, size: 20}).then(res => {
+		  this.masterList = res.data.records
 	  })
   }
 }

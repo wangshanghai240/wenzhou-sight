@@ -45,10 +45,11 @@ export function getGroupPics(groupId, params) {
 	})
 }
 
-export function masters() {
+export function masters(params) {
 	return request({
 	  url: 'index/master',
-	  method: 'get'
+	  method: 'get',
+	  params
 	})
 }
 

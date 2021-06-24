@@ -149,9 +149,9 @@
         </div>
         <div class="content-wrapper">
          <div class="well-chosen-list-box" v-show="picShowType==='WIDTH_EQUAL'" >
-            <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
+            <div class="well-chosen-info-box" v-for="pic in carefullyChosenPics" v-bind:key="pic.id"  @click="seePicGroup(pic.id)">
               <div class="well-chosen-img-div">
-				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss800"/>
+				  <img :alt="pic.title" class="well-chosen-img" :src="pic.oss400"/>
 			  </div>
               <span class="well-chosen-name"><nobr>{{pic.title}}</nobr></span>
               <span class="well-chosen-date">{{pic.createdAt}}</span>
@@ -164,7 +164,7 @@
           </div>
 		  
 		  <div class="well-chosen-list-box-height" v-show="picShowType==='HEIGHT_EQUAL'">
-			  <div class="well-chosen-info-box-height jss117" v-for="pic in carefullyChosenPics" v-bind:key="pic.id">
+			  <div class="well-chosen-info-box-height jss117" v-for="pic in carefullyChosenPics" v-bind:key="pic.id"  @click="seePicGroup(pic.id)">
 				  <a class="MuiButtonBase-root MuiCardActionArea-root" target="_self">
 					 <div class="MuiCardMedia-root jss119" :title="pic.title">
 						 <img :src="pic.oss400" class="lazyload" alt="pic.title">
@@ -213,6 +213,9 @@ export default {
 	}
   },
   methods: {
+	seePicGroup(id) {
+		this.$router.push('/group-pictures?id=' + id)
+	},
     seeNoticeMore: function () {
       this.$router.push("/notice-list");
     },
@@ -442,6 +445,7 @@ export default {
               font-weight: 500;
               color: #999999;
               margin-bottom: 10px;
+			  cursor: pointer;
             }
           }
         }

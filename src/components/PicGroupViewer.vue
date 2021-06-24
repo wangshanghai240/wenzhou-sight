@@ -42,7 +42,7 @@
         </div>
         <div class="search-filter-item" v-show="searchType==='SINGLE'">
           <span class="label">排序</span>
-          <a-select default-value="1,2" style="width: 120px" v-model="sortStr" @change="changePicGroupPage(1)">
+          <a-select default-value="1,2" style="width: 150px" v-model="sortStr" @change="changePicGroupPage(1)">
             <a-select-option value="1,2">
               入库时间倒序
             </a-select-option>
@@ -65,12 +65,11 @@
         </div>
         <span class="overview-info">共{{total}}个资源</span>
       </div>
-      <div class="pic-group-info-list-wrapper">
-        <div class="pic-group-info-wrapper" v-for="picGroup in picGroups" v-bind:key="picGroup.id" v-show="picShowType==='WIDTH_EQUAL'">
+      <div class="pic-group-info-list-wrapper" id="picGroupDiv">
+        <div class="pic-group-info-wrapper" @click="showDetail(picGroup.id)" v-for="picGroup in picGroups" v-bind:key="picGroup.id" v-show="picShowType==='WIDTH_EQUAL'">
           <img :alt="picGroup.title" class="pic-group-img" 
-		  :src="picGroup.picture" />
-		  <!-- v-lazy="picGroup.picture" :key="picGroup.picture" -->
-		  
+		   :src="picGroup.picture"/>
+		   
           <div class="pic-group-info-box">
             <span class="pic-group-name">{{picGroup.title}}</span>
             <span class="pic-group-date">{{picGroup.time}}</span>
@@ -82,14 +81,20 @@
           </div>
         </div>
 		
-		<div class="well-chosen-list-box-height" v-show="picShowType==='HEIGHT_EQUAL'">
-			  <div class="well-chosen-info-box-height jss117" v-for="pic in picGroups" v-bind:key="pic.id">
+		<div id="picGroupDiv" class="well-chosen-list-box-height" v-show="picShowType==='HEIGHT_EQUAL'">
+			  <div @click="showDetail(pic.id)" class="well-chosen-info-box-height jss117" v-for="(pic, index) in list" v-bind:key="pic.id">
 				  <a class="MuiButtonBase-root MuiCardActionArea-root" target="_self">
 					 <div class="MuiCardMedia-root jss119" :title="pic.title">
-						 <img 
-						
-						 :src="pic.pictureHeight"
-						 class="IMG_HEIGHT lazyload" :alt="pic.title"/>
+						 <figure
+						 	:key="pic.id" :class="{'contain': pic._reproportion}"
+						 	:style="{
+						 		width: pic._width + 'px',
+						 		height: pic._height + 'px',
+						 		marginRight: '0px',
+						 		marginBottom: '0px'
+						 	}">
+						 	<img :src="pic.picture" :alt="pic.title"/>
+						 </figure>
 					 </div> 
 					 <div class="MuiCardContent-root picText">
 						 <h2 class="MuiTypography-root jss122 MuiTypography-subtitle2">{{pic.title}}</h2>
@@ -98,13 +103,15 @@
 							</p>
 					 </div>
 					 <span v-if="searchType !== 'SINGLE'" class="MuiTypography-root picNums MuiTypography-caption MuiTypography-gutterBottom">
-						 <svg class="MuiSvgIcon-root jss123" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-							 <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H8l3-4zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"></path>
-						 </svg>{{pic.num}}
+						 <svg class="MuiSvgIcon-picNum jss123" focusable="false" viewBox="0 0 1024 1024" aria-hidden="true" width="200" height="200" t="1624436923180">
+							 <path d="M569.5 733.3L439.8 571.2c-20.5-25.6-57.8-29.7-83.3-9.3-3.4 2.7-6.5 5.9-9.3 9.3L156.3 809.8h711.6L737.4 635.9c-19.6-26.2-56.8-31.5-83-11.9-4.5 3.4-8.5 7.4-11.9 11.9l-73 97.4zM156.3 98.2h711.6c32.7 0 59.3 26.5 59.3 59.3v711.6c0 32.7-26.5 59.3-59.3 59.3H156.3c-32.7 0-59.3-26.5-59.3-59.3V157.5c0-32.7 26.6-59.3 59.3-59.3zM690 454c65.5 0 118.6-53.1 118.6-118.6S755.5 216.8 690 216.8s-118.6 53.1-118.6 118.6S624.5 454 690 454z"></path>
+						 </svg>{{pic.num}}张
 					 </span>
 					 <span class="MuiCardActionArea-focusHighlight"></span>
 				  </a>
 			  </div>
+		  </div>
+		
 		</div>
       </div>
       <div class="pagination-wrapper">
@@ -113,15 +120,14 @@
             :default-current="1"
             :total="total"
 			:pageSize="30"
-			@change="changePicGroupPage"
-        />
+			@change="changePicGroupPage"/>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
 import city from '@/store/area'
+import Gallery from '@/utils/gallery'
 import { hotTopicDetail, searchSingles } from '@/api/index'
 // import echo from '@/utils/echo'
 
@@ -147,7 +153,24 @@ export default {
 		  default: () => {}
 	  }
   },
+  mounted: function() {
+	  // window.addEventListener('resize', this.init.bind(this));
+	  // this.init();
+  },
   methods: {
+	  init: function () {
+		  this.list = Gallery({
+			  list: this.picGroups,
+			  waperWidth: document.getElementById('picGroupDiv').clientWidth,
+			  imageHeight: 300,
+			  gap: this.gap
+		  })
+	  },
+	  showDetail(id) {
+		  if(this.searchType !== 'SINGLE') {
+			  this.$router.push('/group-pictures?id=' + id)
+		  }
+	  },
 	  changeUploadTimeFrom(e, f) {
 		  this.uploadTimeFrom = f
 		  this.changePicGroupPage(1)
@@ -167,54 +190,6 @@ export default {
 	  changePicGroupPage(e) {
 		  this.pageIndex = e
 		  this.search()
-	  },
-	  adjustImageHeight() {
-		  var totalWidth = document.getElementsByClassName('search-filter-wrapper')[0].clientWidth
-		  var imgs = document.getElementsByClassName('IMG_HEIGHT')
-		  var newLineWidth = 0
-		  var newLineIndex = 0
-		  var widthHeightRatios = 0
-		  for(var i = 0; i < imgs.length; i++) {
-		  	newLineWidth += imgs[i].width * 0.6
-		  	if(newLineWidth > totalWidth) {
-		  		// var maxHeight = 0
-		  		// for(var j=newLineIndex; j<i; j++) {
-		  		// 	if(maxHeight < imgs[j].height) {
-		  		// 		maxHeight = imgs[j].height
-		  		// 	}
-		  		// }
-		  		// var totalWidth = 0
-		  		// for(var j=newLineIndex; j<i; j++) {
-		  		// 	totalWidth = maxHeight
-		  		// }
-		  		// for(var j=newLineIndex; j<i; j++) {
-		  		// 	imgs[j].height = maxHeight
-		  		// }
-		  		var height = (totalWidth - (i - newLineIndex) * 11)/widthHeightRatios
-		  		for(var j=newLineIndex; j<i; j++) {
-					var preRatio = imgs[j].width.toFixed(2) / imgs[j].height
-		  			// imgs[j].height = height 
-					imgs[j].style.height  =  height + 'px'
-					imgs[j].style.width  =  (preRatio * height) + 'px'
-					
-					imgs[j].setAttribute('height', height + 'px' )
-					imgs[j].setAttribute('width', (preRatio * height) + 'px')
-					
-					// imgs[j].setAttribute('height', height + 'px')
-					// imgs[j].setAttribute('width', (preRatio * height) + 'px')
-					
-					// var image = new Image()
-					// image.src = imgs[j].src
-					// image.height = height + 'px'
-					console.log(imgs[j].width + ':' + imgs[j].height + ':' + height)
-		  		}
-		  		console.log('--------------')
-		  		newLineIndex = i
-		  		widthHeightRatios = 0
-		  		newLineWidth = 0
-		  	}
-			widthHeightRatios += imgs[i].width / imgs[i].height
-		  }
 	  },
 	  search() {
 		  var areas = ''
@@ -241,21 +216,26 @@ export default {
 		  for(var key in this.otherParams) {
 			  params[key] = this.otherParams[key]
 		  }
-		  // this.$emit('changePicGroupPage', ) 
 		  if(this.searchType == 'GROUP' || this.searchType == 'ALL' ) {
 			  hotTopicDetail(params).then(res => {
-				this.picGroups = res.data.records.map(topicPicGroup => {return {
-					id: topicPicGroup.id,
-					num: topicPicGroup.groupTotal,
-					picture: topicPicGroup.oss800,
-					pictureHeight: topicPicGroup.oss800,
-					title: topicPicGroup.title,
-					time: topicPicGroup.createdAt
-				}})
+				this.picGroups = res.data.records.map(topicPicGroup => {
+					var sizes = topicPicGroup.size.split('/')[0].split('x')
+					return {
+						id: topicPicGroup.id,
+						num: topicPicGroup.groupTotal,
+						picture: topicPicGroup.oss400,
+						src: topicPicGroup.oss400,
+						width: parseInt(sizes[0]),
+						height: parseInt(sizes[1]),
+						title: topicPicGroup.title,
+						time: topicPicGroup.createdAt
+					}
+				})
 				this.total = res.data.total
 				// this.$nextTick(() => {
 					// this.adjustImageHeight()
 				// })
+				this.init()
 			  })
 		  } else {
 			  var sortStrs = this.sortStr.split(',')
@@ -263,22 +243,24 @@ export default {
 			  params['sortRule'] = parseInt(sortStrs[1])
 			  searchSingles(params).then(res => {
 				if(res.data) {
-					this.picGroups = res.data.groupLists.map(topicPicGroup => {return {
-						id: topicPicGroup.id,
-						picture: topicPicGroup.oss800,
-						pictureHeight: topicPicGroup.oss800,
-						title: topicPicGroup.keywords,
-						time: topicPicGroup.createdAt
-					}})
+					this.picGroups = res.data.groupLists.map(topicPicGroup => {
+						var sizes = topicPicGroup.size.split('/')[0].split('x')
+						return {
+							id: topicPicGroup.id,
+							picture: topicPicGroup.oss400,
+							src: topicPicGroup.oss400,
+							title: topicPicGroup.keywords,
+							time: topicPicGroup.createdAt,
+							width: parseInt(sizes[0]),
+							height: parseInt(sizes[1])
+						}
+					})
 					this.total = res.data.total
 				} else {
 					this.picGroups = []
 					this.total = 0
 				}
-				
-				// this.$nextTick(() => {
-					// this.adjustImageHeight()
-				// })
+				this.init()
 			  })
 		  }
 	  },
@@ -296,21 +278,48 @@ export default {
 	  firstCityIndex: 0,
       secondCityIndex: 0,
 	  picShowType: 'HEIGHT_EQUAL',
+	  list: [],
 	  searchType: 'ALL',
 	  uploadTimeFrom: '',
 	  uploadTimeTo: '',
 	  shootTimeFrom: '',
 	  shootTimeTo: '',
 	  sortStr: '1,2',
-	  pageIndex: 1
+	  pageIndex: 1,
+	  gap: 10
     };
   },
   created() {
+	  // window.addEventListener('resize', this.init.bind(this))
+	  // this.init()
   }
 }
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
+figure {
+    display: inline-block;
+    // width: 160px;
+    // height: 160px;
+    background-color: #333;
+    background-clip: content-box;
+    background-size: cover;
+    box-sizing: border-box;
+
+    margin: 0;
+}
+
+figure img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+figure.contain img {
+    object-fit: contain;
+}
+
 .show-type-icon {
   height: 18px;
   width: 18px;
@@ -376,7 +385,7 @@ export default {
         font-weight: 400;
         color: #333333;
         position: absolute;
-        right: 0;
+        right: 30px;
       }
     }
     
@@ -389,11 +398,10 @@ export default {
         width: calc(~'(100% - 45px) / 4');
         background: #fff;
         margin-bottom: 15px;
-		justify-content: space-between;
 
         .pic-group-img{
           background: #fff;
-          border-radius: 6px 6px 0px 0px;
+          border-radius: 6px;
           height: 250px;
           width: 100%;
           object-fit: cover;
@@ -427,10 +435,7 @@ export default {
               height: 16px;
               width: 16px;
               margin-right: 8px;
-            }
-
-
-            
+            } 
           }
         }
       }
@@ -439,22 +444,17 @@ export default {
         margin-right: 0;
       }
     }
-
-    .pagination-wrapper{
-      text-align: center;
-    }
   }
   
   
   .well-chosen-list-box-height {
     display: flex;
     flex-wrap: wrap;
-	justify-content: space-between;
   
     .well-chosen-info-box-height {
       display: inline-flex;
       flex-direction: column;
-  	  height: 300px;
+  	  // height: 300px;
       margin-right: 10px;
       text-align: left;
       margin-bottom: 30px;
@@ -476,10 +476,20 @@ export default {
   	  }
   }
   
+  .MuiSvgIcon-picNum {
+  	  width: 2em;
+	  height: 2em;
+	  padding: 2px;
+  	  display: inline-block;
+  	  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  	  flex-shrink: 0;
+  	  user-select: none;
+  	  overflow: unset;
+  	  fill: #fff;
+	  opacity: 0.8;
+  }
+  
   .jss117 {
-      // width: 386px;
-      // height: 100%;
-	  width: calc(32%);
       display: flex;
       box-shadow: none;
       border-radius: 0;
@@ -525,8 +535,6 @@ export default {
   }
   
   .jss119 img {
-      width: 100%;
-      height: 300px;
       display: block;
       object-fit: cover;
   }
@@ -596,5 +604,9 @@ export default {
       background-color: currentcolor;
   }
   
+}
+
+.pagination-wrapper{
+  text-align: center;
 }
 </style>

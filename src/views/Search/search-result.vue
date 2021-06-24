@@ -1,40 +1,32 @@
 <template>
-	<div class="search-list-wrapper">
-	  <pic-group-viewer 
-		:picGroups="searchResult" :total="total"
-		@changePicGroupPage="changePicGroupPage"></pic-group-viewer>
+	<div class="topic-list-wrapper">
+	
+	  <div class="topic-list-content-wrapper">
+		<div class="search-wrapper">
+		  <div class="search-box">
+			<img alt="" class="search-icon" src="@/assets/img/home/search.png"/>
+			<input placeholder="查找大美温州"/>
+		  </div>
+		  <div class="hot-search-key-wrapper">
+			<span class="desc">热门关键词</span>
+			<div class="hot-search-key-box">
+			  <span class="hot-search-key" v-for="hotKeyword in hotSearchKeywords" v-bind:key="hotKeyword.id">{{hotKeyword.keyword}}</span>
+			</div>
+		  </div>
+		</div>
+		<div class="search-list-wrapper">
+		  <pic-group-viewer :otherParams.sync="otherParams" ref="searchResultView"></pic-group-viewer>
+		</div>
+	  </div>
 	</div>
 </template>
 
 <script>
-import { hotTopicDetail } from '@/api/index'
+import { hotTopicDetail, hotKeywords } from '@/api/index'
 import PicGroupViewer from '@c/PicGroupViewer'
 
 export default {
 	methods: {
-		search() {
-			this.changePicGroupPage({
-				keyWord: this.keyword,
-				curPage: this.curPage,
-				size: this.size,
-				type: 1,
-				cType: 1
-			})
-		},
-		changePicGroupPage(params) {
-			params.keyWord = this.keyword
-			hotTopicDetail(params).then(res => {
-				this.searchResult = res.data.records.map(topicPicGroup => {return {
-					id: topicPicGroup.id,
-					num: topicPicGroup.groupTotal,
-					picture: topicPicGroup.oss800,
-					pictureHeight: topicPicGroup.oss800,
-					title: topicPicGroup.title,
-					time: topicPicGroup.createdAt
-				}})
-				this.total = res.data.total
-			})
-		}
 	},
 	components: {
 		'pic-group-viewer': PicGroupViewer
@@ -42,18 +34,109 @@ export default {
 	data() {
 		return {
 			keyword: '',
-			curPage: 1,
-			size :30,
-			searchResult: [],
-			total: 0
+			otherParams: {keyWord: this.keyword},
+			hotSearchKeywords: []
 		}
 	},
 	created() {
 		this.keyword = this.$route.query.keyword
-		this.search()
+		this.otherParams = {keyWord: this.keyword}
+		this.$nextTick(() => {
+			this.$refs.searchResultView.changePicGroupPage(1)
+		})
+		
+		hotKeywords().then(res => {
+			this.hotSearchKeywords = res.data.records
+		})
 	}
 }
 </script>
 
-<style>
+<style lang="less" rel="stylesheet/less" scoped>
+
+.topic-list-wrapper{
+  background: #fff;
+
+
+  .topic-list-content-wrapper{
+    max-width: 1400px;
+    margin: 0 auto;
+	.search-wrapper {
+	  padding: 45px 175px 40px 175px;
+	  margin-bottom: 20px;
+	  background: #F4F5FB;
+	  margin-top: 20px;
+	
+	  .search-box {
+	    background: #FFFFFF;
+	    box-shadow: 0 0 20px 0 rgba(131, 157, 186, 0.4);
+	    height: 60px;
+	    display: flex;
+	    align-items: center;
+	
+	    .search-icon {
+	      height: 19px;
+	      width: 19px;
+	      margin-left: 45px;
+	      margin-right: 20px;
+	    }
+	
+	    input {
+	      border: none;
+	      outline: none;
+	      font-size: 20px;
+	      font-weight: 800;
+	
+	    }
+	
+	    input::-webkit-input-placeholder {
+	      opacity: 0.5;
+	    }
+	
+	    input::-moz-placeholder { /* Mozilla Firefox 19+ */
+	      opacity: 0.5;
+	    }
+	
+	    input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	      opacity: 0.5;
+	    }
+	
+	    input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+	      opacity: 0.5;
+	    }
+	  }
+	
+	  .hot-search-key-wrapper {
+	    display: flex;
+	    align-items: center;
+	    margin-top: 20px;
+	
+	    .desc {
+	      font-size: 18px;
+	      font-weight: 800;
+	      color: #333333;
+	      margin-right: 28px;
+	    }
+	
+	    .hot-search-key-box {
+	
+	
+	      .hot-search-key {
+	        height: 36px;
+	        padding: 0 20px;
+	        border-radius: 18px;
+	        display: inline-block;
+	        line-height: 36px;
+	        background: #E4E5EC;
+	        margin-right: 15px;
+	        font-size: 18px;
+	        font-weight: 500;
+	        color: #111;
+	      }
+	    }
+	  }
+	
+	 }
+  }
+}
 </style>

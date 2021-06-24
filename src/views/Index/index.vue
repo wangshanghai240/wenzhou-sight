@@ -8,8 +8,8 @@
              alt=""/>
         <div class="head-menu-list">
           <span class="head-menu" @click="$router.push('/index')">大美温州</span>
-          <span class="head-menu">动感温州</span>
-          <span class="head-menu">魅力温州</span>
+          <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/672')">动感温州</span>
+          <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span>
         </div>
       </div>
       <div class="right-wrapper">
@@ -25,6 +25,9 @@
     <div class="nav-content-wrapper">
       <router-view></router-view>
     </div>
+	<a-back-top>
+		<a-button type="danger" shape="circle" icon="up" size="large"/>
+	</a-back-top>
     <div class="bottom-wrapper">
       <img class="bottom-logo-icon" alt="" src="@/assets/img/home/logo-color.jpg"/>
     </div>
@@ -48,7 +51,10 @@ export default {
   methods: {
     toHome: function () {
       this.$router.push("/index");
-    }
+    },
+	redirect(url) {
+		window.location.replace(url)
+	}
   }
 }
 </script>
