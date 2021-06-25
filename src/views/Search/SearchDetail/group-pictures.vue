@@ -93,20 +93,13 @@
 									</span>
 								</span>
 								<div class="buttonIconBox">
-									<button class="MuiButtonBase-root MuiIconButton-root jss105" tabindex="0" type="button">
+									<button class="MuiButtonBase-root MuiIconButton-root jss105" @click="download1(pic.oss800Watermark, pic.id)" tabindex="0" type="button">
 										<span class="MuiIconButton-label">
 											<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
 												<path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
 											</svg>
 										</span>
 									</button>
-									<!-- <a-button shape="circle" class="MuiButtonBase-root MuiIconButton-root jss105">
-										<span class="MuiIconButton-label">
-											<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-												<path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
-											</svg>
-										</span>
-									</a-button> -->
 									<button class="MuiButtonBase-root MuiIconButton-root jss105" tabindex="0" type="button">
 										<span class="MuiIconButton-label">
 											<svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
@@ -167,13 +160,56 @@ export default {
 	},
 	methods: {
 		changeSelectedPicIds(e, picId) {
-			console.log(e)
 			if(e.target.checked) {
 				this.selectedPicIds.push(picId)
 			} else {
 				this.selectedPicIds.splice(this.selectedPicIds.indexOf(picId), 1)
 			}
-			console.log(this.selectedPicIds)
+		},
+		getImageDataURL(image) {
+			const canvas = document.createElement('canvas');
+			canvas.width = image.width;
+			canvas.height = image.height;
+			const ctx = canvas.getContext('2d');
+			//以图片为背景剪裁画布
+			ctx.drawImage(image, 0, 0, image.width, image.height);
+			//获取图片后缀名
+			const extension = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase()
+			// 某些图片url可能没有后缀名，默认是png
+			return canvas.toDataURL('image/' + extension, 1)
+		},
+		download1(url, imgId) {
+			const tag = document.createElement('a')
+			const suffix = url.substring(url.lastIndexOf('.'))
+			tag.setAttribute('download', imgId + suffix)
+			
+			const image = new Image()
+			image.src = url
+			image.setAttribute('crossOrigin', 'Anonymous')
+			image.onload = () => {
+				tag.href = this.getImageDataURL(image)
+				tag.click()
+			}
+		},
+		download(url, imgId) {
+			// var image = new Image()
+			// image.src = url
+			const suffix = url.substring(url.lastIndexOf('.'))
+			const blob = new Blob([url], {type: 'image/' + suffix})
+			//application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'})
+			var fileName = imgId + suffix
+			if(window.navigator && window.navigator.msSaveOrOpenBlob) {
+				window.navigator.msSaveOrOpenBlob(blob, fileName)
+			} else {
+				const downloadElement = document.createElement('a')
+				const href = window.URL.createObjectURL(blob)
+				downloadElement.href = href
+				downloadElement.download = fileName
+				document.body.appendChild(downloadElement)
+				downloadElement.click()
+				document.body.removeChild(downloadElement)
+				window.URL.revokeObjectURL(href)
+			}
 		},
 		setAllPicIdsSelected(e) {
 			if(e.target.checked) {

@@ -24,8 +24,6 @@ Vue.prototype.copy = function(text) {
   oInput.remove()
 }
 
-// Vue.use(VueLazyload)
-
 // Vue.use(VueLazyload, {
 //   preLoad: 1.3,
 //   error: 'dist/error.png',

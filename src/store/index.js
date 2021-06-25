@@ -5,9 +5,11 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-
+		uploadedFilePrefix: 'http://wenzhou-sight.52br.net/api/upload/'
     },
-    getters: {},
+    getters: {
+		
+	},
     mutations: {
 
     },

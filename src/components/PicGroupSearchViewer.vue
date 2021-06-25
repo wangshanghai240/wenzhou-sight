@@ -192,6 +192,7 @@
 						  		id: topicPicGroup.id,
 						  		num: topicPicGroup.groupTotal,
 						  		picture: topicPicGroup.oss400,
+								pictureHigh: topicPicGroup.oss800,
 						  		width: parseInt(sizes[0]),
 						  		height: parseInt(sizes[1]),
 						  		title: topicPicGroup.title,
@@ -213,6 +214,7 @@
 							return {
 								id: topicPicGroup.id,
 								picture: topicPicGroup.oss400,
+								pictureHigh: topicPicGroup.oss800,
 								title: topicPicGroup.keywords,
 								time: topicPicGroup.createdAt,
 								width: parseInt(sizes[0]),

@@ -73,8 +73,8 @@
         </div>
       </div>
 
-      <div class="home-content-center-wrapper">
-        <div class="left-wrapper">
+      <div class="home-content-center-wrapper" id="activityMasterDiv">
+        <div class="left-wrapper" id="activityDiv">
           <div class="info-wrapper new-activity-wrapper">
             <div class="head-box">
               <div class="head-label-box">
@@ -108,7 +108,7 @@
             </div>
           </div>
         </div>
-        <div class="right-wrapper">
+        <div class="right-wrapper" id="masterDiv">
           <div class="info-wrapper master-wrapper">
             <div class="head-box">
               <div class="head-label-box">
@@ -120,7 +120,7 @@
             <div class="content-wrapper">
               <div class="master-list-box">
                 <div class="master-info-box" v-for="master in masters" v-bind:key="master.id">
-                  <img alt="" class="master-img" src="@/assets/img/master.png"/>
+                  <img alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
                   <span class="master-name">{{master.name}}</span>
                 </div>
               </div>
@@ -160,8 +160,10 @@
 <script>
 import HomeBanner from "@/components/HomeBanner";
 import PicGroupViewer from '@c/PicGroupViewer'
-
+import { mapState } from 'vuex'
 import { index } from '@/api/index'
+
+const default_master_photo = require('@/assets/img/master_default.png')
 
 export default {
   name: "home",
@@ -179,8 +181,13 @@ export default {
 		hotTopics: [],
 		masters: [],
 		picShowType: 'HEIGHT_EQUAL',
-		searchKeyword: ''
+		searchKeyword: '',
+		default_master_photo: default_master_photo,
+		heightInitalized: false
 	}
+  },
+  computed: {
+	...mapState(['uploadedFilePrefix']),
   },
   methods: {
     seeNoticeMore: function () {
@@ -215,6 +222,22 @@ export default {
 	switchPicShowType(picShowType) {
 		this.picShowType = picShowType
 		this.$refs.searchResultView.picShowType = picShowType
+	},
+	adjustHeight() {
+		if(this.heightInitalized) {
+			return;
+		}
+		this.heightInitalized = true
+		var activityHeight = document.getElementById('activityDiv').clientHeight
+		// console.log('height-1:' + document.getElementById('activityDiv').height)
+		console.log('height0:' + document.getElementById('activityDiv').offsetHeight)
+		document.getElementById('activityMasterDiv').style.height = activityHeight + 'px'
+		document.getElementById('masterDiv').style.height = activityHeight + 'px'
+		document.getElementsByClassName('master-list-box')[0].style.height = (activityHeight - 30) + 'px'
+		
+		// console.log('height1:' + activityHeight)
+		// console.log('height2:' + document.getElementById('masterDiv').style.height)
+		// console.log('height2:' + document.getElementById('masterDiv').clientHeight)
 	}
   },
   created() {
@@ -241,6 +264,7 @@ export default {
 			}
 		})
 		this.$refs.searchResultView.init()
+		// this.$nextTick(this.adjustHeight)
      })
   }
 }
@@ -260,6 +284,7 @@ export default {
       .left-wrapper {
         flex-grow: 1;
         margin-right: 30px;
+		width: 73%;
 
         .search-wrapper {
           padding: 45px 175px 40px 175px;
@@ -346,12 +371,13 @@ export default {
               flex-grow: 1;
               margin-right: 11px;
               position: relative;
-			  width: calc(25% - 3px);
+			  // width: calc(~'33% - 3px');
               cursor: pointer;
 
               .topic-img {
-                height: 230px;
-                width: 100%;
+                height: 180px;
+                // width: 100%;
+				object-fit: cover;
                 border-radius: 10px;
               }
 
@@ -369,6 +395,7 @@ export default {
             .topic-info-box:last-child {
               margin-right: 0;
             }
+			overflow-x: scroll;
           }
         }
       }
@@ -376,6 +403,7 @@ export default {
       .right-wrapper {
         flex-shrink: 0;
 
+		
 
         .list-wrapper {
           width: 360px;
@@ -445,11 +473,18 @@ export default {
 
     .home-content-center-wrapper {
       display: flex;
+	  align-items: stretch;
       width: 100%;
+	  
+	  min-height: 800px;
+	  overflow: hidden;
+	  position: relative;
 
       .left-wrapper {
         flex-grow: 1;
         margin-right: 30px;
+		width: 57%;
+		position: absolute;
 
         .new-activity-wrapper {
 
@@ -457,10 +492,10 @@ export default {
             position: relative;
 
             .new-activity-info-img {
-              height: 565px;
+              // height: 565px;
               width: 100%;
               border-radius: 10px;
-              object-fit: cover;
+              // object-fit: cover;
             }
 
             .new-activity-name {
@@ -487,8 +522,8 @@ export default {
               position: relative;
 
               .his-activity-img {
-                height: 184px;
-                width: 100%;
+                height: 194px;
+                // width: 100%;
                 border-radius: 10px;
                 object-fit: cover;
               }
@@ -503,6 +538,8 @@ export default {
 				text-align: left;
               }
             }
+			
+			overflow-x: scroll;
 
             .his-activity-info-box:last-child {
               margin-right: 0;
@@ -512,17 +549,23 @@ export default {
       }
 
       .right-wrapper {
-        width: 610px;
-        flex-shrink: 0;
-
+        // width: 610px;
+        flex-shrink: 1;
+		width: 40%;
+		position: absolute;
+		// margin-right: 4px;
+		right: 4px;
+		// left: calc(~'62% - 14px');
+		
         .master-wrapper {
 
           .master-list-box {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            margin-top: 80px;
-			height: 850px;
+            margin-top: 40px;
+			// height: 850px;
+			max-height: 800px;
 			overflow: scroll;
 
             .master-info-box {
@@ -530,7 +573,7 @@ export default {
               flex-direction: column;
               align-items: center;
               min-width: 30%;
-              margin-bottom: 80px;
+              margin-bottom: 40px;
 
               .master-img {
                 height: 136px;

@@ -81,10 +81,16 @@ function Gallery({
       //   item._height = rh < h - thresholdHeight ? h: rh;
       // }
 
+	  if(item._width / cacheRowWidth >= 0.8) {
+	  	 item.picture = item.pictureHig
+		 console.log('enter:' + (item._width / cacheRowWidth))
+	  }
+	  
       item._width = floor(item._width / r);
 	  // console.log(item._height);
       item._height = floor(item._height / r);
 	  // console.log(item._height);
+	  
       return item;
     }));      
     

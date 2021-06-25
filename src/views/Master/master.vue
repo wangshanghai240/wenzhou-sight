@@ -3,7 +3,7 @@
     <div class="chosen-master-wrapper">
       <img alt="" class="chosen-master-bac-img" src="@/assets/img/master-bac.png">
       <div class="chosen-master-content-wrapper">
-        <img class="chosen-master-img" alt="" src="@/assets/img/banner/pic1.jpeg"/>
+        <img class="chosen-master-img" alt="" :src="masterPhoto"/>
         <div class="chosen-master-info-wrapper">
           <span class="master-name">{{masterName}}</span>
           <span class="desc">简介：{{masterDesc}}</span>
@@ -30,6 +30,9 @@
 <script>
 import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
 import { masters } from '@/api/index'
+import { mapState } from 'vuex'
+
+const default_master_photo = require('@/assets/img/master_default.png')
 
 export default {
   name: "master",
@@ -41,13 +44,18 @@ export default {
 		  masterList: [],
 		  masterName: '',
 		  masterDesc: '',
+		  masterPhoto: default_master_photo,
 		  otherParams: {}
 	  }
+  },
+  computed: {
+	...mapState(['uploadedFilePrefix']),
   },
   methods: {
 	  showMasterInfo(index) {
 		  this.masterName = this.masterList[index].name
 		  this.masterDesc = this.masterList[index].remark
+		  this.masterPhoto = this.masterList[index].photo
 		  this.otherParams = {
 			  ids: [this.masterList[index].topicId]
 		  }
@@ -58,6 +66,13 @@ export default {
   created() {
 	  masters({curPage: 1, size: 20}).then(res => {
 		  this.masterList = res.data.records
+		  this.masterList.forEach(item => {
+			  if(!item.photo) {
+				  item.photo = default_master_photo 
+			  } else {
+				  item.photo = this.uploadedFilePrefix + item.photo
+			  }
+		  })
 	  })
   }
 }
@@ -94,6 +109,7 @@ export default {
         height: 120px;
         border-radius: 50%;
         margin-right: 20px;
+		object-fit: cover;
       }
 
       .chosen-master-info-wrapper {
@@ -163,6 +179,7 @@ export default {
             width: 64px;
             border-radius: 50%;
             margin-bottom: 10px;
+			object-fit: cover;
           }
         }
       }

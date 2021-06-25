@@ -27,7 +27,13 @@
 						 		marginRight: '0px',
 						 		marginBottom: '0px'
 						 	}">
-						 	<img :src="pic.picture" :alt="pic.title"/>
+						 	<img 
+							 :src="pic.picture"
+							 :alt="pic.title"/>
+							
+							<!-- :key="pic.picture"
+							v-lazy="pic.picture" -->
+							<!--  -->
 						 </figure>
 					 </div> 
 					 <div class="MuiCardContent-root picText">
