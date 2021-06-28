@@ -82,8 +82,9 @@ function Gallery({
       // }
 
 	  if(item._width / cacheRowWidth >= 0.8) {
-	  	 item.picture = item.pictureHig
-		 console.log('enter:' + (item._width / cacheRowWidth))
+	  	 item.picture = item.pictureHigh
+		 // console.log(item.pictureHigh)
+		 // console.log('enter:' + (item._width / cacheRowWidth))
 	  }
 	  
       item._width = floor(item._width / r);

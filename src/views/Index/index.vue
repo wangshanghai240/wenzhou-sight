@@ -15,13 +15,39 @@
       <div class="right-wrapper">
         <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
         <img class="head-msg-img" v-else src="@/assets/img/home/message-dark.png" alt=""/>
-        <img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
+		<a-dropdown placement="bottomCenter">
+			<img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
+			<a-menu slot="overlay">
+				<a-menu-item>
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/picture">图片上传</a>
+				</a-menu-item>
+				<a-menu-item>
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/vector">设计素材上传</a>
+				</a-menu-item>
+				<a-menu-item>
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/video">视频上传</a>
+				</a-menu-item>
+				<a-menu-item>
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/works/upload">文档上传</a>
+				</a-menu-item>
+				<a-menu-item>
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/audio">音频上传</a>
+				</a-menu-item>
+			</a-menu>
+		</a-dropdown>
         <div class="personal-center-wrapper">
-          <img class="head-personal-img" src="@/assets/img/home/person.png" alt=""/>
-          <span>个人中心</span>
+          <a href="http://wenzhou.vcgvip.com/user/upload-record">
+			  <img class="head-personal-img" src="@/assets/img/home/person.png" alt=""/>
+		  </a>
+          <span>
+			<a href="http://wenzhou.vcgvip.com/user/upload-record">个人中心</a>
+		  </span>
         </div>
       </div>
     </div>
+	<!-- <div class="upload-div" v-show="upoadDivVisible">
+		<a-button type="link">图片上传</a-button>
+	</div> -->
     <div class="nav-content-wrapper">
       <router-view></router-view>
     </div>
@@ -39,7 +65,9 @@ export default {
   name: "index",
   comments: {},
   data: () => {
-    return {};
+    return {
+		upoadDivVisible: false
+	};
   },
   computed: {
     headType: vm => {
@@ -62,6 +90,10 @@ export default {
 <style lang="less" rel="stylesheet/less" scoped>
 .index-wrapper {
   position: relative;
+  
+  // .upload-div {
+	  
+  // }
 
   .top-head-wrapper {
 
@@ -124,6 +156,10 @@ export default {
           width: 30px;
           margin-right: 10px;
         }
+		
+		a {
+		  color: #FFFFFF;
+		}
       }
     }
 
