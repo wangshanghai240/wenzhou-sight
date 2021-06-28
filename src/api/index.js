@@ -8,6 +8,13 @@ export function index() {
   })
 }
 
+export function activities() {
+	return request({
+	  url: 'index/event/1',
+	  method: 'get'
+	})
+}
+
 export function hotTopicList() {
 	return request({
 	  url: 'index/hotListMore',
@@ -87,6 +94,15 @@ export function hotKeywords() {
 		method: 'get'
 	})
 }
+
+export function carouses() {
+	return request({
+		url: '/index/carouse',
+		method: 'get'
+	})
+}
+
+
 
 
 

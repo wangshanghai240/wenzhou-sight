@@ -6,18 +6,18 @@
       <span class="topic-intro">{{topic.details}}</span>
       <span class="back-button" @click="backToTopcList()">返回热门专题</span>
     </div>
-    <pic-group-viewer :otherParams="otherParams"></pic-group-viewer>
+	 <pic-group-search-viewer ref="topicPics" :otherParams="otherParams"></pic-group-search-viewer>
   </div>
 </template>
 
 <script>
-import PicGroupViewer from '@c/PicGroupViewer'
+import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
 import { hotTopicDetail } from '@/api/index'
 
 export default {
   name: "topic-detail",
   components:{
-    'pic-group-viewer': PicGroupViewer
+    'pic-group-search-viewer': PicGroupSearchViewer
   },
   methods:{
     backToTopcList:function(){
@@ -26,9 +26,6 @@ export default {
   },
   data() {
 	return {
-		topicPicGroups: [
-			
-		],
 		total: 0,
 		topic: {
 			hotId: 0,
@@ -52,6 +49,9 @@ export default {
 	this.otherParams={
 		ids: [this.topic.hotId]
 	}
+	this.$nextTick(() => {
+		this.$refs.topicPics.changePicGroupPage(1)
+	})
   }
 }
 </script>

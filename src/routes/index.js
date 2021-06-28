@@ -17,6 +17,7 @@ const constantRouterMap = [{
 			{path: '/search-result', name: "搜索结果", component: () => import('@/views/Search/search-result')},
             {path: '/topic-detail', name:'专题详情', component:()=> import('@/views/Topic/TopicDetail/topic-detail')},
             {path: '/topic-list', name:'专题列表', component:()=> import('@/views/Topic/topic-list')},
+			{path: '/activity-list', name:'活动列表', component:()=> import('@/views/Activity/activity-list')},
 			{path: '/group-pictures', name: '分组图片', component:()=> import('@/views/Search/SearchDetail/group-pictures')},
             {path: '/master', name:'大师推荐',component:()=> import('@/views/Master/master')}
         ]

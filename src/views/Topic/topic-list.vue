@@ -1,6 +1,6 @@
 <template>
   <div class="topic-list-wrapper">
-    <HomeBanner></HomeBanner>
+    <HomeBanner :carouseData="carouses"></HomeBanner>
 
     <div class="topic-list-content-wrapper">
       <div class="search-wrapper">
@@ -35,7 +35,7 @@
 
 <script>
 import HomeBanner from "@/components/HomeBanner";
-import { hotTopicList, hotSearchs, hotKeywords } from '@/api/index'
+import { hotTopicList, hotKeywords, carouses } from '@/api/index'
 
 export default {
   name: "topic-list",
@@ -50,7 +50,8 @@ export default {
   data() {
 	  return {
 		  hotTopics: [],
-		  hotSearchKeywords: []
+		  hotSearchKeywords: [],
+		  carouses: []
 	  }
   },
   created() {
@@ -59,6 +60,9 @@ export default {
 	})
 	hotKeywords().then(res => {
 		this.hotSearchKeywords = res.data.records
+	})
+	carouses().then(res => {
+		this.carouses = res.data
 	})
   }
 }

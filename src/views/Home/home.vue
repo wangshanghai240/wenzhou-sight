@@ -85,8 +85,8 @@
             </div>
             <div class="content-wrapper">
               <div class="new-activity-info-wrapper">
-                <img alt="" class="new-activity-info-img" :src="activities[0].header"/>
-                <span class="new-activity-name">{{activities[0].eventname}}</span>
+                <img alt="" class="new-activity-info-img" :src="newestActivity.activityImgUrl"/>
+                <span class="new-activity-name">{{newestActivity.activityTtitle}}</span>
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@
                 <span class="head-label" style="color: #000">往期活动</span>
               </div>
 
-              <span class="more-button">更多></span>
+              <span class="more-button" @click="seeActivitiesMore">更多></span>
             </div>
             <div class="content-wrapper">
               <div class="his-activity-list-box">
@@ -174,6 +174,10 @@ export default {
   data: () => {
     return {
 		carouses: [],
+		newestActivity: {
+			activityImgUrl: '',
+			activityTitle: ''
+		},
 		activities: [{}],
 		announcements: [],
 		hotSearches: [],
@@ -216,6 +220,9 @@ export default {
     seeTopicMore:function(){
       this.$router.push("/topic-list")
     },
+	seeActivitiesMore:function (){
+	  this.$router.push("/activity-list")
+	},
     seeMasterMore:function(){
       this.$router.push("/master")
     },
@@ -245,6 +252,7 @@ export default {
 		const data = res.data
      	this.carouses = data.carouses
 		this.activities = data.activities.slice(0, 3)
+		this.newestActivity = data.newestActivity
 		this.hotSearchKeywords = data.hotKeywords
 		this.hotSearches = data.hotSearches
 		this.announcements = data.announcements
