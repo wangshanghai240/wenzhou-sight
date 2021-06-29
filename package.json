@@ -43,7 +43,7 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-unused-vars": "warn",
+      "no-unused-vars": "off",
       "no-redeclare": "warn",
       "no-cond-assign": "warn",
       "no-undef": "warn",
