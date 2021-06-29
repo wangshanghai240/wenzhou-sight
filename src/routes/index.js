@@ -29,7 +29,7 @@ const constantRouterMap = [{
     },
 ]
 const router = new Router({
-    mode: 'history',
+    mode: 'hash',
     routes: constantRouterMap
 });
 

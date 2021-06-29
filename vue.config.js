@@ -6,7 +6,7 @@ const resolve = function (dir) {
 module.exports = {
     //选项
     //发布的基本路径
-    publicPath: "/",
+    publicPath: "./",
     // 构建时的输出目录
     outputDir: "dist",
     // 放置静态资源的目录
