@@ -15,6 +15,13 @@ export function activities() {
 	})
 }
 
+export function activityDetail(id) {
+	return request({
+		url: 'index/eventDetail/' + id,
+		method: 'get'
+	})
+}
+
 export function hotTopicList() {
 	return request({
 	  url: 'index/hotListMore',

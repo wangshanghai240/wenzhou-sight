@@ -81,12 +81,12 @@
                 <span class="head-label">最新活动</span>
               </div>
 
-              <span class="more-button">更多></span>
+              <span class="more-button" @click="seeActivitiesMore">更多></span>
             </div>
             <div class="content-wrapper">
               <div class="new-activity-info-wrapper">
                 <img alt="" class="new-activity-info-img" :src="newestActivity.activityImgUrl"/>
-                <span class="new-activity-name">{{newestActivity.activityTtitle}}</span>
+                <span class="new-activity-name">{{newestActivity.activityTitle}}</span>
               </div>
             </div>
           </div>

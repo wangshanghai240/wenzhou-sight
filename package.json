@@ -39,9 +39,11 @@
     ],
     "parserOptions": {
       "parser": "babel-eslint"
-    },
+    }
+	,
     "rules": {
       "no-unused-vars": 0,
+	  "vue/no-unused-vars": 0,
       "no-redeclare": "warn",
       "no-cond-assign": "warn",
       "no-undef": "warn",

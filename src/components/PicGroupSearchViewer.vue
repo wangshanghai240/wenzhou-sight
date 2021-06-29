@@ -3,12 +3,16 @@
 		<div class="pic-group-viewer-info-wrapper">
 			<div class="top-wrapper">
 				<div class="left-wrapper">
-					<span :class="{'choose-tab': true, 'active': searchType==='ALL'}"
-						@click="switchSearchType('ALL')">全部(16)</span>
+					<!-- <span :class="{'choose-tab': true, 'active': searchType==='ALL'}"
+						@click="switchSearchType('ALL')">全部(16)</span> -->
 					<span :class="{'choose-tab': true, 'active': searchType==='GROUP'}"
-						@click="switchSearchType('GROUP')">组图(13)</span>
+						@click="switchSearchType('GROUP')">组图
+						<span v-if="searchType=='GROUP'">({{total}})</span>
+					</span>
 					<span :class="{'choose-tab': true, 'active': searchType==='SINGLE'}"
-						@click="switchSearchType('SINGLE')">单图(3)</span>
+						@click="switchSearchType('SINGLE')">单图
+						<span v-if="searchType=='SINGLE'">({{total}})</span>
+					</span>
 				</div>
 				<div class="right-wrapper">
 					<svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root"
@@ -237,7 +241,7 @@
 				firstCityIndex: 0,
 				secondCityIndex: 0,
 				picShowType: 'HEIGHT_EQUAL',
-				searchType: 'ALL',
+				searchType: 'GROUP',
 				uploadTimeFrom: '',
 				uploadTimeTo: '',
 				shootTimeFrom: '',
@@ -254,7 +258,7 @@
 	.show-type-icon {
 		height: 18px;
 		width: 18px;
-		margin-right: 22px;
+		margin-right: 14px;
 	}
 
 	.show-type-icon:last-child {
