@@ -73,7 +73,7 @@
               <span class="more-button" @click="seeActivitiesMore">更多></span>
             </div>
             <div class="content-wrapper">
-              <div class="new-activity-info-wrapper">
+              <div class="new-activity-info-wrapper" @click="toActivityDetail(newestActivity.activityId)">
                 <img alt="" class="new-activity-info-img" :src="newestActivity.activityImgUrl"/>
                 <span class="new-activity-name">{{newestActivity.activityTitle}}</span>
               </div>
@@ -89,7 +89,8 @@
             </div>
             <div class="content-wrapper">
               <div class="his-activity-list-box">
-                <div class="his-activity-info-box" v-for="activity in activities" v-bind:key="activity.id">
+                <div class="his-activity-info-box" v-for="activity in activities" v-bind:key="activity.id"
+					@click="toActivityDetail(activity.id)">
                   <img alt="" class="his-activity-img" :src="activity.header"/>
                   <span class="his-activity-name">{{activity.eventname}}</span>
                 </div>
@@ -212,6 +213,9 @@ export default {
     seeMasterMore:function(){
       this.$router.push("/master")
     },
+	toActivityDetail: function(activityId){
+	    this.$router.push("/activity-detail?id=" + activityId);
+	},
 	switchPicShowType(picShowType) {
 		this.picShowType = picShowType
 		this.$refs.searchResultView.picShowType = picShowType
@@ -414,6 +418,7 @@ export default {
               // height: 565px;
               width: 100%;
               border-radius: 10px;
+			  cursor: pointer;
               // object-fit: cover;
             }
 
@@ -445,6 +450,7 @@ export default {
                 // width: 100%;
                 border-radius: 10px;
                 object-fit: cover;
+				cursor: pointer;
               }
 
               .his-activity-name {
