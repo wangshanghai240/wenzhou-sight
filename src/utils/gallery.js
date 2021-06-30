@@ -76,10 +76,14 @@ function Gallery({
 	// console.log(r)
     newList = newList.concat(cacheRow.map(item => {
       // 超宽图处理
-      // if (cacheRow.length === 1 && item._maxW) {
-      //   const rh = item._width/item._maxW;
-      //   item._height = rh < h - thresholdHeight ? h: rh;
-      // }
+      if (cacheRow.length === 1 && item._maxW) {
+		  // console.log('enter before:' + item._height)
+          // const rh = item._width/item._maxW;
+		  // console.log(rh)
+          // item._height = rh < h - thresholdHeight ? h: rh;
+		  // console.log('enter after:' + item._height)
+		  r = r * waperWidth /item._maxW
+      }
 
 	  if(item._width / cacheRowWidth >= 0.8) {
 	  	 item.picture = item.pictureHigh

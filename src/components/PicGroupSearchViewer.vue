@@ -35,7 +35,7 @@
 					<span class="label">入库时间</span>
 					<a-date-picker @change="changeUploadTimeFrom" placeholder="开始时间" style="width: 120px" />
 					~
-					<a-date-picker @change="changeUploadTimeFrom" placeholder="结束时间" style="width: 120px" />
+					<a-date-picker @change="changeUploadTimeTo" placeholder="结束时间" style="width: 120px" />
 				</div>
 				<div class="search-filter-item" v-show="searchType==='SINGLE'">
 					<span class="label">拍摄时间</span>
@@ -46,7 +46,7 @@
 				</div>
 				<div class="search-filter-item" v-show="searchType==='SINGLE'">
 					<span class="label">地点</span>
-					<a-select default-value="0" v-model="firstCityIndex" style="width: 120px;margin-right: 4px">
+					<a-select @change="changeFirstCityIndex" default-value="0" v-model="firstCityIndex" style="width: 120px;margin-right: 4px">
 						<a-select-option v-for="(province, index) in provinceData" :key="index">
 							{{ province.label }}
 						</a-select-option>
@@ -89,7 +89,7 @@
 			
 		</div>
 		<div class="pagination-wrapper">
-			<a-pagination showQuickJumper :default-current="1" :total="total" :pageSize="30"
+			<a-pagination v-model="pageIndex" showQuickJumper :default-current="1" :total="total" :pageSize="30"
 				@change="changePicGroupPage" />
 		</div>
 	</div>
@@ -101,7 +101,7 @@
 	import PicGroupViewer from '@c/PicGroupViewer'
 
 	city.unshift({
-		"value": "-1",
+		"value": "0",
 		"label": "请选择",
 		"children": [{
 			"value": "-1",
@@ -125,6 +125,12 @@
 			'pic-group-viewer': PicGroupViewer
 		},
 		methods: {
+			changeFirstCityIndex() {
+				// if(this.firstCityIndex>0 && (!this.provinceData[this.firstCityIndex].children  || this.provinceData[this.firstCityIndex].children.length<=1) ) {
+				// 	this.changePicGroupPage(1)
+				// }
+				this.changePicGroupPage(1)
+			},
 			changeUploadTimeFrom(e, f) {
 				this.uploadTimeFrom = f
 				this.changePicGroupPage(1)
@@ -147,7 +153,7 @@
 				var areas = ''
 				if(this.firstCityIndex > 0) {
 				  areas = city[this.firstCityIndex].label 
-				  if(this.secondCityIndex > 0) {
+				  if(this.secondCityIndex >= 0) {
 					  areas += ',' + city[this.firstCityIndex].children[this.secondCityIndex].label
 				  }
 				}

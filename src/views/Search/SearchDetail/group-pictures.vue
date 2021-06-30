@@ -34,7 +34,7 @@
 					  <div class="search-filter-item">
 					    <span class="label">入库时间</span>
 					    <a-date-picker @change="changeUploadTimeFrom" placeholder="开始时间" style="width: 120px" />
-							  ~ <a-date-picker @change="changeUploadTimeFrom" placeholder="结束时间" style="width: 120px"/>
+							  ~ <a-date-picker @change="changeUploadTimeTo" placeholder="结束时间" style="width: 120px"/>
 					  </div>
 					  <div class="search-filter-item">
 					    <span class="label">拍摄时间</span>
@@ -71,7 +71,7 @@
 						  <a-checkbox :checked="selectedPicIds.length === pics.length" @change="setAllPicIdsSelected" >全选</a-checkbox>
 						  <span v-show="selectedPicIds.length > 1">
 							共选择 {{selectedPicIds.length}} 张
-							<button class="MuiButtonBase-root MuiButton-root MuiButton-contained jss79 MuiButton-containedSizeSmall MuiButton-sizeSmall MuiButton-disableElevation" tabindex="0" type="button">
+							<button @click="downloadZip" class="MuiButtonBase-root MuiButton-root MuiButton-contained jss79 MuiButton-containedSizeSmall MuiButton-sizeSmall MuiButton-disableElevation" tabindex="0" type="button">
 								<span class="MuiButton-label">
 									<svg style="fill: #fff;" class="MuiSvgIcon-root jss80 MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path></svg>
 								打包下载</span>
@@ -88,7 +88,7 @@
 								</a>
 								<span class="MuiButtonBase-root MuiIconButton-root jss97 MuiCheckbox-root MuiCheckbox-colorPrimary checkbox MuiIconButton-colorPrimary" aria-disabled="false">
 									<span class="MuiIconButton-label">
-										<a-checkbox class="picIdCheckbox" v-show="selectedPicIds.includes(pic.id) || hoverPicIndex === index" :value="pic.id" :checked="selectedPicIds.includes(pic.id)" @change="changeSelectedPicIds($event, pic.id)"/>
+										<a-checkbox class="picIdCheckbox" v-show="selectedPicIds.includes(index) || hoverPicIndex === index" :value="index" :checked="selectedPicIds.includes(index)" @change="changeSelectedPicIds($event, index)"/>
 										<!-- <input type="checkbox" class="jss100" :value="pic.id" data-indeterminate="false" aria-label="secondary checkbox"> -->
 									</span>
 								</span>
@@ -122,6 +122,7 @@
 		  
 		  <div class="pagination-wrapper">
 		    <a-pagination
+				v-model="curPage"
 		        showQuickJumper
 		        :default-current="1"
 		        :total="total"
@@ -136,6 +137,8 @@
 
 <script>
 import { getGroupPics } from '@/api/index'
+import JSZip from "jszip"
+import FileSaver from "file-saver"
 
 export default {
 	data() {
@@ -164,6 +167,38 @@ export default {
 				this.selectedPicIds.push(picId)
 			} else {
 				this.selectedPicIds.splice(this.selectedPicIds.indexOf(picId), 1)
+			}
+		},
+		downloadZip() {
+			let zip = new JSZip()
+			let imgs = zip.folder('图片打包')
+			var imgList = []
+			var _this = this
+			for(var i in this.selectedPicIds) {
+				var pic = this.pics[this.selectedPicIds[i]]
+				
+				let image = new Image();
+				// 解决跨域 Canvas 污染问题
+				image.setAttribute("crossOrigin", "anonymous");
+				image.onload = function() {
+					let canvas = document.createElement("canvas")
+					canvas.width = image.width
+					canvas.height = image.height
+					let context = canvas.getContext("2d")
+					context.drawImage(image, 0, 0, image.width, image.height)
+					let url = canvas.toDataURL() // 图片的base64编码数据
+					imgList.push(url.substring(22))
+					
+					if(imgList.length == _this.selectedPicIds.length) {
+						for(var index in imgList) {
+							imgs.file('photo' + index + '.png', imgList[index], {base64: true})
+						}
+						zip.generateAsync({type: 'blob'}).then(function(content) {
+							FileSaver.saveAs(content, '图片打包.zip')
+						})
+					}
+				}
+				image.src = pic.oss800Watermark
 			}
 		},
 		getImageDataURL(image) {
@@ -213,7 +248,7 @@ export default {
 		},
 		setAllPicIdsSelected(e) {
 			if(e.target.checked) {
-				this.selectedPicIds = this.pics.map(item => item.id)
+				this.selectedPicIds = this.pics.map((item, index) => index)
 			} else {
 				this.selectedPicIds = []
 			}
@@ -262,20 +297,27 @@ export default {
 				  sortRule: parseInt(sortStrs[1])
 			}
 			getGroupPics(this.groupId, params).then(res => {
-				this.pics = res.data.groupLists
-				this.pics.forEach(item => {
-					var groupIds = item.viewSortStr.split(',')
-					var groupIdInts = new Array()
-					groupIds.forEach(groupId => {
-						if(groupId && !isNaN(groupId)) {
-							groupIdInts.push(groupId)
-						}
+				if(!res.data) {
+					this.pics = []
+					this.total = 0
+				} else {
+					this.pics = res.data.groupLists
+					this.pics.forEach(item => {
+						var groupIds = item.viewSortStr.split(',')
+						var groupIdInts = new Array()
+						groupIds.forEach(groupId => {
+							if(groupId && !isNaN(groupId)) {
+								groupIdInts.push(groupId)
+							}
+						})
+						item.groupId1 = groupIdInts[0]
+						item.groupId2 = groupIdInts[1]
 					})
-					item.groupId1 = groupIdInts[0]
-					item.groupId2 = groupIdInts[1]
-				})
-				this.total = res.data.group.groupTotal
-				this.group = res.data.group
+					this.total = res.data.group.groupTotal
+					this.group = res.data.group
+				}
+				this.selectedPicIds = []
+				
 			})
 		}
 	},

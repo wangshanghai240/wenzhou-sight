@@ -8,18 +8,7 @@
       <div class="home-content-top-wrapper">
         <div class="left-wrapper">
 
-          <div class="search-wrapper">
-            <div class="search-box">
-              <img alt="" class="search-icon" src="@/assets/img/home/search.png"/>
-              <input v-model="searchKeyword" placeholder="查找大美温州" @keydown="searchResult"/>
-            </div>
-            <div class="hot-search-key-wrapper">
-              <span class="desc">热门关键词</span>
-              <div class="hot-search-key-box">
-                <span class="hot-search-key" v-for="hotSearchKeyword in hotSearchKeywords" v-bind:key="hotSearchKeyword.id">{{hotSearchKeyword.keyword}}</span>
-              </div>
-            </div>
-          </div>
+          <SearchInput/>
 
           <div class="info-wrapper topic-wrapper">
             <div class="head-box">
@@ -31,7 +20,7 @@
             </div>
             <div class="content-wrapper">
               <div class="topic-list-box">
-                <div class="topic-info-box" @click="seeTopicDetail(hotTopic.hotId)" v-for="hotTopic in hotTopics" v-bind:key="hotTopic.hotId">
+                <div class="topic-info-box" @click="seeTopicDetail(hotTopic.hotTopicId, hotTopic.title, hotTopic.picture)" v-for="hotTopic in hotTopics" v-bind:key="hotTopic.hotId">
                   <img alt="" class="topic-img" :src="hotTopic.picture"/>
                   <span class="topic-name">{{hotTopic.title}}</span>
                 </div>
@@ -160,6 +149,7 @@
 <script>
 import HomeBanner from "@/components/HomeBanner";
 import PicGroupViewer from '@c/PicGroupViewer'
+import SearchInput from '@/components/SearchInput'
 import { mapState } from 'vuex'
 import { index } from '@/api/index'
 
@@ -170,6 +160,7 @@ export default {
   components: {
   	PicGroupViewer
 	,HomeBanner
+	,SearchInput
   },
   data: () => {
     return {
@@ -206,16 +197,11 @@ export default {
     seeSearchDetail: function (){
       this.$router.push("/search-detail");
     },
-	searchResult: function(e) {
-		if(e.key == 'Enter') {
-			this.$router.push("/search-result?keyword=" + this.searchKeyword);
-		}
-	},
 	seeSearchResult: function (){
 	  this.$router.push("/search-result");
 	},
-    seeTopicDetail:function (){
-      this.$router.push("/topic-detail")
+    seeTopicDetail:function (hotTopicId, title, picture){
+      this.$router.push("/topic-detail?hotId=" + hotTopicId + "&title=" + title + "&picture=" + picture)
     },
     seeTopicMore:function(){
       this.$router.push("/topic-list")
@@ -295,87 +281,11 @@ export default {
         margin-right: 30px;
 		width: 73%;
 
-        .search-wrapper {
-          padding: 45px 175px 40px 175px;
-          margin-bottom: 20px;
-
-          background: #F4F5FB;
-
-          .search-box {
-            background: #FFFFFF;
-            box-shadow: 0 0 20px 0 rgba(131, 157, 186, 0.4);
-            height: 60px;
-            display: flex;
-            align-items: center;
-
-            .search-icon {
-              height: 19px;
-              width: 19px;
-              margin-left: 45px;
-              margin-right: 20px;
-            }
-
-            input {
-              border: none;
-              outline: none;
-              font-size: 20px;
-              font-weight: 800;
-
-            }
-
-            input::-webkit-input-placeholder {
-              opacity: 0.5;
-            }
-
-            input::-moz-placeholder { /* Mozilla Firefox 19+ */
-              opacity: 0.5;
-            }
-
-            input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-              opacity: 0.5;
-            }
-
-            input:-ms-input-placeholder { /* Internet Explorer 10-11 */
-              opacity: 0.5;
-            }
-          }
-
-          .hot-search-key-wrapper {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-
-            .desc {
-              font-size: 18px;
-              font-weight: 800;
-              color: #333333;
-              margin-right: 28px;
-            }
-
-            .hot-search-key-box {
-
-
-              .hot-search-key {
-                height: 36px;
-                padding: 0 20px;
-                border-radius: 18px;
-                display: inline-block;
-                line-height: 36px;
-                background: #E4E5EC;
-                margin-right: 15px;
-                font-size: 18px;
-                font-weight: 500;
-                color: #111;
-              }
-            }
-          }
-
-        }
-
         .topic-wrapper {
           .topic-list-box {
             display: flex;
-
+			text-align: left;
+			
             .topic-info-box {
               flex-grow: 1;
               margin-right: 11px;
@@ -742,6 +652,11 @@ export default {
       height: 300px;
       display: block;
       object-fit: cover;
+  }
+  
+  #searchBtn svg {
+	  width: 1.3em;
+	  height: 1.3em;
   }
   
   // .picText {

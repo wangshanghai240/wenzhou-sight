@@ -4,13 +4,19 @@
 	  <div class="topic-list-content-wrapper">
 		<div class="search-wrapper">
 		  <div class="search-box">
-			<img alt="" class="search-icon" src="@/assets/img/home/search.png"/>
-			<input placeholder="查找大美温州"/>
+		    <div class="search-button">
+		  	  <img @click="searchResult" alt="" class="search-icon" src="@/assets/img/home/search.png"/>
+		    </div>
+		    <input v-model="keyword" placeholder="查找大美温州" @keydown="searchIfEnter"/>
 		  </div>
+		  
 		  <div class="hot-search-key-wrapper">
 			<span class="desc">热门关键词</span>
 			<div class="hot-search-key-box">
-			  <span class="hot-search-key" v-for="hotKeyword in hotSearchKeywords" v-bind:key="hotKeyword.id">{{hotKeyword.keyword}}</span>
+				<a-button @click="keyword = hotSearchKeyword.keyword;searchResult();" type="link" class="hot-search-key"
+				 v-for="hotSearchKeyword in hotSearchKeywords" v-bind:key="hotSearchKeyword.id">
+					{{hotSearchKeyword.keyword}}
+				</a-button>
 			</div>
 		  </div>
 		</div>
@@ -26,8 +32,6 @@ import { hotTopicDetail, hotKeywords } from '@/api/index'
 import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
 
 export default {
-	methods: {
-	},
 	components: {
 		'pic-group-search-viewer': PicGroupSearchViewer
 	},
@@ -36,6 +40,17 @@ export default {
 			keyword: '',
 			otherParams: {keyWord: this.keyword},
 			hotSearchKeywords: []
+		}
+	},
+	methods: {
+		searchIfEnter(e) {
+			if(e.key == 'Enter') {
+				this.searchResult()
+			}
+		},
+		searchResult() {
+			this.$refs.searchResultView.otherParams = {keyWord: this.keyword}
+			this.$refs.searchResultView.changePicGroupPage(1)
 		}
 	},
 	created() {
@@ -74,11 +89,27 @@ export default {
 	    display: flex;
 	    align-items: center;
 	
-	    .search-icon {
-	      height: 19px;
-	      width: 19px;
-	      margin-left: 45px;
-	      margin-right: 20px;
+	    .search-button {
+	        flex: 0 0 auto;
+	        color: rgba(0, 0, 0, 0.54);
+	        padding: 12px;
+	        overflow: visible;
+	        text-align: center;
+	        transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+	        border-radius: 50%;
+	    	margin-left: 45px;
+	    	margin-right: 20px;
+	    	width: 46px;
+	    	height: 46px;
+	    	
+	    	.search-icon {
+	    	  height: 19px;
+	    	  width: 19px;
+	    	  cursor: pointer;
+	    	}
+	    }
+	    .search-button:hover {
+	      background-color: rgba(0, 0, 0, 0.04);
 	    }
 	
 	    input {
