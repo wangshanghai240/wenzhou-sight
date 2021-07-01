@@ -7,10 +7,11 @@
         <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-else src="@/assets/img/home/logo-color.jpg"
              alt=""/>
         <div class="head-menu-list">
-          <span class="head-menu" @click="$router.push('/index')">大美温州</span>
+         <!-- <span class="head-menu" @click="$router.push('/index')">大美温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/672')">动感温州</span>
-          <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span>
-        </div>
+          <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span> -->
+			<span class="head-menu" @click="gotoCategory(category.id)" v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</span>
+		</div>
       </div>
       <div class="right-wrapper">
         <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
@@ -45,11 +46,8 @@
         </div>
       </div>
     </div>
-	<!-- <div class="upload-div" v-show="upoadDivVisible">
-		<a-button type="link">图片上传</a-button>
-	</div> -->
     <div class="nav-content-wrapper">
-      <router-view></router-view>
+      <router-view ref="routerView"></router-view>
     </div>
 	<a-back-top>
 		<a-button type="danger" shape="circle" icon="up" size="large"/>
@@ -61,17 +59,19 @@
 </template>
 
 <script>
+import { categories } from '@/api/index'
+
 export default {
   name: "index",
   comments: {},
   data: () => {
     return {
-		upoadDivVisible: false
+		upoadDivVisible: false,
+		categoryList: []
 	};
   },
   computed: {
     headType: vm => {
-      console.log(vm.$route.path);
       const homePathList = ["/index", "/topic-list"]
       return homePathList.indexOf(vm.$route.path) !== -1 ? 'home' : 'other';
     }
@@ -82,7 +82,20 @@ export default {
     },
 	redirect(url) {
 		window.location.replace(url)
+	},
+	gotoCategory(categoryId) {
+		console.log(this.$route)
+		if(this.$route.path === '/category-list') {
+			this.$refs.routerView.changeCategoryId(categoryId)
+		} else {
+			this.$router.push('/category-list?id=' + categoryId)
+		}
 	}
+  },
+  created() {
+	  categories().then(res => {
+		  this.categoryList = res.data
+	  })
   }
 }
 </script>
@@ -90,10 +103,6 @@ export default {
 <style lang="less" rel="stylesheet/less" scoped>
 .index-wrapper {
   position: relative;
-  
-  // .upload-div {
-	  
-  // }
 
   .top-head-wrapper {
 
@@ -118,9 +127,14 @@ export default {
           font-family: PingFang SC, serif;
           font-weight: bold;
           color: #FFFFFF;
-          margin-right: 105px;
+          // margin-right: 35px;
+		  padding: 25px;
 		  cursor: pointer;
         }
+		
+		.head-menu:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
       }
     }
 

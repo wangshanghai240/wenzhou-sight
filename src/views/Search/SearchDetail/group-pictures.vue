@@ -83,7 +83,7 @@
 					  <div @mouseover="hoverPicIndex = index" @mouseout="hoverPicIndex = -1" class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-2 MuiGrid-grid-sm-4 MuiGrid-grid-md-2" v-for="(pic, index) in pics" v-bind:key="pic.id">
 						  <div class="MuiPaper-root MuiCard-root jss101 MuiPaper-elevation1 MuiPaper-rounded">
 							  <div class="jss102">
-								  <a :href="'/group/' + pic.groupId1 + '/' + pic.groupId2" to="/group/277770/6954597" class="jss103" target="_blank">
+								  <a :href="'/group/' + groupId + '/' + pic.id" to="/group/277770/6954597" class="jss103" target="_blank">
 									  <img :src="pic.oss176" class=" ls-is-cached lazyloaded" :alt="pic.caption"/>
 								</a>
 								<span class="MuiButtonBase-root MuiIconButton-root jss97 MuiCheckbox-root MuiCheckbox-colorPrimary checkbox MuiIconButton-colorPrimary" aria-disabled="false">

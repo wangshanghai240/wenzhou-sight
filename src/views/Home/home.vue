@@ -190,7 +190,7 @@ export default {
       this.$router.push("/notice-list");
     },
     seeSearchMore: function () {
-      this.$router.push("/search-list");
+      this.$router.push("/hot-search-list");
     },
     seeNoticeDetail: function (id){
       this.$router.push("/notice-detail?id=" + id);

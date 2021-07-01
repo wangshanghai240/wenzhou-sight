@@ -29,6 +29,13 @@ export function hotTopicList() {
 	})
 }
 
+export function categories() {
+	return request({
+		url: 'index/categories',
+		method: 'get'
+	})
+}
+
 export function hotTopicDetail(params) {
 	return request({
 	  url: 'index/detail',
