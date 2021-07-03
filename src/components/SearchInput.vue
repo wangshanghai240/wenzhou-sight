@@ -114,6 +114,7 @@
 	      font-weight: 800;
 	      color: #333333;
 	      margin-right: 28px;
+		  word-break: keep-all;
 	    }
 	
 	    .hot-search-key-box {

@@ -17,6 +17,9 @@ module.exports = {
     filenameHashing: true,
     //用于多页配置
     pages: undefined,
+	devServer: {
+		disableHostCheck: true
+	},
     chainWebpack: config => {
         config.resolve.alias
             .set("@", resolve("src"))

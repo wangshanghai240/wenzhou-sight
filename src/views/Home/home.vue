@@ -20,10 +20,12 @@
             </div>
             <div class="content-wrapper">
               <div class="topic-list-box">
-                <div class="topic-info-box" @click="seeTopicDetail(hotTopic.hotTopicId, hotTopic.title, hotTopic.picture)" v-for="hotTopic in hotTopics" v-bind:key="hotTopic.hotId">
-                  <img alt="" class="topic-img" :src="hotTopic.picture"/>
-                  <span class="topic-name">{{hotTopic.title}}</span>
-                </div>
+                <div class="topic-info-box-out" v-for="hotTopic in hotTopics" v-bind:key="hotTopic.hotId">
+					<div class="topic-info-box" @click="seeTopicDetail(hotTopic.hotTopicId, hotTopic.title, hotTopic.picture)" >
+					  <img alt="" class="topic-img" :src="hotTopic.picture"/>
+					  <span class="topic-name">{{hotTopic.title}}</span>
+					</div>
+				</div>
               </div>
             </div>
           </div>
@@ -89,10 +91,12 @@
             </div>
             <div class="content-wrapper">
               <div class="his-activity-list-box">
-                <div class="his-activity-info-box" v-for="activity in activities" v-bind:key="activity.id"
+                <div class="his-activity-info-box-out" v-for="activity in activities" v-bind:key="activity.id"
 					@click="toActivityDetail(activity.id)">
-                  <img alt="" class="his-activity-img" :src="activity.header"/>
-                  <span class="his-activity-name">{{activity.eventname}}</span>
+					<div class="his-activity-info-box">
+						<img alt="" class="his-activity-img" :src="activity.header"/>
+						<span class="his-activity-name">{{activity.eventname}}</span>
+					</div>
                 </div>
               </div>
             </div>
@@ -109,10 +113,19 @@
             </div>
             <div class="content-wrapper">
               <div class="master-list-box">
-                <div class="master-info-box" v-for="master in masters" v-bind:key="master.id">
-                  <img alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
-                  <span class="master-name">{{master.name}}</span>
-                </div>
+				 <!-- <div class="master-info-box" v-for="master in masters" v-bind:key="master.id">
+				    <img alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
+				    <span class="master-name">{{master.name}}</span>
+				  </div> -->
+				  <div class="master-info-box-out" v-for="master in masters" v-bind:key="master.id">
+					<div class="master-info-box-wrapper">
+						<div class="master-info-box" >
+						  <img alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
+						  
+						</div>
+						<span class="master-name">{{master.name}}</span>
+					</div>
+				  </div>
               </div>
 
             </div>
@@ -122,26 +135,26 @@
 
 
       <div class="info-wrapper well-chosen-wrapper">
-        <div class="head-box">
-          <div class="head-label-box">
-            <span class="head-label">精选图片</span>
-          </div>
-		  
-		  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等高">
-			  <path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2035)"></path>
-		  </svg>
-		  <svg @click="switchPicShowType('WIDTH_EQUAL')" style="margin-right:20px;" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等宽">
-			  <path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2035)"></path>
-		  </svg>        
-		<!--  <img class="show-type-icon" alt="" src="@/assets/img/home/arrange-active.png"/>
-          <img class="show-type-icon" alt="" src="@/assets/img/home/arrange.png"/> -->
-          <span class="more-button" @click="seeSearchResult" >更多></span>
-        </div>
-        <div class="content-wrapper pic-group-viewer-wrapper">
-			<div class="pic-group-viewer-info-wrapper">
-				<PicGroupViewer ref="searchResultView"></PicGroupViewer>
+        <div class="whole-wrapper">
+			<div class="head-box">
+			  <div class="head-label-box">
+			    <span class="head-label">精选图片</span>
+			  </div>
+			  
+			  <svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等高">
+				  <path :class="{'selected': picShowType==='HEIGHT_EQUAL'}" d="M1634,2055h8v8h-8v-8Zm10,0h8v8h-8v-8Zm-10-10h18v8h-18v-8Z" transform="translate(-1634 -2035)"></path>
+			  </svg>
+			  <svg @click="switchPicShowType('WIDTH_EQUAL')" style="margin-right:20px;" class="show-type-icon MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等宽">
+				  <path :class="{'selected': picShowType==='WIDTH_EQUAL'}" d="M1674,2055h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Zm-13-10h5v8h-5v-8Zm7,0h4v8h-4v-8Zm6,0h5v8h-5v-8Z" transform="translate(-1674 -2035)"></path>
+			  </svg>        
+			  <span class="more-button" @click="seeSearchResult" >更多></span>
 			</div>
-        </div>
+			<div class="content-wrapper pic-group-viewer-wrapper">
+				<div class="pic-group-viewer-info-wrapper">
+					<PicGroupViewer ref="searchResultView"></PicGroupViewer>
+				</div>
+			</div>
+		</div>
       </div>
     </div>
   </div>
@@ -241,7 +254,9 @@ export default {
      index().then(res => {
 		const data = res.data
      	this.carouses = data.carouses
-		this.activities = data.activities.slice(0, 3)
+		if(data.activities) {
+			this.activities = data.activities.slice(0, 3)
+		}
 		this.newestActivity = data.newestActivity
 		this.hotSearchKeywords = data.hotKeywords
 		this.hotSearches = data.hotSearches
@@ -288,45 +303,56 @@ export default {
         .topic-wrapper {
           .topic-list-box {
             display: flex;
+			align-items: flex-start;
 			text-align: left;
 			
-            .topic-info-box {
-              flex-grow: 1;
-              margin-right: 11px;
-              position: relative;
-			  // width: calc(~'33% - 3px');
-              cursor: pointer;
-
-              .topic-img {
-                height: 180px;
-                // width: 100%;
-				object-fit: cover;
-                border-radius: 10px;
-              }
-
-              .topic-name {
-                position: absolute;
-                left: 17px;
-                bottom: 13px;
-                font-size: 18px;
-                font-weight: 500;
-                color: #FFFFFF;
-				text-align: left;
-              }
-            }
-
+			.topic-info-box-out {
+				width: 24%;
+				margin-right: 11px;
+				position: relative;
+				// width: calc(~'25% - 3px');
+				// width: 236px;
+				cursor: pointer;
+				overflow: hidden;
+				border-radius: 4%;
+				
+				
+				.topic-info-box {
+				  // flex-grow: 1;
+				  
+				  width: 100%;
+				  height: 0;
+				  padding-bottom: 75%;
+				
+				  .topic-img {
+				    // height: 180px;
+				    // width: 100%;
+					object-fit: cover;
+				  }
+				
+				  .topic-name {
+				    position: absolute;
+				    left: 17px;
+				    bottom: 13px;
+				    font-size: 18px;
+				    font-weight: 500;
+				    color: #FFFFFF;
+					text-align: left;
+				  }
+				}
+				
+			}
+			
             .topic-info-box:last-child {
               margin-right: 0;
             }
-			overflow-x: scroll;
+			// overflow-x: scroll;
           }
         }
       }
 
       .right-wrapper {
         flex-shrink: 0;
-
-		
 
         .list-wrapper {
           width: 360px;
@@ -373,7 +399,7 @@ export default {
             text-align: left;
 
             .link-info {
-              font-size: 16px;
+              font-size: 15px;
               font-weight: 500;
               color: #999999;
               margin-bottom: 10px;
@@ -388,7 +414,7 @@ export default {
         }
 
         .hot-search-wrapper {
-          height: 280px;
+          min-height: 240px;
           margin-bottom: 20px;
         }
       }
@@ -399,34 +425,42 @@ export default {
 	  align-items: stretch;
       width: 100%;
 	  
-	  min-height: 800px;
-	  overflow: hidden;
-	  position: relative;
+	  // min-height: 800px;
+	  // overflow: hidden;
+	  // position: relative;
 
       .left-wrapper {
         flex-grow: 1;
         margin-right: 30px;
 		width: 57%;
-		position: absolute;
+		// position: absolute;
 
         .new-activity-wrapper {
-
+		  text-align: left;
           .new-activity-info-wrapper {
             position: relative;
+			width: 98.6%;
+			height: 0;
+			padding-bottom: 56%;
+			overflow: hidden;
+			border-radius: 10px;
 
             .new-activity-info-img {
               // height: 565px;
               width: 100%;
-              border-radius: 10px;
+			  // height: 100%;
+			  // width: 485px;
+			  // height: 275px;;
 			  cursor: pointer;
               // object-fit: cover;
             }
 
             .new-activity-name {
               position: absolute;
+			  display: inline-block;
               left: 32px;
               bottom: 25px;
-              font-size: 24px;
+              font-size: 23px;
               font-weight: 500;
               color: #FFFFFF;
 			  text-align: left;
@@ -440,31 +474,42 @@ export default {
           .his-activity-list-box {
             display: flex;
 
-            .his-activity-info-box {
+            .his-activity-info-box-out {
               flex-grow: 1;
               margin-right: 10px;
               position: relative;
-
-              .his-activity-img {
-                height: 194px;
-                // width: 100%;
-                border-radius: 10px;
-                object-fit: cover;
-				cursor: pointer;
-              }
-
-              .his-activity-name {
-                position: absolute;
-                left: 18px;
-                bottom: 15px;
-                font-size: 18px;
-                font-weight: 500;
-                color: #FFFFFF;
-				text-align: left;
-              }
+			  
+			  width: 33%;
+			  .his-activity-info-box {
+				  height: 0;
+				  width:100%;
+				  padding-bottom: 57%;
+				  overflow: hidden;
+				  border-radius: 4%;
+				  background-color: #585858;
+				  
+				  .his-activity-img {
+				    // height: 194px;
+				    // width: 100%;
+				    
+				    object-fit: cover;
+					width: 100%;
+					cursor: pointer;
+				  }
+				  
+				  .his-activity-name {
+				    position: absolute;
+				    left: 10px;
+				    bottom: 5px;
+				    font-size: 15px;
+				    font-weight: 500;
+				    color: #FFFFFF;
+				  	text-align: left;
+				  }
+			  }
             }
 			
-			overflow-x: scroll;
+			// overflow-x: scroll;
 
             .his-activity-info-box:last-child {
               margin-right: 0;
@@ -477,43 +522,103 @@ export default {
         // width: 610px;
         flex-shrink: 1;
 		width: 40%;
-		position: absolute;
-		// margin-right: 4px;
+		// position: absolute;
+		margin-right: 4px;
 		right: 4px;
 		// left: calc(~'62% - 14px');
 		
         .master-wrapper {
+		  width: 100%;
+		  height: 0;
+		  padding-bottom: 136%;
+		  overflow: hidden;
 
           .master-list-box {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+			
             margin-top: 40px;
 			// height: 850px;
-			max-height: 800px;
-			overflow: scroll;
-
-            .master-info-box {
-              display: inline-flex;
-              flex-direction: column;
-              align-items: center;
-              min-width: 30%;
-              margin-bottom: 40px;
-
-              .master-img {
-                height: 136px;
-                width: 136px;
-                border-radius: 136px;
-                object-fit: cover;
-                margin-bottom: 20px;
-              }
-
-              .master-name {
-                font-size: 20px;
-                font-weight: 500;
-                color: #111111;
-              }
-            }
+			// max-height: 800px;
+			overflow-y: scroll;
+			
+			// .master-info-box {
+				
+			// 	display: flex;
+			// 	flex-direction: column;
+			// 	align-items: center;
+					
+			//   width: 21%;
+			//   margin-left: 6%;
+			//   margin-right: 6%;
+			//   height: 0;
+			//   padding-bottom: 21%;
+			//   border-radius: 50%;
+			//   overflow: hidden;
+			//   margin-bottom: 20px;
+			//   background-color: #E4E5EC;
+			  
+			//   .master-img {
+			//     // height: 136px;
+			//     // width: 136px;
+			// 	width: 100%;
+			// 	// height: 100%;
+			    
+			//     object-fit: contain;
+			    
+			//   }
+			
+			//   .master-name {
+			//     font-size: 20px;
+			//     font-weight: 500;
+			//     color: #111111;
+			//   }
+			// }
+			
+			.master-info-box-out {
+				width: 21%;
+				height: 0;
+				padding-bottom: 21%;
+				margin-left: 6.1%;
+				margin-right: 6.1%;
+				// display: inline-flex;
+				// flex-direction: column;
+				// align-items: center;
+				// min-width: 30%;
+				margin-bottom: 40px;
+				
+				.master-info-box-wrapper {
+					.master-info-box {
+					  
+					  width: 100%;
+					  height: 0;
+					  padding-bottom: 100%; 
+					  background-color: #E4E5EC;
+					  border-radius: 50%;
+					  overflow: hidden;
+					  // margin-bottom: 20px;
+					  
+					  .master-img {
+					    // height: 136px;
+					    width: 100%;
+					    
+					    object-fit: contain;
+					    
+					  }
+					
+					  
+					}
+					
+					.master-name {
+											// margin-top: 20px;
+					  font-size: 20px;
+					  font-weight: 500;
+					  color: #111111;
+					}
+					
+				}
+			}
           }
 
           .master-list-box:nth-last-child(1),
@@ -526,6 +631,15 @@ export default {
     }
 
     .well-chosen-wrapper {
+		
+	  // display: flex;
+	  // align-items: stretch;
+	  width: 100%;
+	  margin-top: 20px;
+	  
+	  .whole-wrapper {
+		 flex-shrink: 1;
+	  }
 
       .show-type-icon {
         // height: 18px;

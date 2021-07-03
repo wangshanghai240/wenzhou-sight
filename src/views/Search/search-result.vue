@@ -79,7 +79,8 @@ export default {
 	.search-wrapper {
 	  padding: 45px 175px 40px 175px;
 	  margin-bottom: 20px;
-	  background: #F4F5FB;
+	  background: #d1d2d8;
+	  // #F4F5FB;
 	  margin-top: 20px;
 	
 	  .search-box {
@@ -147,6 +148,7 @@ export default {
 	      font-weight: 800;
 	      color: #333333;
 	      margin-right: 28px;
+		  word-break: keep-all;
 	    }
 	
 	    .hot-search-key-box {
