@@ -46,7 +46,7 @@
 	  padding: 45px 175px 40px 175px;
 	  margin-bottom: 20px;
 	  background: #F4F5FB;
-	  margin-top: 20px;
+	  // margin-top: 20px;
 	
 	  
 	  .search-box {

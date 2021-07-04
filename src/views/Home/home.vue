@@ -290,7 +290,11 @@ export default {
   background: #fff;
 
   .home-content-wrapper {
-    padding: 20px 100px;
+	width: 88%;
+	// padding-right: 6%;
+	padding-left: 5%;
+    padding-top: 20px;
+	// padding-bottom: 100px;
 
     .home-content-top-wrapper {
       display: flex;
@@ -319,7 +323,6 @@ export default {
 				
 				.topic-info-box {
 				  // flex-grow: 1;
-				  
 				  width: 100%;
 				  height: 0;
 				  padding-bottom: 75%;
@@ -355,10 +358,11 @@ export default {
         flex-shrink: 0;
 
         .list-wrapper {
-          width: 360px;
+          // width: 360px;
+		  // width: 26%;
           background: #FFFFFF;
           box-shadow: 0 0 20px 0 rgba(123, 152, 186, 0.4);
-          padding: 20px 30px;
+          padding: 20px 15px;
 
           .head-wrapper {
             display: flex;
@@ -387,6 +391,7 @@ export default {
               font-weight: 500;
               color: #999999;
               cursor: pointer;
+			  margin-right: 0.7%;
             }
           }
         }
@@ -590,7 +595,6 @@ export default {
 				
 				.master-info-box-wrapper {
 					.master-info-box {
-					  
 					  width: 100%;
 					  height: 0;
 					  padding-bottom: 100%; 
@@ -600,9 +604,7 @@ export default {
 					  // margin-bottom: 20px;
 					  
 					  .master-img {
-					    // height: 136px;
 					    width: 100%;
-					    
 					    object-fit: contain;
 					    
 					  }
