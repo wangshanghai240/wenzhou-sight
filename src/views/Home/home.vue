@@ -180,7 +180,7 @@ export default {
     return {
 		carouses: [],
 		newestActivity: {
-			activityImgUrl: '',
+			activityImgUrl: require('@/assets/img/loading-live.gif'),
 			activityTitle: ''
 		},
 		activities: [{}],
@@ -264,21 +264,24 @@ export default {
 		this.hotTopics = data.hotTopics.slice(0, 4)
 		this.masters = data.masters
 		
-		this.$refs.searchResultView.picGroups = data.carefullyChosenPics.map(topicPicGroup => {
-			var sizes = topicPicGroup.size.split('/')[0].split('x')
-			return {
-				id: topicPicGroup.id,
-				num: topicPicGroup.groupTotal,
-				picture: topicPicGroup.oss400,
-				pictureHigh: topicPicGroup.oss800,
-				width: parseInt(sizes[0]),
-				height: parseInt(sizes[1]),
-				title: topicPicGroup.title,
-				time: topicPicGroup.createdAt
-			}
-		})
-		this.$refs.searchResultView.init()
-		// this.$nextTick(this.adjustHeight)
+		if(data.carefullyChosenPics) {
+			this.$refs.searchResultView.picGroups = data.carefullyChosenPics.map(topicPicGroup => {
+				var sizes = topicPicGroup.size.split('/')[0].split('x')
+				return {
+					id: topicPicGroup.id,
+					num: topicPicGroup.groupTotal,
+					picture: topicPicGroup.oss400,
+					pictureHigh: topicPicGroup.oss800,
+					width: parseInt(sizes[0]),
+					height: parseInt(sizes[1]),
+					title: topicPicGroup.title,
+					time: topicPicGroup.createdAt
+				}
+			})
+			this.$refs.searchResultView.init()
+		} else {
+			this.$refs.searchResultView.picGroups = []
+		}
      })
   }
 }
@@ -290,9 +293,9 @@ export default {
   background: #fff;
 
   .home-content-wrapper {
-	width: 88%;
+	width: 90%;
 	// padding-right: 6%;
-	padding-left: 5%;
+	padding-left: 9%;
     padding-top: 20px;
 	// padding-bottom: 100px;
 
@@ -302,7 +305,7 @@ export default {
       .left-wrapper {
         flex-grow: 1;
         margin-right: 30px;
-		width: 73%;
+		width: 71%;
 
         .topic-wrapper {
           .topic-list-box {
@@ -326,10 +329,11 @@ export default {
 				  width: 100%;
 				  height: 0;
 				  padding-bottom: 75%;
+				  background-color: #585858;
 				
 				  .topic-img {
 				    // height: 180px;
-				    // width: 100%;
+				    width: 100%;
 					object-fit: cover;
 				  }
 				
@@ -359,21 +363,22 @@ export default {
 
         .list-wrapper {
           // width: 360px;
-		  // width: 26%;
+		  width: 28%;
+		  min-width: 300px;
           background: #FFFFFF;
           box-shadow: 0 0 20px 0 rgba(123, 152, 186, 0.4);
-          padding: 20px 15px;
+          padding: 20px 20px;
 
           .head-wrapper {
             display: flex;
             align-items: flex-end;
 
             .list-title {
-              font-size: 22px;
+              font-size: 20px;
               font-weight: bold;
               color: #333333;
               margin-right: 9px;
-              line-height: 22px;
+              line-height: 20px;
             }
 
             .icon-box {
@@ -382,8 +387,8 @@ export default {
             }
 
             .list-icon {
-              height: 27px;
-              width: 54px;
+              height: 25px;
+              width: 40px;
             }
 
             .more-button {
@@ -404,7 +409,7 @@ export default {
             text-align: left;
 
             .link-info {
-              font-size: 15px;
+              font-size: 14px;
               font-weight: 500;
               color: #999999;
               margin-bottom: 10px;
@@ -585,8 +590,9 @@ export default {
 				width: 21%;
 				height: 0;
 				padding-bottom: 21%;
-				margin-left: 6.1%;
-				margin-right: 6.1%;
+				margin-left: 7%;
+				margin-right: 6%;
+				margin-top: 10px;
 				// display: inline-flex;
 				// flex-direction: column;
 				// align-items: center;
@@ -601,25 +607,25 @@ export default {
 					  background-color: #E4E5EC;
 					  border-radius: 50%;
 					  overflow: hidden;
-					  // margin-bottom: 20px;
+					  margin-bottom: 10px;
 					  
 					  .master-img {
 					    width: 100%;
 					    object-fit: contain;
-					    
 					  }
-					
-					  
 					}
 					
 					.master-name {
-											// margin-top: 20px;
-					  font-size: 20px;
+					  // margin-top: 20px;
+					  font-size: 17px;
 					  font-weight: 500;
 					  color: #111111;
 					}
-					
 				}
+			}
+			
+			.master-info-box-out:nth-child(3n) {
+				margin-right: 3%;
 			}
           }
 
@@ -672,7 +678,7 @@ export default {
           display: inline-block;
           background: #E4E5EC;
           border-radius: 6px 6px 0 0;
-          font-size: 20px;
+          font-size: 18px;
           font-weight: bold;
           color: #F84949;
           padding: 0 25px;

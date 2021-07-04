@@ -82,7 +82,7 @@
 			input {
 			  border: none;
 			  outline: none;
-			  font-size: 20px;
+			  font-size: 18px;
 			  font-weight: 800;
 	
 			}
@@ -118,8 +118,6 @@
 	    }
 	
 	    .hot-search-key-box {
-	
-	
 	      .hot-search-key {
 	        height: 36px;
 	        padding: 0 20px;
@@ -132,7 +130,11 @@
 	        font-weight: 500;
 	        color: #111;
 	      }
+		  button:nth-last-child(1) {
+		  	margin-right: 0px;
+		  }
 	    }
+		
 	  }
 	
 	}
