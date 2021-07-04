@@ -180,7 +180,7 @@ export default {
     return {
 		carouses: [],
 		newestActivity: {
-			activityImgUrl: require('@/assets/img/loading-live.gif'),
+			activityImgUrl: '',
 			activityTitle: ''
 		},
 		activities: [{}],
