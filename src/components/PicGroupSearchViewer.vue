@@ -223,6 +223,7 @@
 							var sizes = topicPicGroup.size.split('/')[0].split('x')
 							return {
 								id: topicPicGroup.id,
+								groupIds: topicPicGroup.groupIds,
 								picture: topicPicGroup.oss400,
 								pictureHigh: topicPicGroup.oss800,
 								title: topicPicGroup.keywords,

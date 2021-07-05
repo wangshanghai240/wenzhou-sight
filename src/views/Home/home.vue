@@ -314,7 +314,7 @@ export default {
 			text-align: left;
 			
 			.topic-info-box-out {
-				width: 24%;
+				width: 25%;
 				margin-right: 11px;
 				position: relative;
 				// width: calc(~'25% - 3px');
@@ -350,7 +350,7 @@ export default {
 				
 			}
 			
-            .topic-info-box:last-child {
+            .topic-info-box-out:last-child {
               margin-right: 0;
             }
 			// overflow-x: scroll;
@@ -419,7 +419,7 @@ export default {
         }
 
         .notice-wrapper {
-          height: 220px;
+          height: 180px;
           margin-bottom: 20px;
         }
 
@@ -521,7 +521,7 @@ export default {
 			
 			// overflow-x: scroll;
 
-            .his-activity-info-box:last-child {
+            .his-activity-info-box-out:last-child {
               margin-right: 0;
             }
           }

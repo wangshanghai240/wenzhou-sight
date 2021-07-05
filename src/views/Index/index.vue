@@ -84,7 +84,6 @@ export default {
 		window.location.replace(url)
 	},
 	gotoCategory(categoryId) {
-		console.log(this.$route)
 		if(this.$route.path === '/category-list') {
 			this.$refs.routerView.changeCategoryId(categoryId)
 		} else {
