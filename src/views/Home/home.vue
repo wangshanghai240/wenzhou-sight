@@ -108,7 +108,6 @@
               <div class="head-label-box">
                 <span class="head-label">大师推荐</span>
               </div>
-
               <span class="more-button" @click="seeMasterMore()">更多></span>
             </div>
             <div class="content-wrapper">
@@ -120,8 +119,7 @@
 				  <div class="master-info-box-out" v-for="master in masters" v-bind:key="master.id">
 					<div class="master-info-box-wrapper">
 						<div class="master-info-box" >
-						  <img alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
-						  
+						  <img @click="seeMasterMore(master.id)" alt="" class="master-img" :src="master.photo?uploadedFilePrefix + master.photo : default_master_photo"/>
 						</div>
 						<span class="master-name">{{master.name}}</span>
 					</div>
@@ -223,8 +221,12 @@ export default {
 	seeActivitiesMore:function (){
 	  this.$router.push("/activity-list")
 	},
-    seeMasterMore:function(){
-      this.$router.push("/master")
+    seeMasterMore:function(id){
+	  if(id) {
+		  this.$router.push("/master?id=" + id)
+	  } else {
+		  this.$router.push("/master")
+	  }
     },
 	toActivityDetail: function(activityId){
 	    this.$router.push("/activity-detail?id=" + activityId);
@@ -551,7 +553,6 @@ export default {
             margin-top: 40px;
 			// height: 850px;
 			// max-height: 800px;
-			overflow-y: scroll;
 			
 			// .master-info-box {
 				

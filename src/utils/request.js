@@ -17,11 +17,11 @@ httpService.interceptors.request.use(
 
 httpService.interceptors.response.use(
     response => {
-		console.log(response)
+		// console.log(response)
         return response.data;
     },error => {
         console.log(error);
-        return Promise.reject(error.response.status);
+        return Promise.reject(error.response?error.response.status:error);
     }
 )
 export default httpService

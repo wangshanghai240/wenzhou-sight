@@ -2,9 +2,9 @@
   <div class="master-wrapper">
     <div class="chosen-master-wrapper">
       <img alt="" class="chosen-master-bac-img" src="@/assets/img/master-bac.png">
-      <div class="chosen-master-content-wrapper">
+      <div class="chosen-master-content-wrapper" v-if="masterName">
         <img class="chosen-master-img" alt="" :src="masterPhoto"/>
-        <div class="chosen-master-info-wrapper">
+        <div class="chosen-master-info-wrapper" >
           <span class="master-name">{{masterName}}</span>
           <span class="desc">简介：{{masterDesc}}</span>
         </div>
@@ -61,18 +61,38 @@ export default {
 		  }
 		  this.$refs.masterPics.otherParams = this.otherParams
 		  this.$refs.masterPics.changePicGroupPage(1)
+		  console.log(index)
+		  this.$forceUpdate()
 	  }
   },
   created() {
-	  masters({curPage: 1, size: 20}).then(res => {
+	  masters({curPage: 1, size: 50}).then(res => {
 		  this.masterList = res.data.records
-		  this.masterList.forEach(item => {
+		  var masterTopicIds = Array()
+		  var id = parseInt(this.$route.query.id)
+		  var index = -1
+		  this.masterList.forEach((item, i) => {
+			  masterTopicIds.push(item.topicId)
 			  if(!item.photo) {
 				  item.photo = default_master_photo 
 			  } else {
 				  item.photo = this.uploadedFilePrefix + item.photo
 			  }
+			  
+			  if(id && id === item.id) {
+				  index = i
+			  }
 		  })
+		  
+		  if(index >=0 ) {
+			  this.showMasterInfo(index)
+		  } else {
+			  this.otherParams = {
+			  	ids: masterTopicIds
+			  }
+			  this.$refs.masterPics.otherParams = this.otherParams
+			  this.$refs.masterPics.changePicGroupPage(1)
+		  }
 	  })
   }
 }

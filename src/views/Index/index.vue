@@ -10,12 +10,12 @@
          <!-- <span class="head-menu" @click="$router.push('/index')">大美温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/672')">动感温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span> -->
-			<span class="head-menu" @click="gotoCategory(category.id)" v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</span>
+			<span :class="{'selected-menu': selectedCategoryId===category.id, 'head-menu': true}" @click="gotoCategory(category.id)" v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</span>
 		</div>
       </div>
       <div class="right-wrapper">
-        <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
-        <img class="head-msg-img" v-else src="@/assets/img/home/message-dark.png" alt=""/>
+       <!-- <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
+        <img class="head-msg-img" v-else src="@/assets/img/home/message-dark.png" alt=""/> -->
 		<a-dropdown placement="bottomCenter">
 			<img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
 			<a-menu slot="overlay">
@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="nav-content-wrapper">
-      <router-view ref="routerView"></router-view>
+      <router-view ref="routerView" v-on:viewIn="enterView"></router-view>
     </div>
 	<a-back-top>
 		<a-button type="danger" shape="circle" icon="up" size="large"/>
@@ -55,6 +55,12 @@
     <div class="bottom-wrapper">
       <img class="bottom-logo-icon" alt="" src="@/assets/img/home/logo-color.jpg"/>
     </div>
+	
+	<div class="footer-copyright">
+		<a class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorTextSecondary" target="_blank" href="http://www.beian.miit.gov.cn/">
+			  苏ICP备19044258号</a> 
+		温州晚报 汉华易美视觉科技有限公司
+	</div>
   </div>
 </template>
 
@@ -67,15 +73,17 @@ export default {
   data: () => {
     return {
 		upoadDivVisible: false,
-		categoryList: []
-	};
+		categoryList: [],
+		selectedCategoryId: -1,
+		headType: 'other'
+	}
   },
-  computed: {
-    headType: vm => {
-      const homePathList = ["/index", "/topic-list"]
-      return homePathList.indexOf(vm.$route.path) !== -1 ? 'home' : 'other';
-    }
-  },
+  // computed: {
+  //   headType: vm => {
+  //     const homePathList = ["/index", "/topic-list"]
+  //     return homePathList.indexOf(vm.$route.path) !== -1 ? 'home' : 'other';
+  //   }
+  // },
   methods: {
     toHome: function () {
       this.$router.push("/index");
@@ -85,10 +93,15 @@ export default {
 	},
 	gotoCategory(categoryId) {
 		if(this.$route.path === '/category-list') {
+			this.selectedCategoryId = categoryId
 			this.$refs.routerView.changeCategoryId(categoryId)
 		} else {
 			this.$router.push('/category-list?id=' + categoryId)
 		}
+	},
+	enterView(e) {
+		console.log('enterView')
+		console.log(e)
 	}
   },
   created() {
@@ -127,12 +140,17 @@ export default {
           font-weight: bold;
           color: #FFFFFF;
           // margin-right: 35px;
-		  padding: 25px;
+		  padding: 30px;
 		  cursor: pointer;
         }
 		
 		.head-menu:hover {
 			background-color: rgba(0, 0, 0, 0.1);
+		}
+		
+		.head-menu .selected {
+		    background-color: rgba(0, 0, 0, 0.1);
+			color: #d46666;
 		}
       }
     }
@@ -183,13 +201,17 @@ export default {
     background: #fff;
 
     .left-wrapper {
-
-
+		
       .head-menu-list {
 
         .head-menu {
-          color: #000;
+            color: #000;
         }
+		
+		.head-menu.selected-menu {
+		    background-color: rgba(0, 0, 0, 0.1);
+			color: #d46666;
+		}
       }
     }
 
@@ -217,6 +239,21 @@ export default {
       top: 50%;
       transform: translateY(-50%);
     }
+  }
+  
+  .footer-copyright {
+  	background-color: rgba(180, 171, 174, 1);
+  	width: 100%;
+  	padding: 20px 0px;
+  	color: rgba(0, 0, 0, 0.54);
+  }
+  
+  .MuiLink-underlineHover {
+      text-decoration: none;
+  }
+  
+  .MuiTypography-colorTextSecondary {
+      color: rgba(0, 0, 0, 0.54);
   }
 
   .nav-content-wrapper {

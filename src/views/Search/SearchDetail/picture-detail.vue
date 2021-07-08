@@ -61,7 +61,7 @@
 						<div class="intro">
 							<span :class="{'open': titleOpen, 'MuiTypography-root': true, 'jss1020': true}">
 								{{picInfo.caption}}
-								<button @click="switchTitleOpen" v-show="picInfo.caption.length>0" class="MuiButtonBase-root MuiIconButton-root jss1019" tabindex="0" type="button">
+								<button @click="switchTitleOpen" v-show="picInfo.caption.length>20" class="MuiButtonBase-root MuiIconButton-root jss1019" tabindex="0" type="button">
 									<span class="MuiIconButton-label">
 										<svg ref="titleOpenSvg" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
 											<path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path>
@@ -157,7 +157,7 @@
 				// this.picInfo.oss800Watermark = this.picInfo.oss800Watermark + '?' + Math.random()
 				this.picInfo.mediumHeight = parseInt(2048*this.picInfo.picHeight/this.picInfo.picWidth)
 				this.picInfo.smallHeight = parseInt(1024*this.picInfo.picHeight/this.picInfo.picWidth)
-				this.keywords = this.picInfo.keywords.split(',')
+				this.keywords = this.picInfo.keywords.split(',').filter(item => item.length>0)
 				this.$forceUpdate()
 			},
 			switchTitleOpen() {
@@ -279,7 +279,7 @@
 						}
 						this.picInfo.mediumHeight = parseInt(2048*this.picInfo.picHeight/this.picInfo.picWidth)
 						this.picInfo.smallHeight = parseInt(1024*this.picInfo.picHeight/this.picInfo.picWidth)
-						this.keywords = this.picInfo.keywords.split(',')
+						this.keywords = this.picInfo.keywords.split(',').filter(item => item.length>0)
 						
 						this.$refs.picGroupViewer.searchType = 'SINGLE'
 						this.$refs.picGroupViewer.picGroups = this.pics.map(picGroup => {

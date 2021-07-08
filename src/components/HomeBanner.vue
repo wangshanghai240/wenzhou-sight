@@ -1,15 +1,28 @@
 <template>
   <div class="home-banner-wrapper">
-    <div class="home-banner-move-wrapper" :style="{right: 'calc(100% * ' + currentIndex + ')'}">
-      <img v-for="carouse of carouseData" v-bind:key="carouse.id" alt="" class="banner-img" :src="carouse.url"/>
-    </div>
-    <div class="process-info-wrapper">
+	  <a-carousel arrows autoplay>
+		<div
+			slot="prevArrow" slot-scope="props" class="custom-slick-arrow"
+			style="left: 10px; zIndex: 1">
+			<a-icon type="left-circle" :width="'4em'" :height="'4em'" />
+		</div>
+		<div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 40px">
+			<a-icon type="right-circle" :width="'4em'" :height="'4em'" />
+		</div>
+		<div v-for="(carouse,index) of carouseData" v-bind:key="carouse.id">
+			<img alt="" class="banner-img" :src="carouse.url"/>
+		</div>
+	  </a-carousel>
+	<!-- <div class="home-banner-move-wrapper" >
+		
+    </div> -->
+    <!-- <div class="process-info-wrapper">
       <span v-for="(carouse,index) of carouseData"
             v-bind:key="carouse.id"
             :class="{ 'active' : currentIndex === index}"
             class="process-info-bar"
             @click="switchPic(index)"></span>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -48,10 +61,56 @@ export default {
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
+
 .home-banner-wrapper {
   position: relative;
   height: 500px;
   overflow: hidden;
+  // background-color: red;
+  
+  @deep: ~'>>>';
+  .ant-carousel {
+  	.slick-slide {
+  	  text-align: center;
+  	  height: 160px;
+  	  line-height: 160px;
+  	  background: #364d79;
+  	  overflow: hidden;
+  	}
+  	
+  	.custom-slick-arrow {
+  	  width: 25px;
+  	  height: 25px;
+  	  font-size: 35px;
+  	  color: #fff;
+  	  background-color: rgba(31, 45, 61, 0.11);
+  	  opacity: 0.6;
+	  
+	  .anticon svg{
+		  width: '4em';
+		  height: '4em';
+	  }
+  	}
+  	
+  	.custom-slick-arrow:before {
+  	  display: none;
+  	}
+  	
+  	.custom-slick-arrow:hover {
+  	  opacity: 0.5;
+  	}
+  	
+  	.slick-slide h3 {
+  	  color: #fff;
+  	}
+	
+	.banner-img {
+	  height: 500px;
+	  flex-shrink: 0;
+	  width: 100%;
+	  object-fit: cover;
+	}
+  }
 
   .home-banner-move-wrapper {
     position: relative;

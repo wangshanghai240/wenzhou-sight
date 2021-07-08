@@ -4,9 +4,9 @@ import Router from "vue-router";
 Vue.use(Router)
 
 const constantRouterMap = [{
-    path: '/',
-    redirect: '/index'
-},
+		path: '/',
+		redirect: '/index'
+	},
     {
         path: '/index', name: 'index', component: () => import('@/views/Index/index'), children: [
             {path: '', name: '首页', component: () => import('@/views/Home/home.vue')},
@@ -34,6 +34,17 @@ const constantRouterMap = [{
 const router = new Router({
     mode: 'hash',
     routes: constantRouterMap
+});
+
+Vue.mixin({
+  beforeRouteUpdate(to, from, next) {
+	if(to.path === '/category-list') {
+	   this.selectedCategoryId = parseInt(to.query.id)
+	} else {
+		this.selectedCategoryId = -1
+	}
+	next()
+  }
 });
 
 export default router;
