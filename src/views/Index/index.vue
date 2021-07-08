@@ -10,13 +10,13 @@
          <!-- <span class="head-menu" @click="$router.push('/index')">大美温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/672')">动感温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span> -->
-			<span :class="{'selected-menu': selectedCategoryId===category.id, 'head-menu': true}" @click="gotoCategory(category.id)" v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</span>
+			<span @mouseout="hoverCategoryId=-1" @mouseenter="hoverCategoryId=category.id" :class="{'selected-menu': selectedCategoryId===category.id, 'unhover': hoverCategoryId!==-1 && selectedCategoryId!==hoverCategoryId, 'head-menu': true}" @click="gotoCategory(category.id)" v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</span>
 		</div>
       </div>
       <div class="right-wrapper">
        <!-- <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
         <img class="head-msg-img" v-else src="@/assets/img/home/message-dark.png" alt=""/> -->
-		<a-dropdown placement="bottomCenter">
+		<!-- <a-dropdown placement="bottomCenter">
 			<img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
 			<a-menu slot="overlay">
 				<a-menu-item>
@@ -35,7 +35,7 @@
 					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/audio">音频上传</a>
 				</a-menu-item>
 			</a-menu>
-		</a-dropdown>
+		</a-dropdown> -->
         <div class="personal-center-wrapper">
           <a href="http://wenzhou.vcgvip.com/user/upload-record">
 			  <img class="head-personal-img" src="@/assets/img/home/person.png" alt=""/>
@@ -75,15 +75,21 @@ export default {
 		upoadDivVisible: false,
 		categoryList: [],
 		selectedCategoryId: -1,
+		hoverCategoryId: -1,
 		headType: 'other'
 	}
   },
-  // computed: {
-  //   headType: vm => {
-  //     const homePathList = ["/index", "/topic-list"]
-  //     return homePathList.indexOf(vm.$route.path) !== -1 ? 'home' : 'other';
-  //   }
-  // },
+  computed: {
+   //  headType: vm => {
+   //    const homePathList = ["/index", "/topic-list"]
+   //    return homePathList.indexOf(vm.$route.path) !== -1 ? 'home' : 'other';
+   //  }
+  },
+  watch: {
+	  hoverCategoryId(newVal, oldVal) {
+		  // console.log(newVal)
+	  }
+  },
   methods: {
     toHome: function () {
       this.$router.push("/index");
@@ -119,7 +125,7 @@ export default {
   .top-head-wrapper {
 
     .left-wrapper {
-      z-index: 1;
+      z-index: 0;
       position: absolute;
       left: 30px;
       top: 20px;
@@ -129,7 +135,7 @@ export default {
       .head-logo {
         height: 42px;
         width: 147px;
-        margin-right: 90px;
+        margin-right: 30px;
       }
 
       .head-menu-list {
@@ -140,16 +146,27 @@ export default {
           font-weight: bold;
           color: #FFFFFF;
           // margin-right: 35px;
-		  padding: 30px;
+		  padding: 40px;
 		  cursor: pointer;
         }
 		
 		.head-menu:hover {
 			background-color: rgba(0, 0, 0, 0.1);
+			padding-left: 40px;
+			padding-right: 40px;
+			padding-top: 30px;
+			padding-bottom: 22px;
+			overflow: hidden;
+			color: #d46666;
 		}
 		
-		.head-menu .selected {
+		.head-menu.selected-menu {
 		    background-color: rgba(0, 0, 0, 0.1);
+			padding-left: 40px;
+			padding-right: 40px;
+			padding-top: 30px;
+			padding-bottom: 22px;
+			overflow: hidden;
 			color: #d46666;
 		}
       }
@@ -197,22 +214,41 @@ export default {
   }
 
   .top-head-wrapper.other {
-    height: 80px;
+    height: 70px;
     background: #fff;
 
     .left-wrapper {
+		.head-menu-list {
 		
-      .head-menu-list {
-
-        .head-menu {
-            color: #000;
-        }
-		
-		.head-menu.selected-menu {
-		    background-color: rgba(0, 0, 0, 0.1);
-			color: #d46666;
+			.head-menu {
+				font-size: 18px;
+				font-family: PingFang SC, serif;
+				font-weight: bold;
+				color: #000;
+				// margin-right: 35px;
+				padding-left: 40px;
+				padding-right: 40px;
+				padding-top: 30px;
+				padding-bottom: 22px;
+				overflow: hidden;
+				cursor: pointer;
+			}
+			
+			.head-menu:hover {
+				background-color: rgba(0, 0, 0, 0.1);
+				color: #d46666;
+			}
+			
+			.head-menu.selected-menu {
+				background-color: rgba(0, 0, 0, 0.1);
+				color: #d46666;
+			}
+			
+			.head-menu.selected-menu.unhover {
+				background-color: white;
+				color: #000;
+			}
 		}
-      }
     }
 
     .right-wrapper {
@@ -259,6 +295,7 @@ export default {
   .nav-content-wrapper {
     background: #F4F5FB;
     min-height: calc(~"100vh - 280px");
+	// margin-top: -15px;
   }
 }
 </style>

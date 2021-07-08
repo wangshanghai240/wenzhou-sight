@@ -62,6 +62,7 @@ export default {
   name: "PicGroupViewer",
   methods: {
 	  init: function () {
+		  console.log('enter init')
 		  this.list = Gallery({
 			  list: this.picGroups,
 			  waperWidth: document.getElementById('picGroupDiv').clientWidth,
