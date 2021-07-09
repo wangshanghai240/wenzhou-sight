@@ -92,9 +92,9 @@ export default {
   background: #fff;
 
   .topic-list-content-wrapper{
+	width: 90%;
     max-width: 1400px;
     margin: 0 auto;
-    
   }
 
   .topic-info-list-wrapper{

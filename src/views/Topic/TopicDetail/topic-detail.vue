@@ -6,7 +6,9 @@
       <span class="topic-intro">{{topic.details}}</span>
       <span class="back-button" @click="backToTopcList()">返回热门专题</span>
     </div>
-	 <pic-group-search-viewer ref="topicPics" :otherParams="otherParams"></pic-group-search-viewer>
+	<div style="width: 90%; margin: 0 auto;">
+		<pic-group-search-viewer ref="topicPics" :otherParams="otherParams"></pic-group-search-viewer>
+	</div>
   </div>
 </template>
 

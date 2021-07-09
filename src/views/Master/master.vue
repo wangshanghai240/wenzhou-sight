@@ -23,7 +23,9 @@
       </div>
     </div>
 
-    <pic-group-search-viewer ref="masterPics"></pic-group-search-viewer>
+	<div style="margin: 0 auto; width: 90%;">
+		<pic-group-search-viewer ref="masterPics"></pic-group-search-viewer>
+	</div>
   </div>
 </template>
 
@@ -102,6 +104,7 @@ export default {
 .master-wrapper {
 
   .chosen-master-wrapper {
+	
     height: 220px;
     position: relative;
 
@@ -177,8 +180,9 @@ export default {
 
 
     .master-list-content-wrapper{
+	  width: 90%;
+	  margin: 0 auto;
       max-width: 1400px;
-      margin: 0 auto;
       text-align: left;
       overflow: hidden;
 

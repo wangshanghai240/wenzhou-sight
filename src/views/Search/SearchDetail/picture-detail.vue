@@ -122,7 +122,7 @@
 
 <script>
 	import PicGroupViewer from '@c/PicGroupViewer'
-	import { getGroupPics } from '@/api/index'
+	import { getGroupPics, searchSingles } from '@/api/index'
 	import JSZip from "jszip"
 	import FileSaver from "file-saver"
 	
@@ -250,28 +250,22 @@
 					})
 				}
 				
-			}
-		},
-		created() {
-			var groupId = this.$route.query.groupId
-			this.groupId = groupId
-			var picId = this.$route.query.picId
-			if(groupId) {
-				var params = {
+			},
+			initGroupPics() {
+				getGroupPics(this.groupId, {
 				  type: 1,
 				  cType: 1,
 				  curPage: 1,
 				  size: 30,
 				  sort: 1,
 				  sortRule: 2
-				}
-				getGroupPics(groupId, params).then(res => {
+				}).then(res => {
 					if(!res.data) {
 						this.pics = []
 					} else {
 						this.pics = res.data.groupLists
 						for(var i in this.pics) {
-							if(this.pics[i].id == picId) {
+							if(this.pics[i].id == this.picId) {
 								this.picInfo = this.pics[i]
 								this.picIndex = parseInt(i)
 								break
@@ -285,7 +279,7 @@
 						this.$refs.picGroupViewer.picGroups = this.pics.map(picGroup => {
 							return {
 								id: picGroup.id,
-								groupIds: groupId,
+								groupIds: this.groupId,
 								num: picGroup.groupTotal,
 								picture: picGroup.oss400,
 								pictureHigh: picGroup.oss800,
@@ -298,8 +292,45 @@
 						this.$refs.picGroupViewer.init()
 					}
 				})
-				
 			}
+		},
+		created() {
+			var groupId = this.$route.query.groupId
+			this.groupId = groupId
+			this.picId = this.$route.query.picId
+			if(this.picId && !this.groupId) {
+				searchSingles({
+				  type: 1,
+				  cType: 1,
+				  curPage: 1,
+				  size: 30,
+				  sort: 1,
+				  sortRule: 2,
+				  id: this.picId
+				}).then(res => {
+					if(!res.data) {
+						this.pics = []
+					} else {
+						this.pics = res.data.groupLists
+						for(var i in this.pics) {
+							if(this.pics[i].id == this.picId) {
+								this.picInfo = this.pics[i]
+								this.picIndex = parseInt(i)
+								break
+							}
+						}
+						this.picInfo.mediumHeight = parseInt(2048*this.picInfo.picHeight/this.picInfo.picWidth)
+						this.picInfo.smallHeight = parseInt(1024*this.picInfo.picHeight/this.picInfo.picWidth)
+						this.keywords = this.picInfo.keywords.split(',').filter(item => item.length>0)
+						if(this.picInfo && this.picInfo.groupIds) {
+							this.groupId = this.picInfo.groupIds
+							this.initGroupPics()
+						}
+					}
+				})
+			} else if(this.picId && this.groupId) {
+				this.initGroupPics()
+			} 
 		}
 	}
 </script>

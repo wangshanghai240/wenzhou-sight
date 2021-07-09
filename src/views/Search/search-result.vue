@@ -74,12 +74,14 @@ export default {
 
 
   .topic-list-content-wrapper{
+	width: 90%;
     max-width: 1400px;
     margin: 0 auto;
 	.search-wrapper {
 	  padding: 45px 175px 40px 175px;
 	  margin-bottom: 20px;
-	  background: #d1d2d8;
+	  // background: #d1d2d8;
+	  background: #F4F5FB;
 	  // #F4F5FB;
 	  margin-top: 20px;
 	

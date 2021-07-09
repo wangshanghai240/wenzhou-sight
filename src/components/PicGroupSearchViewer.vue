@@ -14,7 +14,9 @@
 						<span v-if="searchType=='SINGLE'">({{total}})</span>
 					</span>
 				</div>
+				
 				<div class="right-wrapper">
+					<span class="overview-info" style="margin-right: 10px;">共{{total}}个资源</span>
 					<svg @click="switchPicShowType('HEIGHT_EQUAL')" class="show-type-icon MuiSvgIcon-root"
 						focusable="false" viewBox="0 0 24 24" aria-hidden="true" alt="等高">
 						<path :class="{'selected': picShowType==='HEIGHT_EQUAL'}"
@@ -82,7 +84,6 @@
 						</a-select-option>
 					</a-select>
 				</div>
-				<span class="overview-info">共{{total}}个资源</span>
 			</div>
 			
 			<pic-group-viewer ref="searchResultView"></pic-group-viewer>

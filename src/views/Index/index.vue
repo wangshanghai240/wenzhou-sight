@@ -4,7 +4,7 @@
       <div class="left-wrapper">
         <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-if="headType === 'home'"
              src="@/assets/img/logo.png" alt=""/>
-        <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-else src="@/assets/img/home/logo-color.jpg"
+        <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-else src="@/assets/img/home/logo-color.png"
              alt=""/>
         <div class="head-menu-list">
          <!-- <span class="head-menu" @click="$router.push('/index')">大美温州</span>
@@ -53,7 +53,7 @@
 		<a-button type="danger" shape="circle" icon="up" size="large"/>
 	</a-back-top>
     <div class="bottom-wrapper">
-      <img class="bottom-logo-icon" alt="" src="@/assets/img/home/logo-color.jpg"/>
+      <img class="bottom-logo-icon" alt="" src="@/assets/img/home/logo-color.png"/>
     </div>
 	
 	<div class="footer-copyright">
