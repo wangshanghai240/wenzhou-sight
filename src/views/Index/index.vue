@@ -16,7 +16,7 @@
       <div class="right-wrapper">
        <!-- <img class="head-msg-img" v-if="headType === 'home'" src="@/assets/img/home/msg.png" alt=""/>
         <img class="head-msg-img" v-else src="@/assets/img/home/message-dark.png" alt=""/> -->
-		<!-- <a-dropdown placement="bottomCenter">
+		<a-dropdown placement="bottomCenter">
 			<img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
 			<a-menu slot="overlay">
 				<a-menu-item>
@@ -35,11 +35,25 @@
 					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/audio">音频上传</a>
 				</a-menu-item>
 			</a-menu>
-		</a-dropdown> -->
+		</a-dropdown>
         <div class="personal-center-wrapper">
-          <a href="http://wenzhou.vcgvip.com/user/upload-record">
-			  <img class="head-personal-img" src="@/assets/img/home/person.png" alt=""/>
-		  </a>
+          <!-- <a href="http://wenzhou.vcgvip.com/user/upload-record"> -->
+		  <a-dropdown placement="bottomCenter">
+			  <!--  -->
+			  <img class="head-personal-img" :src="$store.state.avatar?$store.state.avatar:require('@/assets/img/home/person.png')" alt=""/>
+			  <a-menu slot="overlay">
+			  	<a-menu-item v-if="$store.state.token">
+					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/picture">个人中心</a>
+			  	</a-menu-item>
+				<a-menu-item v-if="$store.state.token">
+					<a target="_blank" rel="noopener noreferrer" @click="$store.dispatch('logout')">退出</a>
+				</a-menu-item>
+				<a-menu-item v-if="!$store.state.token">
+					<a target="_blank" rel="noopener noreferrer" @click="$router.push('/login')">登录</a>
+				</a-menu-item>
+			  </a-menu>
+		  </a-dropdown>
+		  <!-- </a> -->
           <span>
 			<a href="http://wenzhou.vcgvip.com/user/upload-record">个人中心</a>
 		  </span>

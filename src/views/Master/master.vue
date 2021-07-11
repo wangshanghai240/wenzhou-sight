@@ -10,7 +10,7 @@
         </div>
 
       </div>
-      <span class="back-button">返回大师推荐</span>
+      <span class="back-button" @click="$router.push('/index')">返回大师推荐</span>
     </div>
     <div class="master-list-wrapper">
       <div class="master-list-content-wrapper">

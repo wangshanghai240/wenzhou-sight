@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import Modal from "ant-design-vue/lib/modal";
 
 Vue.use(Router)
 
@@ -30,11 +31,23 @@ const constantRouterMap = [{
         name: 'home',
         component: () => import('@/views/Home/home.vue')
     },
+	{
+	   path: '/user', name:'user', component: () => import('@/views/User/template.vue'), children: [
+			{path: '/login', name: '登录' ,component: () => import('@/views/User/login.vue')},
+			{path: '/reset-password', name: '密码重置' ,component: () => import('@/views/User/reset-password.vue')},
+			{path: '/register', name: '注册' ,component: () => import('@/views/User/register.vue')}
+	   ]
+	}
 ]
 const router = new Router({
     mode: 'hash',
     routes: constantRouterMap
 });
+
+router.beforeEach((to, from, next) => {
+  Modal.destroyAll();
+  next();
+})
 
 Vue.mixin({
   beforeRouteUpdate(to, from, next) {
