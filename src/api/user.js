@@ -1,6 +1,20 @@
 import request from '@/utils/request'
 const qs = require('qs')
 
+export function upload(file) {
+  let param = new FormData()
+  param.append('file',file.file)
+  return request({
+    url: '/upload',
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data: param
+  })
+}
+
+
 export function login(params) {
 	return request({
 		url: '/login',

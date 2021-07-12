@@ -20,7 +20,8 @@ const store = new Vuex.Store({
 		avatar: ''
     },
     getters: {
-		
+		token: state => state.token,
+		fileUpload: state => 'http://wenzhou-sight.52br.net/api/upload/'
 	},
     mutations: {
 		RESET_STATE: (state) => {

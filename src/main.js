@@ -7,11 +7,16 @@ import VueRouter from "vue-router";
 import './permission';
 import store from "@/store";
 // import VueLazyload from 'vue-lazyload'
+import { ElUpload } from 'element-plus'
 
 
 Vue.config.productionTip = false
 Vue.use(Antd);
 Vue.use(VueRouter);
+
+const app = Vue.createApp(App)
+app.component(ElUpload.name, ElUpload)
+
 
 Vue.prototype.copy = function(text) {
   let url = text
