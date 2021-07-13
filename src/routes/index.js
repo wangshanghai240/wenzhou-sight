@@ -24,7 +24,7 @@ const constantRouterMap = [{
 			{path: '/group-pictures', name: '分组图片', component:()=> import('@/views/Search/SearchDetail/group-pictures')},
 			{path: '/picture-detail', name: '图片详情', component:()=> import('@/views/Search/SearchDetail/picture-detail')},
             {path: '/master', name:'大师推荐',component:()=> import('@/views/Master/master')},
-			{path: '/upload-img', name: '图片上传' ,component: () => import('@/views/Upload/upload-imgs')},
+			{path: '/upload-picture', name: '图片上传' ,component: () => import('@/views/Upload/upload-img')},
         ]
     },
     {
