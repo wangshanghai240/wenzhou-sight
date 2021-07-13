@@ -46,7 +46,7 @@
 					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/picture">个人中心</a>
 			  	</a-menu-item>
 				<a-menu-item v-if="$store.state.token">
-					<a target="_blank" rel="noopener noreferrer" @click="$store.dispatch('logout')">退出</a>
+					<a target="_blank" rel="noopener noreferrer" @click="$store.dispatch('logout').then(res => {$message.success('登出成功')})">退出</a>
 				</a-menu-item>
 				<a-menu-item v-if="!$store.state.token">
 					<a target="_blank" rel="noopener noreferrer" @click="$router.push('/login')">登录</a>

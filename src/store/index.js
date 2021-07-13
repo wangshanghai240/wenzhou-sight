@@ -20,7 +20,8 @@ const store = new Vuex.Store({
 		avatar: ''
     },
     getters: {
-		
+		token: state => state.token,
+		fileUpload: state => 'http://wenzhou-sight.52br.net/api/upload/'
 	},
     mutations: {
 		RESET_STATE: (state) => {
@@ -76,10 +77,10 @@ const store = new Vuex.Store({
 
 	  // user logout
 	  logout({ commit, state }) {
+		  commit('SET_TOKEN', '')
+		  commit('SET_NAME', '')
+		  commit('SET_AVATAR', '')
 		return new Promise((resolve, reject) => {
-			commit('SET_TOKEN', '')
-			commit('SET_NAME', '')
-			commit('SET_AVATAR', '')
 		  logout().then(() => {
 			resolve()
 		  }).catch(error => {
