@@ -14,6 +14,13 @@ export function upload(file) {
   })
 }
 
+export function getInfo() {
+	return request({
+		url: 'userInfo',
+		method: 'GET'
+	})
+}
+
 export function login(params) {
 	return request({
 		url: '/login',

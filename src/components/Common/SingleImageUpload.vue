@@ -14,9 +14,9 @@
       :with-credentials="true"
       :show-file-list="true"
       class="avatar-uploader"
-      list-type="picture"
+      list-type="picture-card"
       :file-list="fileList">
-      <a-button size="small" type="primary">点击上传</a-button>
+      <a-icon size="large" type="plus" ></a-icon>
     </el-upload>
     <!-- <div class="image-preview">
       <div v-show="imageUrl.length>1" class="image-preview-wrapper">
@@ -60,8 +60,10 @@ export default {
     }
   },
   mounted() {
-    this.$refs.width.$el.style.setProperty('--width', this.width)
-    this.$refs.width.$el.style.width = this.width
+    if(this.width) {
+		this.$refs.width.$el.style.setProperty('--width', this.width)
+		this.$refs.width.$el.style.width = this.width
+	}
   },
   computed: {
     ...mapGetters(['fileUpload', 'token']),
@@ -141,12 +143,25 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-    @import "~@/assets/styles/mixin.scss";
+<style lang="less" scoped>
+	.avatar-uploader {
+		float: left;
+		margin: 10px;
+		
+		.el-upload-list--picture-card .el-upload-list__item {
+			float: left;
+		}
+	}
     .upload-container {
         width: 100%;
         position: relative;
-        @include clearfix;
+		
+        &:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+		
         .image-uploader {
             width: 60%;
             float: left;

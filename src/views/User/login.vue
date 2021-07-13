@@ -11,16 +11,6 @@
 				<a-input-password class="input_field" size="large"  v-decorator="['pwd']"
 					placeholder="请输入密码">
 				</a-input-password>
-				<el-upload
-				  :multiple="true"
-				  action="http://localhost:8890/upload"
-				  :with-credentials="true"
-				  :show-file-list="true"
-				  class="avatar-uploader"
-				  list-type="picture"
-				  :file-list="fileList">
-				  <el-button size="small" type="primary">点击上传</el-button>
-				</el-upload>
 			</a-form-item>
 			<a-form-item>
 				<a-button size="large" style="height: 56px; background-color: #5986ff; border-color: #5986ff;" font-size="25" class="input_field" type="primary" html-type="submit">
@@ -46,8 +36,7 @@
 	export default {
 		data() {
 			return {
-				loginForm: this.$form.createForm(this, { name: 'coordinated' }),
-				fileList: []
+				loginForm: this.$form.createForm(this, { name: 'coordinated' })
 			}
 		},
 		methods: {

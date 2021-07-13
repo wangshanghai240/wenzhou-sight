@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, getInfo } from '@/api/user'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
-    token: '',
+    token: getToken(),
     name: '',
     avatar: ''
   }
@@ -15,12 +16,13 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
 		uploadedFilePrefix: 'http://wenzhou-sight.52br.net/api/upload/',
-		token: '',
+		token: getToken(),
 		name: '',
 		avatar: ''
     },
     getters: {
 		token: state => state.token,
+		name: state => state.name,
 		fileUpload: state => 'http://wenzhou-sight.52br.net/api/upload/'
 	},
     mutations: {
@@ -28,6 +30,7 @@ const store = new Vuex.Store({
 		   Object.assign(state, getDefaultState())
 		},
 		SET_TOKEN: (state, token) => {
+		   console.log("token:" + token)
 		   state.token = token
 		},
 		SET_NAME: (state, name) => {
@@ -45,6 +48,7 @@ const store = new Vuex.Store({
 		  login({ account: account.trim(), pwd: pwd }).then(response => {
 			const { data } = response
 			commit('SET_TOKEN', data.accessToken)
+			setToken(data.accessToken)
 			commit('SET_NAME', data.displayUsername)
 			commit('SET_AVATAR', data.imgPath)
 			resolve()
@@ -57,17 +61,17 @@ const store = new Vuex.Store({
 	  // get user info
 	  getInfo({ commit, state }) {
 		return new Promise((resolve, reject) => {
-		  getInfo(state.token).then(response => {
+		  getInfo().then(response => {
 			const { data } = response
 
 			if (!data) {
-			  return reject('Verification failed, please Login again.')
+			  return reject('登录信息验证失败，请重新登录')
 			}
 
-			const { name, photo } = data
+			const { displayUsername, imgPath } = data
 
-			commit('SET_NAME', name)
-			commit('SET_AVATAR', photo)
+			commit('SET_NAME', displayUsername)
+			commit('SET_AVATAR', imgPath)
 			resolve(data)
 		  }).catch(error => {
 			reject(error)
@@ -77,6 +81,7 @@ const store = new Vuex.Store({
 
 	  // user logout
 	  logout({ commit, state }) {
+		  removeToken()
 		  commit('SET_TOKEN', '')
 		  commit('SET_NAME', '')
 		  commit('SET_AVATAR', '')

@@ -1,6 +1,8 @@
 import axios from 'axios'
 import store from '@/store'
 import Modal from "ant-design-vue/lib/modal";
+import message from "ant-design-vue/lib/message";
+// import { getToken } from '@/utils/auth';
 
 // 创建axios实例
 const httpService = axios.create({
@@ -16,6 +18,8 @@ httpService.interceptors.request.use(
 		  // ['X-Token'] is a custom headers key
 		  // please modify it according to the actual situation
 		  config.headers['token'] = store.getters.token
+		  // getToken()
+		  //
 		}
         return config;
     },
@@ -45,7 +49,8 @@ httpService.interceptors.response.use(
 						
 					}
 				})
-				return
+			} else {
+				message.error(res.msg)
 			}
 			return Promise.reject(new Error(res.msg || 'Error'))
 		} else {
