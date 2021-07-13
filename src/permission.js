@@ -8,8 +8,6 @@ NProgress.configure({showSpinner: false})
 const needLoginPaths = ['/upload-picture']
 
 router.beforeEach(async(to, from, next) => {
-    console.log(to.path)
-    // console.log(store);
     // store.commit("setMenuByRoute", to);
     NProgress.start();
     if (to.path === from.path) {
@@ -52,7 +50,6 @@ router.beforeEach(async(to, from, next) => {
 	  }
 	} else {
 	  /* has no token*/
-	  console.log(to)
 	  // other pages that do not have permission to access are redirected to the login page.
 	  next(`/login?redirect=${to.path}`)
 	  NProgress.done()

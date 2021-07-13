@@ -59,29 +59,29 @@
 						组信息
 					</div>
 					<a-form-model-item label="组照标题">
-						<a-input v-model="uploadInfoForm.groupTitle" placeholder="请输入组照标题"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.groupTitle" placeholder="请输入组照标题"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="组照说明">
-						<a-input v-model="uploadInfoForm.groupCaption" placeholder="请输入组照说明"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.groupCaption" placeholder="请输入组照说明"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="组照分类">
-						<a-select v-model="uploadInfoForm.categoryId">
+						<a-select size="large" v-model="uploadInfoForm.categoryId">
 							<a-select-option v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</a-select-option>
 						</a-select>
 					</a-form-model-item>
-					<a-form-model-item label="组照关键词s">
+					<a-form-model-item label="组照关键词">
 						<div class="keywords_border MuiInputBase-root MuiOutlinedInput-root jss207 jss210 MuiInputBase-formControl MuiInputBase-adornedStart MuiOutlinedInput-adornedStart">
 							<div
-								v-for="keyword in uploadInfoForm.groupKeywordArr"
-								v-bind:key="keyword">
+								v-for="(keyword, index) in uploadInfoForm.groupKeywordArr"
+								v-bind:key="keyword"
 								class="MuiButtonBase-root MuiChip-root jss221 MuiChip-clickable MuiChip-deletable" tabindex="0" role="button" style="">
-								<span class="MuiChip-label">fdaf</span>
-								<svg class="MuiSvgIcon-root MuiChip-deleteIcon" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+								<span class="MuiChip-label">{{keyword}}</span>
+								<svg class="MuiSvgIcon-root MuiChip-deleteIcon" focusable="false" viewBox="0 0 24 24" aria-hidden="true" @click="removeKeyword('groupKeywordArr', index)">
 									<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path>
 								</svg>
 							</div>
 							
-							<a-input @change="changeKeywords('keywords')" v-model="uploadInfoForm.groupKeywords" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @pressEnter="createKeywordLabel('groupKeywords')" @change="changeKeywords($event, 'groupKeywords')" v-model="uploadInfoForm.groupKeywords" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 					
@@ -89,16 +89,16 @@
 						图片信息
 					</div>
 					<a-form-model-item label="摄影师">
-						<a-input v-model="uploadInfoForm.desc" placeholder="请输入摄影师"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="请输入摄影师"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="署名">
-						<a-input v-model="uploadInfoForm.desc" placeholder="请输入署名"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="请输入署名"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="拍摄时间">
-						<a-input v-model="uploadInfoForm.desc" placeholder="请输入组照说明"></a-input>
+						<a-date-picker size="large" v-model="uploadInfoForm.createdAt" placeholder="请输入拍摄时间" />
 					</a-form-model-item>
 					<a-form-model-item label="图片说明">
-						<a-input v-model="uploadInfoForm.desc" placeholder="请输入组照说明"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="点击输入说明(1000字以内)说明需要包括年、月、日\地点，画面本身的内容"></a-input>
 					</a-form-model-item>
 				</a-form-model>
 			</div>
@@ -269,9 +269,17 @@
 			    resolve(true)
 			  })
 			},
-			
-			changeKeywords() {
-				
+			changeKeywords(e, keywordField) {
+				if(e.data === ' ') {
+					this.createKeywordLabel(keywordField)
+				}
+			},
+			createKeywordLabel(keywordField) {
+				this.uploadInfoForm[keywordField.substring(0, keywordField.length-1) + 'Arr'].push(this.uploadInfoForm.groupKeywords.trim())
+				this.uploadInfoForm[keywordField] = ''
+			},
+			removeKeyword(keywordField, index) {
+				this.uploadInfoForm[keywordField].splice(index, 1)
 			}
 		},
 		created() {
@@ -449,10 +457,34 @@
 						border: solid 1px #c4c4c4;
 						
 						input {
-							border: none;
+							background:#ffffff !important;
+							border: none !important;
+							outline: none !important;
 						}
 						input:focus {
+							background:#ffffff !important;
+							border: none !important;
+							outline: none !important;
+						}
+						
+						input::selection { 
+						    background:#ffffff !important;
+						    color: #ffffff !important;
+							border: none !important;
+							outline: none !important;
+						    // color: var(--antd-wave-shadow-color); // ant design vue,可根据主题色修改
+						}
+						input::-moz-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
 							border: none;
+							outline: none;
+						}
+						input::-webkit-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
+							border: none;
+							outline: none;
 						}
 					}
 				}
@@ -563,7 +595,7 @@
 	    }
 		
 		.image-preview.selected {
-			border: 2px solid #556cd6
+			border: 2px solid #556cd6;
 		}
 	}
 	
