@@ -1,6 +1,17 @@
 import request from '@/utils/request'
 const qs = require('qs')
 
+export function submitResGroup(data) {
+	return request({
+		url: '/upload/submitResGroup',
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json'
+		},
+		data: JSON.stringify(data)
+	})
+}
+
 export function upload(file) {
   let param = new FormData()
   param.append('file',file.file)

@@ -11,7 +11,7 @@
 			<div class="content">
 				<div class="upload-container">
 					<div v-for="(image, index) in fileList" v-bind:key="image.uid"
-					 :class="{'image-preview': true, 'selected': image.uid===selectedImageUid}" @click="selectImage(image.uid)">
+					 :class="{'image-preview': true, 'selected': image.uid===selectedImageUid}" @click="selectImage(image.uid, index)">
 					 <!-- <div v-show="imageUrl.length>1" class="image-preview-wrapper">
 					    <img :src="imageUrl">
 					    <div class="image-preview-action">
@@ -19,10 +19,17 @@
 					    </div>
 					  </div> -->
 					  <div class="image-preview-wrapper">
+						<button v-if="image.isSurface" class="MuiButtonBase-root MuiButton-root MuiButton-text coverButton isCover MuiButton-textSizeSmall MuiButton-sizeSmall MuiButton-disableElevation Mui-disabled Mui-disabled" tabindex="-1" type="button" disabled="">
+							<span class="MuiButton-label">封面</span>
+						</button>
+						<button v-else class="MuiButtonBase-root MuiButton-root MuiButton-text coverButton isNotCover MuiButton-textSizeSmall MuiButton-sizeSmall MuiButton-disableElevation Mui-disabled Mui-disabled" tabindex="-1" type="button"
+							@click="setCover(index)">
+							<span class="MuiButton-label">设为封面</span>
+						</button>
 					    <img :src="image.url">
-					    <div class="image-preview-action">
+					    <!-- <div class="image-preview-action">
 					      <i class="el-icon-delete" @click="rmImage(index)" />
-					    </div>
+					    </div> -->
 					  </div>
 					</div>
 					
@@ -50,8 +57,8 @@
 		
 		<div class="right_wrapper">
 			<div class="header">
-				<a-button type="danger">保存草稿</a-button>
-				<a-button :disabled="!canCommit" type="danger">提交</a-button>
+				<a-button type="danger" @click="save(true)">保存草稿</a-button>
+				<a-button :disabled="!canCommit" type="danger"  @click="save(false)">提交</a-button>
 			</div>
 			<div class="content">
 				<a-form-model :model="uploadInfoForm" style="text-align: left;" >
@@ -66,7 +73,7 @@
 					</a-form-model-item>
 					<a-form-model-item label="组照分类">
 						<a-select size="large" v-model="uploadInfoForm.categoryId">
-							<a-select-option v-for="category in categoryList" v-bind:key="category.id">{{category.cname}}</a-select-option>
+							<a-select-option v-for="category in categoryList" @click="setGroupCategory(category.id, category.cname)" v-bind:key="category.id">{{category.cname}}</a-select-option>
 						</a-select>
 					</a-form-model-item>
 					<a-form-model-item label="组照关键词">
@@ -89,16 +96,49 @@
 						图片信息
 					</div>
 					<a-form-model-item label="摄影师">
-						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="请输入摄影师"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].creditLine" placeholder="请输入摄影师"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="署名">
-						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="请输入署名"></a-input>
+						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].signature" placeholder="请输入署名"></a-input>
+					</a-form-model-item>
+					<a-form-model-item label="拍摄地点">
+						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].location" placeholder="请输入拍摄地点"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="拍摄时间">
-						<a-date-picker size="large" v-model="uploadInfoForm.createdAt" placeholder="请输入拍摄时间" />
+						<a-date-picker size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].shootTime" placeholder="请输入拍摄时间" valueFormat="YYYY-MM-DD" />
 					</a-form-model-item>
 					<a-form-model-item label="图片说明">
-						<a-input size="large" v-model="uploadInfoForm.desc" placeholder="点击输入说明(1000字以内)说明需要包括年、月、日\地点，画面本身的内容"></a-input>
+						<a-textarea :rows="2" size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].caption" placeholder="点击输入说明(1000字以内)说明需要包括年、月、日、地点，画面本身的内容"></a-textarea>
+					</a-form-model-item>
+					<a-form-model-item label="关键词">
+						<div class="keywords_border MuiInputBase-root MuiOutlinedInput-root jss207 jss210 MuiInputBase-formControl MuiInputBase-adornedStart MuiOutlinedInput-adornedStart">
+							<div
+								v-for="(keyword, index) in uploadInfoForm.assetsList[selectedImageIndex].keywordArr"
+								v-bind:key="keyword"
+								class="MuiButtonBase-root MuiChip-root jss221 MuiChip-clickable MuiChip-deletable" tabindex="0" role="button" style="">
+								<span class="MuiChip-label">{{keyword}}</span>
+								<svg class="MuiSvgIcon-root MuiChip-deleteIcon" focusable="false" viewBox="0 0 24 24" aria-hidden="true" @click="removeAssetKeyword('keywords', 'keywordArr', index)">
+									<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path>
+								</svg>
+							</div>
+							
+							<a-input size="large" @pressEnter="createAssetKeywordLabel('keywords', 'keywordArr')" @change="changeAssetKeywords($event, 'keywords', 'keywordArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].keywords" placeholder="请输入关键词,并空格或回车"></a-input>
+						</div>
+					</a-form-model-item>
+					<a-form-model-item label="人物关键词">
+						<div class="keywords_border MuiInputBase-root MuiOutlinedInput-root jss207 jss210 MuiInputBase-formControl MuiInputBase-adornedStart MuiOutlinedInput-adornedStart">
+							<div
+								v-for="(keyword, index) in uploadInfoForm.assetsList[selectedImageIndex].peopleArr"
+								v-bind:key="keyword"
+								class="MuiButtonBase-root MuiChip-root jss221 MuiChip-clickable MuiChip-deletable" tabindex="0" role="button" style="">
+								<span class="MuiChip-label">{{keyword}}</span>
+								<svg class="MuiSvgIcon-root MuiChip-deleteIcon" focusable="false" viewBox="0 0 24 24" aria-hidden="true" @click="removeAssetKeyword('people' ,'peopleArr', index)">
+									<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path>
+								</svg>
+							</div>
+							
+							<a-input size="large" @pressEnter="createAssetKeywordLabel('people', 'peopleArr')" @change="changeAssetKeywords($event, 'people', 'peopleArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].people" placeholder="请输入关键词,并空格或回车"></a-input>
+						</div>
 					</a-form-model-item>
 				</a-form-model>
 			</div>
@@ -108,7 +148,7 @@
 
 <script>
 	import { mapGetters } from 'vuex'
-	import { upload } from '@/api/user'
+	import { upload, submitResGroup } from '@/api/user'
 	import { categories } from '@/api/index'
 	
 	export default { 
@@ -117,16 +157,26 @@
 				categoryList: [],
 				canCommit: false,
 				uploadInfoForm: {
-					groupKeywordArr: []
+					sortStr: '',
+					sortName: '',
+					surfacePhoto: '',
+					groupTitle: '',
+					groupCaption: '',
+					groupKeywords: '',
+					groupKeywordArr: [],
+					tagPath: '',
+					assetType: 1,
+					assetsList: []
 				},
 				loading: false,
 				listObj: {},
 				fileList: [],
-				selectedImageUid: ''
+				selectedImageUid: '',
+				selectedImageIndex: 0
 			}
 		},
 		computed: {
-			...mapGetters(['fileUpload', 'uploadedFilePrefix', 'token']),
+			...mapGetters(['fileUpload', 'uploadedFilePrefix', 'token', 'name']),
 		},
 		methods: {
 			// imgChange: function(info) {
@@ -150,8 +200,40 @@
 			//     }
 			//   })
 			// }
-			selectImage(uid) {
+			save(isDraft) {
+				this.uploadInfoForm.isDraft = isDraft?1:0
+				if(this.uploadInfoForm.assetsList.length === 1 && !this.uploadInfoForm.assetsList[0].ossYuantu) {
+					this.$message.error('请至少上传一个资源')
+					return
+				}
+				for(var i in this.uploadInfoForm.assetsList) {
+					if(this.uploadInfoForm.assetsList[i].isSurface) {
+						this.uploadInfoForm.surfacePhoto = this.uploadInfoForm.assetsList[i].ossYuantu
+						break
+					}
+				}
+				this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
+				this.uploadInfoForm.assetsList.forEach(item => {
+					item.keywords = item.keywordArr.join(',')
+					item.people = item.peopleArr.join(',')
+				})
+				this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
+				submitResGroup(this.uploadInfoForm).then(res => {
+					this.$message.success('上传成功')
+					this.uploadInfoForm.groupKeywords = ''
+					this.uploadInfoForm.assetsList.forEach(item => {
+						item.keywords = ''
+						item.people = ''
+					})
+				})
+			},
+			setGroupCategory(categoryId, categoryName) {
+				this.uploadInfoForm.sortStr = categoryId
+				this.uploadInfoForm.sortName = categoryName
+			},
+			selectImage(uid, index) {
 				this.selectedImageUid = uid
+				this.selectedImageIndex = index
 			},
 			customUpload(file) {
 			  upload(file).then(res => {
@@ -172,76 +254,65 @@
 			  const objKeyArr = Object.keys(this.listObj)
 			  for (let i = 0, len = objKeyArr.length; i < len; i++) {
 			    if (this.listObj[objKeyArr[i]].uid === uid) {
-			      this.listObj[objKeyArr[i]].url = this.uploadedFilePrefix + '/' + data
-			      this.listObj[objKeyArr[i]].hasSuccess = true
+					var url = this.uploadedFilePrefix + '/' + data
+				  this.listObj[objKeyArr[i]].url = url
+				  this.listObj[objKeyArr[i]].hasSuccess = true
 				  this.listObj[objKeyArr[i]].status = 'ready'
 				  this.fileList.push(this.listObj[objKeyArr[i]])
-			      return
+				  if(this.fileList.length === 1) {
+					  this.selectedImageIndex = 0
+					  this.selectedImageUid = uid
+					  this.uploadInfoForm.assetsList[0].ossYuantu = url
+					  this.fileList[0].isSurface = true
+					  this.uploadInfoForm.assetsList[0].isSurface = true
+				  } else {
+					  this.uploadInfoForm.assetsList.push({
+						  creditLine: this.name,
+						  signature: this.name,
+						  shootTime: '',
+						  location: '',
+						  area: "中国/浙江省/温州市",
+						  caption: '',
+						  keywords: '',
+						  people: '',
+						  keywordArr: [],
+						  peopleArr: [],
+						  ossYuantu: url
+					  })
+				  }
+				  return
 			    }
 			  }
 			},
+			assureOneAsset() {
+				if(this.uploadInfoForm.assetsList.length == 0) {
+					this.uploadInfoForm.assetsList.push({
+					  creditLine: this.name,
+					  signature: this.name,
+					  shootTime: '',
+					  location: '',
+					  area: "中国/浙江省/温州市",
+					  caption: '',
+					  keywords: '',
+					  people: '',
+					  keywordArr: [],
+					  peopleArr: [],
+					  ossYuantu: ''
+					})
+					this.selectedImageIndex = 0
+				}
+			},
 			rmImage(index) {
 			  var temp = this.fileList.splice(index, 1)
+			  this.uploadInfoForm.assetsList.splice(index, 1)
 			  if(this.fileList.length > 0) {
 				this.selectedImageUid = this.fileList[0].uid
-				// console.log('enter 1')
+				this.selectedImageIndex = 0
 			  } else {
 				this.selectedImageUid = ''
+				this.selectedImageIndex = -1
+				this.assureOneAsset()
 			  }
-			  // console.log(this.selectedImageUid === this.fileList[0].uid)
-			  // this.$forceUpdate()
-			},
-			moveToFirst() {
-				if(this.fileList.length < 2) {
-					return
-				}
-				var index = -1
-				for(var i in this.fileList) {
-					if(this.fileList[i].uid === this.selectedImageUid) {
-						index = parseInt(i)
-						break
-					}
-				}
-				if(index<=0) {
-					return
-				}
-				var temp = this.fileList.splice(index, 1)
-				this.fileList.unshift(temp[0])
-			},
-			moveToLast() {
-				if(this.fileList.length < 2) {
-					return
-				}
-				var index = -1
-				for(var i in this.fileList) {
-					if(this.fileList[i].uid === this.selectedImageUid) {
-						index = parseInt(i)
-						break
-					}
-				}
-				if(index === -1 || index === this.fileList.length-1) {
-					return
-				}
-				var temp = this.fileList.splice(index, 1)
-				this.fileList.push(temp[0])
-			},
-			deleteImg() {
-				var index = -1
-				for(var i in this.fileList) {
-					if(this.fileList[i].uid === this.selectedImageUid) {
-						index = parseInt(i)
-						break
-					}
-				}
-				if(index === -1) {
-					return
-				}
-				this.fileList.splice(index, 1)
-				if(this.fileList.length > 0) {
-					this.selectedImageUid = this.fileList[0].uid
-				} else {
-					this.selectedImageUid = ''
-				}
 			},
 			emitInput(val) {
 			  // this.$emit('input', val)
@@ -258,7 +329,6 @@
 			  const img = new Image()
 			  img.src = _URL.createObjectURL(file)
 			  this.emitInput(img.src)
-			  console.log(file)
 			
 			  return new Promise((resolve, reject) => {
 			    const img = new Image()
@@ -268,6 +338,60 @@
 			    }
 			    resolve(true)
 			  })
+			},
+			moveToFirst() {
+				if(this.fileList.length < 2) {
+					return
+				}
+				if(this.selectedImageIndex<=0) {
+					return
+				}
+				var temp = this.fileList.splice(this.selectedImageIndex, 1)
+				this.fileList.unshift(temp[0])
+				
+				temp = this.uploadInfoForm.assetsList.splice(this.selectedImageIndex, 1)
+				this.uploadInfoForm.assetsList.unshift(temp[0])
+				this.selectedImageIndex = 0
+			},
+			moveToLast() {
+				if(this.fileList.length < 2) {
+					return
+				}
+				if(this.selectedImageIndex === -1 || this.selectedImageIndex === this.fileList.length-1) {
+					return
+				}
+				var temp = this.fileList.splice(this.selectedImageIndex, 1)
+				this.fileList.push(temp[0])
+				
+				temp = this.uploadInfoForm.assetsList.splice(this.selectedImageIndex, 1)
+				this.uploadInfoForm.assetsList.push(temp[0])
+				this.selectedImageIndex = this.fileList.length-1
+			},
+			deleteImg() {
+				if(this.selectedImageIndex === -1) {
+					return
+				}
+				this.fileList.splice(this.selectedImageIndex, 1)
+				this.uploadInfoForm.assetsList.splice(this.selectedImageIndex, 1)
+				if(this.fileList.length > 0) {
+					this.selectedImageUid = this.fileList[0].uid
+					this.selectedImageIndex = 0
+				} else {
+					this.selectedImageUid = ''
+					this.selectedImageIndex = 0
+					this.assureOneAsset()
+				}
+			},
+			setCover(index) {
+				this.fileList.forEach(item => {
+					item.isSurface = false
+				})
+				this.uploadInfoForm.assetsList.forEach(item => {
+					item.isSurface = false
+				})
+				this.fileList[index].isSurface = true
+				this.uploadInfoForm.assetsList[index].isSurface = true
+				this.$forceUpdate()
 			},
 			changeKeywords(e, keywordField) {
 				if(e.data === ' ') {
@@ -280,12 +404,27 @@
 			},
 			removeKeyword(keywordField, index) {
 				this.uploadInfoForm[keywordField].splice(index, 1)
+			},
+			changeAssetKeywords(e, keywordField, keywordArrField) {
+				if(e.data === ' ') {
+					this.createAssetKeywordLabel(keywordField, keywordArrField)
+				}
+			},
+			createAssetKeywordLabel(keywordField, keywordArrField) {
+				var asset = this.uploadInfoForm.assetsList[this.selectedImageIndex]
+				asset[keywordArrField].push(asset[keywordField].trim())
+				asset[keywordField] = ''
+			},
+			removeAssetKeyword(keywordField, keywordArrField, index) {
+				var asset = this.uploadInfoForm.assetsList[this.selectedImageIndex]
+				asset[keywordArrField].splice(index, 1)
 			}
 		},
 		created() {
 			categories().then(res => {
 				this.categoryList = res.data
 			})
+			this.assureOneAsset()
 		}
 	}
 </script>
@@ -555,6 +694,8 @@
 			border-radius: 3%;
 			
 	        .image-preview-wrapper {
+				display: flex;
+				justify-content: center;
 	            position: relative;
 	            width: 100%;
 	            height: 100%;
@@ -564,39 +705,114 @@
 	                height: 97%;
 					margin: auto;
 					margin-top: 1%;
+					object-fit: contain;
 	            }
 	        }
-	        .image-preview-action {
-	            position: absolute;
-	            width: 100%;
-	            height: 100%;
-	            left: 0;
-	            top: 0;
-	            cursor: default;
-	            text-align: center;
-	            color: #fff;
-	            opacity: 0;
-	            font-size: 20px;
-	            background-color: rgba(0, 0, 0, .5);
-	            transition: opacity .3s;
-	            cursor: pointer;
-	            text-align: center;
-	            line-height: 200px;
-	            .el-icon-delete {
-	                font-size: 36px;
-	            }
-	        }
-	        &:hover {
-	            .image-preview-action {
-	                opacity: 1;
-	            }
-	        }
+	        // .image-preview-action {
+	        //     position: absolute;
+	        //     width: 100%;
+	        //     height: 100%;
+	        //     left: 0;
+	        //     top: 0;
+	        //     cursor: default;
+	        //     text-align: center;
+	        //     color: #fff;
+	        //     opacity: 0;
+	        //     font-size: 20px;
+	        //     background-color: rgba(0, 0, 0, .5);
+	        //     transition: opacity .3s;
+	        //     cursor: pointer;
+	        //     text-align: center;
+	        //     line-height: 200px;
+	        //     .el-icon-delete {
+	        //         font-size: 36px;
+	        //     }
+	        // }
+	        // &:hover {
+	        //     .image-preview-action {
+	        //         opacity: 1;
+	        //     }
+	        // }
+			
+			.isNotCover {
+				opacity: 0;
+				display: block;
+			}
+			
+			&:hover {
+			    .isNotCover {
+			        opacity: 1;
+			    }
+			}
 			
 	    }
 		
 		.image-preview.selected {
 			border: 2px solid #556cd6;
 		}
+		
+		.MuiButtonBase-root {
+		    color: inherit;
+		    border: 0;
+		    cursor: pointer;
+		    margin: 0;
+		    display: inline-flex;
+		    outline: 0;
+		    padding: 0;
+		    position: relative;
+		    align-items: center;
+		    user-select: none;
+		    border-radius: 0;
+		    vertical-align: middle;
+		    -moz-appearance: none;
+		    justify-content: center;
+		    text-decoration: none;
+		    background-color: transparent;
+		    -webkit-appearance: none;
+		    -webkit-tap-highlight-color: transparent;
+		}
+		
+		.MuiButton-root {
+		    color: rgba(0, 0, 0, 0.87);
+		    padding: 6px 16px;
+		    font-size: 0.875rem;
+		    min-width: 64px;
+		    box-sizing: border-box;
+		    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+		    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+		    font-weight: 500;
+		    line-height: 1.75;
+		    border-radius: 4px;
+		    letter-spacing: 0.02857em;
+		    text-transform: uppercase;
+		}
+		
+		.MuiButton-textSizeSmall {
+		    padding: 4px 5px;
+		    font-size: 0.8125rem;
+		}
+		
+		.MuiButton-label {
+		    width: 100%;
+		    display: inherit;
+		    align-items: inherit;
+		    justify-content: inherit;
+		}
+		
+		.coverButton {
+		    color: #fff;
+		    bottom: 20px;
+		    margin: 0 auto;
+		    display: none;
+		    z-index: 999;
+		    position: absolute;
+		    background-color: rgba(1,1,1,0.7);
+		}
+		
+		.isCover {
+			display: block;
+		}
+		
 	}
 	
 	
