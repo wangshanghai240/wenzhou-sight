@@ -25,7 +25,7 @@
 					</router-link>
 				</a-menu-item>
 				<a-menu-item>
-					<router-link to="/upload-picture">
+					<router-link target="_blank" to="/upload-picture?resourceType=vector">
 						<a rel="noopener noreferrer">设计素材上传</a>
 					</router-link>
 				</a-menu-item>

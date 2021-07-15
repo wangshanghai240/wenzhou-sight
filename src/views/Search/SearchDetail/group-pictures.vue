@@ -4,25 +4,25 @@
 		  
 		  <div class="jss232">
 			  <div class="MuiContainer-root jss52 MuiContainer-maxWidthLg">
-			  			  <nav class="MuiTypography-root MuiBreadcrumbs-root jss53 MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock" aria-label="breadcrumb">
-			  				  <ol class="MuiBreadcrumbs-ol">
-			  					  <li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-body2 MuiTypography-colorTextPrimary" href="/index">大美温州</a></li>
-			  					  <li aria-hidden="true" class="MuiBreadcrumbs-separator">/</li>
-			  					  <li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorInherit" style="margin-bottom: 0px;">{{group.title}}</p></li>
-			  				  </ol>
-			  			  </nav>
-			  			  <h5 class="MuiTypography-root jss54 MuiTypography-h5 MuiTypography-colorTextPrimary">{{group.title}}</h5>
-			  			  <div :class="{'open': titleOpen, 'jss55': true}">
-			  				  <p class="MuiTypography-root jss56 MuiTypography-body2">{{group.groupCaption}}</p>
-			  				  <button class="MuiButtonBase-root MuiIconButton-root jss57" tabindex="0" type="button">
-								  <span class="MuiIconButton-label">
-									  <svg ref="titleOpenBtn" @click="switchTitleOpen" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-										<path ref="titleOpenSvg" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
-									  </svg>
-								  </span>
-							  </button>
-			  				  <button class="MuiButtonBase-root MuiIconButton-root jss57" tabindex="0" type="button"><span class="MuiIconButton-label"><svg ref="titleCopyBtn" @click="copyGroupTitle" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5H1v16c0 1.1.9 2 2 2h16v-2H3V5zm18-4H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 16H7V3h14v14z"></path></svg></span></button>
-			  			</div>
+				  <nav class="MuiTypography-root MuiBreadcrumbs-root jss53 MuiTypography-body2 MuiTypography-colorTextSecondary MuiTypography-displayBlock" aria-label="breadcrumb">
+					  <ol class="MuiBreadcrumbs-ol">
+						  <li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-body2 MuiTypography-colorTextPrimary" href="/index">大美温州</a></li>
+						  <li aria-hidden="true" class="MuiBreadcrumbs-separator">/</li>
+						  <li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body2 MuiTypography-colorInherit" style="margin-bottom: 0px;">{{group.title}}</p></li>
+					  </ol>
+				  </nav>
+				  <h5 class="MuiTypography-root jss54 MuiTypography-h5 MuiTypography-colorTextPrimary">{{group.title}}</h5>
+				  <div :class="{'open': titleOpen, 'jss55': true}">
+					  <p class="MuiTypography-root jss56 MuiTypography-body2">{{group.groupCaption}}</p>
+					  <button class="MuiButtonBase-root MuiIconButton-root jss57" tabindex="0" type="button">
+						  <span class="MuiIconButton-label">
+							  <svg ref="titleOpenBtn" @click="switchTitleOpen" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+								<path ref="titleOpenSvg" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
+							  </svg>
+						  </span>
+					  </button>
+					  <button class="MuiButtonBase-root MuiIconButton-root jss57" tabindex="0" type="button"><span class="MuiIconButton-label"><svg ref="titleCopyBtn" @click="copyGroupTitle" class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5H1v16c0 1.1.9 2 2 2h16v-2H3V5zm18-4H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 16H7V3h14v14z"></path></svg></span></button>
+				  </div>
 			  </div>
 		  </div>
 		  

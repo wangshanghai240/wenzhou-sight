@@ -11,7 +11,7 @@
 			<div class="content">
 				<div class="upload-container">
 					<div v-for="(image, index) in fileList" v-bind:key="image.uid"
-					 :class="{'image-preview': true, 'selected': image.uid===selectedImageUid}" @click="selectImage(image.uid, index)">
+					 :class="{'image-preview': resourceType !=='vector', 'selected': image.uid===selectedImageUid, vector: resourceType==='vector'}" @click="selectImage(image.uid, index)">
 					 <!-- <div v-show="imageUrl.length>1" class="image-preview-wrapper">
 					    <img :src="imageUrl">
 					    <div class="image-preview-action">
@@ -26,10 +26,25 @@
 							@click="setCover(index)">
 							<span class="MuiButton-label">设为封面</span>
 						</button>
-					    <img :src="image.url">
+						<a-popover v-if="resourceType==='vector' && image.url" placement="rightBottom">
+							<template slot="content">上传源文件</template>
+							<a-button class="pre_file_upload_btn" alt="上传源文件" @click="triggerSourceUpload(image.uid)">
+								<a-icon type="upload" :style="{color: '#ffffff'}" alt="上传源文件"></a-icon>
+							</a-button>
+							<input style="display: none; z-index: -1;" type="file" :ref="'sourceFile' + image.uid" @change="setSourceFile($event, index)"/>
+						</a-popover>
+						 <img class="vector" v-if="resourceType==='vector'" :src="image.url"/>
+						<!-- <button v-if="resourceType==='vector'" class="MuiButtonBase-root MuiButton-root MuiButton-text coverButton isCover MuiButton-textSizeSmall MuiButton-sizeSmall MuiButton-disableElevation Mui-disabled Mui-disabled" tabindex="-1" type="button" disabled="">
+						 	<span class="MuiButton-label">设置源图</span>
+						 </button> -->
+					     <img class="picture" v-if="resourceType==='picture'" :src="image.url"/>
+						 <video v-if="resourceType==='video'" :src="image.url" controls="controls">您的浏览器不支持视频播放</video>
 					    <!-- <div class="image-preview-action">
 					      <i class="el-icon-delete" @click="rmImage(index)" />
 					    </div> -->
+						<a-progress type="circle" v-if="resourceType!=='vector' && uploading && !image.url"
+							style="position: absolute; left: 30px; margin-top: 10px;"
+							:percent="uploadPercent"></a-progress>
 					  </div>
 					</div>
 					
@@ -38,6 +53,7 @@
 				    :http-request="customUpload"
 				    :action="fileUpload"
 				    :before-upload="beforeUpload"
+					:on-progress="uploadProgress"
 				    :with-credentials="true"
 				    :show-file-list="false"
 				    class="avatar-uploader"
@@ -46,7 +62,7 @@
 				    <div class="choose_picture">
 						  <a-icon :style="{marginTop: '56px', height: '0px'}" size="large" type="plus" ></a-icon>
 						  <span>
-							  请选择{{resourceType==='picture'?'图片':'视频'}}
+							  请选择{{resourceTypeName}}
 						  </span>
 					  </div>
 				  </el-upload>
@@ -92,8 +108,8 @@
 						</div>
 					</a-form-model-item>
 					
-					<div  class="group_title">
-						图片信息
+					<div class="group_title">
+						{{resourceTypeName}}信息
 					</div>
 					<a-form-model-item label="摄影师">
 						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].creditLine" placeholder="请输入摄影师"></a-input>
@@ -118,7 +134,7 @@
 					<a-form-model-item label="拍摄时间">
 						<a-date-picker size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].shootTime" placeholder="请输入拍摄时间" valueFormat="x" />
 					</a-form-model-item>
-					<a-form-model-item label="图片说明">
+					<a-form-model-item :label="resourceTypeName + '说明'">
 						<a-textarea :rows="2" size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].caption" placeholder="点击输入说明(1000字以内)说明需要包括年、月、日、地点，画面本身的内容"></a-textarea>
 					</a-form-model-item>
 					<a-form-model-item label="关键词">
@@ -176,10 +192,28 @@
 		}]
 	})
 	
+	const resourceTypeInfos = {
+		picture: {
+			assetType: 1,
+			cname: '图片' 
+		},
+		vector: {
+			assetType: 2,
+			cname: '设计素材' 
+		},
+		video: {
+			assetType: 3,
+			cname: '视频' 
+		}
+	}
+	
 	export default { 
 		data() {
 			return {
 				resourceType: 'picture',
+				resourceTypeName: '图片',
+				uploading: false,
+				uploadPercent: 0,
 				
 				provinceData: city,
 				categoryList: [],
@@ -232,18 +266,22 @@
 			// 		console.log('done')
 			// 	}
 			// }
-			// customUpload(file) {
-			//   upload(file).then(res => {
-			//     const { code, msg, data } = res
-			//     if (code == 200) {
-			// 		console.log("data:" + data)
-			// 		console.log(file.file)
-			//       this.fileList.push({uid: file.file.uid, name: file.file.filename, status: 'done', url: this.$store.state.uploadedFilePrefix + data})
-			//     } else {
-			//       this.$message.error('上传失败:' + m)
-			//     }
-			//   })
-			// }
+			triggerSourceUpload(uid) {
+				this.$refs['sourceFile' + uid][0].click()
+			},
+			setSourceFile(event, index) {
+				if(event.target.files.length > 0) {
+					var file  = event.target.files[0]
+					upload({file: file}).then(res => {
+						const { code, msg, data } = res
+						if (code == 200) {
+						  this.uploadInfoForm.assetsList[index].source = data
+						} else {
+						  this.$message.error('上传失败:' + m)
+						}
+					})
+				}
+			},
 			save(isDraft) {
 				this.uploadInfoForm.isDraft = isDraft?1:0
 				if(this.uploadInfoForm.assetsList.length === 1 && !this.uploadInfoForm.assetsList[0].ossYuantu) {
@@ -251,7 +289,18 @@
 					return
 				}
 				
-				this.$refs.uploadInfoForm.validate((valid)=>{
+				this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
+				
+				this.$refs.uploadInfoForm.validate((valid, err)=>{
+					// var reallyInValid = this.uploadInfoForm.groupKeywordArr.length == 0
+					// for(var i in err) {
+					// 	if(i !== 'groupKeywords') {
+					// 		reallyInValid = true
+					// 	} else if(this.uploadInfoForm.groupKeywordArr.length > 0) {
+					// 		this.$refs.uploadInfoForm.clearValidate('groupKeywords')
+					// 	}
+					// }
+					
 					if(valid) {
 						for(var i in this.uploadInfoForm.assetsList) {
 							if(this.uploadInfoForm.assetsList[i].isSurface) {
@@ -259,12 +308,13 @@
 								break
 							}
 						}
-						this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
+						
+						const assetType = resourceTypeInfos[this.resourceType].assetType
 						this.uploadInfoForm.assetsList.forEach((item, index) => {
 							item.keywords = item.keywordArr.join(',')
 							item.people = item.peopleArr.join(',')
 							item.groupIndex = index
-							item.assetType = 1
+							item.assetType = assetType
 							item.area = "中国"
 							var province = this.provinceData[item.firstCityIndex].label
 							var city = this.provinceData[item.firstCityIndex].children[item.secondCityIndex].label
@@ -306,46 +356,10 @@
 			    }
 			  })
 			},
-			handleAvatarSuccess(data, file, fileList) {
-			  if (data) {
-			    this.emitInput(data)
-			  }
-			
-			  const uid = file.uid
-			  const objKeyArr = Object.keys(this.listObj)
-			  for (let i = 0, len = objKeyArr.length; i < len; i++) {
-			    if (this.listObj[objKeyArr[i]].uid === uid) {
-					var url = this.uploadedFilePrefix + '/' + data
-				  this.listObj[objKeyArr[i]].url = url
-				  this.listObj[objKeyArr[i]].hasSuccess = true
-				  this.listObj[objKeyArr[i]].status = 'ready'
-				  this.fileList.push(this.listObj[objKeyArr[i]])
-				  if(this.fileList.length === 1) {
-					  this.selectedImageIndex = 0
-					  this.selectedImageUid = uid
-					  this.uploadInfoForm.assetsList[0].ossYuantu = url
-					  this.fileList[0].isSurface = true
-					  this.uploadInfoForm.assetsList[0].isSurface = true
-					  this.canCommit = true
-				  } else {
-					  this.uploadInfoForm.assetsList.push({
-						  creditLine: this.name,
-						  signature: this.name,
-						  shootTime: '',
-						  location: '',
-						  area: "",
-						  firstCityIndex: 0,
-						  caption: '',
-						  keywords: '',
-						  people: '',
-						  keywordArr: [],
-						  peopleArr: [],
-						  ossYuantu: url
-					  })
-				  }
-				  return
-			    }
-			  }
+			uploadProgress(event, file, fileList) {
+				console.log(event)
+				console.log(file)
+				this.uploadPercent = file.percentage.toFixed(0) * 1
 			},
 			assureOneAsset() {
 				if(this.uploadInfoForm.assetsList.length == 0) {
@@ -356,6 +370,7 @@
 					  location: '',
 					  area: "",
 					  firstCityIndex: 0,
+					  secondCityIndex: 0,
 					  caption: '',
 					  keywords: '',
 					  people: '',
@@ -383,24 +398,107 @@
 			  // this.$emit('input', val)
 			},
 			beforeUpload(file) {
+			  if(this.resourceType === 'video') {
+				  const isLt10M = file.size / 1024 / 1024  < 10;
+				  if (['video/mp4', 'video/ogg', 'video/flv','video/avi','video/wmv','video/rmvb'].indexOf(file.type) == -1) {
+					  this.$message.error('请上传正确的视频格式');
+					  return false;
+				  }
+				  if (!isLt10M) {
+					  this.$message.error('上传视频大小不能超过10MB哦!');
+					  return false;
+				  }
+				  this.uploadPercent = 0
+				  const interval = setInterval(() => {
+					if (this.uploadPercent >= 99) {
+					  clearInterval(interval)
+					  return
+					}
+					this.uploadPercent += 1 //进度条进度
+				  }, 200)
+				  
+			  }
+			  
+				
 			  const fileName = file.uid
 			  if(!this.selectedImageUid) {
 				this.selectedImageUid = fileName
 			  }
-			  this.listObj[fileName] = {}
+			  this.listObj[fileName] = {name: file.name, status: '', hasSuccess: false, uid: file.uid}
+			  this.fileList.push({name: file.name, status: '', hasSuccess: false, uid: file.uid})
+			  this.uploading = true
+			  this.uploadPercent = 0
 			  
-			  const img = new Image()
-			  const _URL = window.URL || window.webkitURL
-			  img.src = _URL.createObjectURL(file)
-			  this.emitInput(img.src)
+			  if(this.resourceType === 'picture') {
+				  const img = new Image()
+				  const _URL = window.URL || window.webkitURL
+				  img.src = _URL.createObjectURL(file)
+				  this.emitInput(img.src)
+				  
+				  const _self = this
+				  return new Promise((resolve, reject) => {
+				    img.onload = function() {
+				      _self.listObj[fileName] = { name: file.name, status: '', hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
+				    }
+				    resolve(true)
+				  })
+			  } else {
+				  return true
+			  }
+			},
+			addUrl(uid, url) {
+				if(this.fileList.length === 1) {
+				  this.selectedImageIndex = 0
+				  this.selectedImageUid = uid
+				  this.uploadInfoForm.assetsList[0].ossYuantu = url
+				  this.fileList[0].isSurface = true
+				  this.uploadInfoForm.assetsList[0].isSurface = true
+				  this.canCommit = true
+				} else {
+				  this.uploadInfoForm.assetsList.push({
+					  creditLine: this.name,
+					  signature: this.name,
+					  shootTime: '',
+					  location: '',
+					  area: "",
+					  firstCityIndex: 0,
+					  secondCityIndex: 0,
+					  caption: '',
+					  keywords: '',
+					  people: '',
+					  keywordArr: [],
+					  peopleArr: [],
+					  ossYuantu: url
+				  })
+				}
+			},
+			handleAvatarSuccess(data, file, fileList) {
+			  if (data) {
+			    this.emitInput(data)
+			  }
+			  var url = this.uploadedFilePrefix + '/' + data
+			  
+			  // if(this.resourceType === 'video') {
+				 //  this.fileList.push({url: url, name: file.name, status: 'ready', hasSuccess: true, uid: file.uid})
+				 //  this.addUrl(file.uid, url)
+				 //  return
+			  // }
 			
-			  const _self = this
-			  return new Promise((resolve, reject) => {
-			    img.onload = function() {
-			      _self.listObj[fileName] = { name: file.name, status: '', hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
+			  const uid = file.uid
+			  const objKeyArr = Object.keys(this.listObj)
+			  for (let i = 0, len = objKeyArr.length; i < len; i++) {
+			    if (this.listObj[objKeyArr[i]].uid === uid) {
+				  this.listObj[objKeyArr[i]].url = url
+				  this.listObj[objKeyArr[i]].hasSuccess = true
+				  this.listObj[objKeyArr[i]].status = 'ready'
+				  this.fileList[this.fileList.length - 1] = this.listObj[objKeyArr[i]]
+				  this.addUrl(uid, url)
+				  this.uploadPercent = 100
+				  // console.log(this.fileList[this.fileList.length - 1])
+				  break
 			    }
-			    resolve(true)
-			  })
+			  }
+			  this.uploading = false
 			},
 			moveToFirst() {
 				if(this.fileList.length < 2) {
@@ -462,6 +560,7 @@
 				// 	}
 				// })
 			},
+			
 			setCover(index) {
 				this.fileList.forEach(item => {
 					item.isSurface = false
@@ -473,6 +572,7 @@
 				this.uploadInfoForm.assetsList[index].isSurface = true
 				this.$forceUpdate()
 			},
+			
 			changeKeywords(e, keywordField) {
 				if(e.data === ' ') {
 					this.createKeywordLabel(keywordField)
@@ -515,6 +615,8 @@
 			if(this.$route.query.resourceType) {
 				this.resourceType = this.$route.query.resourceType
 			}
+			this.uploadInfoForm.assetType = resourceTypeInfos[this.resourceType].assetType
+			this.resourceTypeName = resourceTypeInfos[this.resourceType].cname
 		}
 	}
 </script>
@@ -767,6 +869,23 @@
 	    width: 100%;
 	    position: relative;
 		
+		.pre_file_upload_btn {
+			position: absolute;
+			top: 20px;
+			right: 30px;
+			z-index: 100;
+			// opacity: 0.5;
+			background: transparent;
+		}
+		
+		// .pre_file_upload_btn:hover:after {
+		// 	content: '上传源文件';
+		// }
+		
+		// .pre_file_upload_btn:hover > svg {
+		// 	color: rgb(255,77,80);
+		// }
+		
 	    &:after {
 	      content: "";
 	      display: table;
@@ -800,6 +919,13 @@
 					margin-top: 1%;
 					object-fit: contain;
 	            }
+				video {
+					width: 97%;
+					height: 97%;
+					margin: auto;
+					margin-top: 1%;
+					object-fit: contain;
+				}
 	        }
 	        // .image-preview-action {
 	        //     position: absolute;
@@ -840,7 +966,44 @@
 			
 	    }
 		
+		.vector{
+			height: 200px;
+			position: relative;
+			border: 1px dashed #d9d9d9;
+			float: left;
+			margin: 10px;
+			border-radius: 3%;
+			
+			.image-preview-wrapper {
+				display: flex;
+				justify-content: center;
+				position: relative;
+				height: 100%;
+				border: 2px;
+				img {
+					height: 97%;
+					margin: auto;
+					margin-top: 1%;
+					object-fit: contain;
+				}
+			}
+			.isNotCover {
+				opacity: 0;
+				display: block;
+			}
+			
+			&:hover {
+			    .isNotCover {
+			        opacity: 1;
+			    }
+			}
+		}			
+		
 		.image-preview.selected {
+			border: 2px solid #556cd6;
+		}
+		
+		.cover.selected {
 			border: 2px solid #556cd6;
 		}
 		
