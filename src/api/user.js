@@ -12,6 +12,13 @@ export function submitResGroup(data) {
 	})
 }
 
+export function myUploads() {
+	return request({
+		url: '/upload/myUploads',
+		method: 'GET'
+	})
+}
+
 export function upload(file) {
   let param = new FormData()
   param.append('file',file.file)

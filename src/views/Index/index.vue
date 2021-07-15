@@ -19,14 +19,20 @@
 		<a-dropdown placement="bottomCenter">
 			<img class="head-upload-img" src="@/assets/img/home/upload.png" alt=""/>
 			<a-menu slot="overlay">
-				<router-link to="/upload-picture">
-					<a rel="noopener noreferrer">图片上传</a>
-				</router-link>
 				<a-menu-item>
-					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/vector">设计素材上传</a>
+					<router-link to="/upload-picture">
+						<a rel="noopener noreferrer">图片上传</a>
+					</router-link>
 				</a-menu-item>
 				<a-menu-item>
-					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/upload/video">视频上传</a>
+					<router-link to="/upload-picture">
+						<a rel="noopener noreferrer">设计素材上传</a>
+					</router-link>
+				</a-menu-item>
+				<a-menu-item>
+					<router-link to="/upload-picture?resourceType=video">
+						<a rel="noopener noreferrer">视频上传</a>
+					</router-link>
 				</a-menu-item>
 				<a-menu-item>
 					<a target="_blank" rel="noopener noreferrer" href="http://wenzhou.vcgvip.com/works/upload">文档上传</a>

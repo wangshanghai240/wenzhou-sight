@@ -3,7 +3,7 @@
 		<div class="left_wrapper">
 			<div class="header">
 				<div style="float:right;" class="head_buttons">
-					<a-button type="info" @click="deleteImg">删除</a-button>
+					<a-button type="info" @click="showDeleteImgDialog">删除</a-button>
 					<a-button type="info" @click="moveToFirst">置于最前</a-button>
 					<a-button type="info" @click="moveToLast">置于最后</a-button>
 				</div>
@@ -46,7 +46,7 @@
 				    <div class="choose_picture">
 						  <a-icon :style="{marginTop: '56px', height: '0px'}" size="large" type="plus" ></a-icon>
 						  <span>
-							  请选择图片
+							  请选择{{resourceType==='picture'?'图片':'视频'}}
 						  </span>
 					  </div>
 				  </el-upload>
@@ -57,7 +57,7 @@
 		
 		<div class="right_wrapper">
 			<div class="header">
-				<a-button type="danger" @click="save(true)">保存草稿</a-button>
+				<!-- <a-button :disabled="!canCommit" type="danger" style="background-color: #34BF49; border-color: #34BF49;" @click="save(true)">保存草稿</a-button> -->
 				<a-button :disabled="!canCommit" type="danger"  @click="save(false)">提交</a-button>
 			</div>
 			<div class="content">
@@ -102,14 +102,14 @@
 						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].signature" placeholder="请输入署名"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="拍摄地点">
-						<a-select default-value="0" v-model="firstCityIndex" style="width: 120px;margin-right: 4px">
+						<a-select default-value="0" v-model="uploadInfoForm.assetsList[selectedImageIndex].firstCityIndex" style="width: 120px;margin-right: 4px">
 							<a-select-option v-for="(province, index) in provinceData" :key="index">
 								{{ province.label }}
 							</a-select-option>
 						</a-select>
-						<a-select default-value="0" v-model="secondCityIndex"
+						<a-select default-value="0" v-model="uploadInfoForm.assetsList[selectedImageIndex].secondCityIndex"
 							style="width: 120px">
-							<a-select-option v-for="(city, index) in provinceData[firstCityIndex].children" :key="index">
+							<a-select-option v-for="(city, index) in provinceData[uploadInfoForm.assetsList[selectedImageIndex].firstCityIndex].children" :key="index">
 								{{ city.label }}
 							</a-select-option>
 						</a-select>
@@ -154,12 +154,16 @@
 				</a-form-model>
 			</div>
 		</div>
+		
+		<a-modal title="确定删除" :visible="deleteImgVisible" @ok="deleteImg" @cancel="deleteImgVisible=false">
+			您确定要删除该资源？
+		</a-modal>
 	</div>
 </template>
 
 <script>
 	import { mapGetters } from 'vuex'
-	import { upload, submitResGroup } from '@/api/user'
+	import { upload, submitResGroup, myUploads } from '@/api/user'
 	import { categories } from '@/api/index'
 	import city from '@/store/area'
 	
@@ -175,10 +179,11 @@
 	export default { 
 		data() {
 			return {
+				resourceType: 'picture',
+				
 				provinceData: city,
-				firstCityIndex: 0,
-				secondCityIndex: 0,
 				categoryList: [],
+				
 				canCommit: false,
 				uploadInfoForm: {
 					sortStr: '',
@@ -210,7 +215,8 @@
 				listObj: {},
 				fileList: [],
 				selectedImageUid: '',
-				selectedImageIndex: 0
+				selectedImageIndex: 0,
+				deleteImgVisible: false
 			}
 		},
 		computed: {
@@ -244,28 +250,42 @@
 					this.$message.error('请至少上传一个资源')
 					return
 				}
-				for(var i in this.uploadInfoForm.assetsList) {
-					if(this.uploadInfoForm.assetsList[i].isSurface) {
-						this.uploadInfoForm.surfacePhoto = this.uploadInfoForm.assetsList[i].ossYuantu
-						break
+				
+				this.$refs.uploadInfoForm.validate((valid)=>{
+					if(valid) {
+						for(var i in this.uploadInfoForm.assetsList) {
+							if(this.uploadInfoForm.assetsList[i].isSurface) {
+								this.uploadInfoForm.surfacePhoto = this.uploadInfoForm.assetsList[i].ossYuantu
+								break
+							}
+						}
+						this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
+						this.uploadInfoForm.assetsList.forEach((item, index) => {
+							item.keywords = item.keywordArr.join(',')
+							item.people = item.peopleArr.join(',')
+							item.groupIndex = index
+							item.assetType = 1
+							item.area = "中国"
+							var province = this.provinceData[item.firstCityIndex].label
+							var city = this.provinceData[item.firstCityIndex].children[item.secondCityIndex].label
+							if(province!=='请选择') {
+								item.area += "/" + province
+							}
+							if(city!=='请选择') {
+								item.area += "/" + city
+							}
+						})
+						// this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
+						this.uploadInfoForm.onlineState = 2
+						submitResGroup(this.uploadInfoForm).then(res => {
+							this.$message.success('上传成功')
+							this.uploadInfoForm.groupKeywords = ''
+							this.uploadInfoForm.assetsList.forEach(item => {
+								item.keywords = ''
+								item.people = ''
+							})
+						})
 					}
-				}
-				this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
-				this.uploadInfoForm.assetsList.forEach((item, index) => {
-					item.keywords = item.keywordArr.join(',')
-					item.people = item.peopleArr.join(',')
-					item.groupIndex = index
-					item.assetType = 1
-				})
-				// this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
-				this.uploadInfoForm.onlineState = 2
-				submitResGroup(this.uploadInfoForm).then(res => {
-					this.$message.success('上传成功')
-					this.uploadInfoForm.groupKeywords = ''
-					this.uploadInfoForm.assetsList.forEach(item => {
-						item.keywords = ''
-						item.people = ''
-					})
 				})
 			},
 			setGroupCategory(categoryId, categoryName) {
@@ -313,7 +333,8 @@
 						  signature: this.name,
 						  shootTime: '',
 						  location: '',
-						  area: "中国/" + this.provinceData[this.firstCityIndex].label + "/" + this.provinceData[this.firstCityIndex].children[this.secondCityIndex].label,
+						  area: "",
+						  firstCityIndex: 0,
 						  caption: '',
 						  keywords: '',
 						  people: '',
@@ -333,7 +354,8 @@
 					  signature: this.name,
 					  shootTime: '',
 					  location: '',
-					  area: "中国/浙江省/温州市",
+					  area: "",
+					  firstCityIndex: 0,
 					  caption: '',
 					  keywords: '',
 					  people: '',
@@ -361,21 +383,19 @@
 			  // this.$emit('input', val)
 			},
 			beforeUpload(file) {
-			  const _self = this
-			  const _URL = window.URL || window.webkitURL
-			  // console.log(file)
 			  const fileName = file.uid
 			  if(!this.selectedImageUid) {
 				this.selectedImageUid = fileName
 			  }
 			  this.listObj[fileName] = {}
+			  
 			  const img = new Image()
+			  const _URL = window.URL || window.webkitURL
 			  img.src = _URL.createObjectURL(file)
 			  this.emitInput(img.src)
 			
+			  const _self = this
 			  return new Promise((resolve, reject) => {
-			    const img = new Image()
-			    img.src = _URL.createObjectURL(file)
 			    img.onload = function() {
 			      _self.listObj[fileName] = { name: file.name, status: '', hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
 			    }
@@ -410,8 +430,14 @@
 				this.uploadInfoForm.assetsList.push(temp[0])
 				this.selectedImageIndex = this.fileList.length-1
 			},
+			showDeleteImgDialog() {
+				if(this.selectedImageIndex === -1 || this.fileList.length == 0) {
+					return
+				}
+				this.deleteImgVisible = true
+			},
 			deleteImg() {
-				if(this.selectedImageIndex === -1) {
+				if(this.selectedImageIndex === -1 || this.fileList.length == 0) {
 					return
 				}
 				this.fileList.splice(this.selectedImageIndex, 1)
@@ -424,6 +450,17 @@
 					this.selectedImageIndex = 0
 					this.assureOneAsset()
 				}
+				this.deleteImgVisible = false
+				// this.$confirm({
+				// 	title: '确定删除',
+				// 	content: '您确认要删除该资源？',
+				// 	okText: '确定',
+				// 	okType: 'danger',
+				// 	cancelText: '取消',
+				// 	onOk() {
+						
+				// 	}
+				// })
 			},
 			setCover(index) {
 				this.fileList.forEach(item => {
@@ -442,6 +479,9 @@
 				}
 			},
 			createKeywordLabel(keywordField) {
+				if(!this.uploadInfoForm.groupKeywords.trim()) {
+					return
+				}
 				this.uploadInfoForm[keywordField.substring(0, keywordField.length-1) + 'Arr'].push(this.uploadInfoForm.groupKeywords.trim())
 				this.uploadInfoForm[keywordField] = ''
 			},
@@ -455,6 +495,9 @@
 			},
 			createAssetKeywordLabel(keywordField, keywordArrField) {
 				var asset = this.uploadInfoForm.assetsList[this.selectedImageIndex]
+				if(!asset[keywordField].trim()) {
+					return
+				}
 				asset[keywordArrField].push(asset[keywordField].trim())
 				asset[keywordField] = ''
 			},
@@ -462,12 +505,16 @@
 				var asset = this.uploadInfoForm.assetsList[this.selectedImageIndex]
 				asset[keywordArrField].splice(index, 1)
 			}
+			
 		},
 		created() {
 			categories().then(res => {
 				this.categoryList = res.data
 			})
 			this.assureOneAsset()
+			if(this.$route.query.resourceType) {
+				this.resourceType = this.$route.query.resourceType
+			}
 		}
 	}
 </script>
@@ -515,6 +562,9 @@
 			.header > button {
 				margin: 5px;
 				width: 40%;
+				float: left;
+				margin-left: 35px;
+				margin-top: 20px;
 			}
 			
 			.group_title {
