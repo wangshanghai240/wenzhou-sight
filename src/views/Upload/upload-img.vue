@@ -61,22 +61,22 @@
 				<a-button :disabled="!canCommit" type="danger"  @click="save(false)">提交</a-button>
 			</div>
 			<div class="content">
-				<a-form-model :model="uploadInfoForm" style="text-align: left;" >
+				<a-form-model ref="uploadInfoForm" :model="uploadInfoForm" :rules="uploadInfoFormRules" style="text-align: left;" >
 					<div class="group_title">
 						组信息
 					</div>
-					<a-form-model-item label="组照标题">
+					<a-form-model-item label="组照标题" prop="groupTitle">
 						<a-input size="large" v-model="uploadInfoForm.groupTitle" placeholder="请输入组照标题"></a-input>
 					</a-form-model-item>
-					<a-form-model-item label="组照说明">
+					<a-form-model-item label="组照说明" prop="groupCaption">
 						<a-input size="large" v-model="uploadInfoForm.groupCaption" placeholder="请输入组照说明"></a-input>
 					</a-form-model-item>
-					<a-form-model-item label="组照分类">
+					<a-form-model-item label="组照分类" prop="categoryId">
 						<a-select size="large" v-model="uploadInfoForm.categoryId">
 							<a-select-option v-for="category in categoryList" @click="setGroupCategory(category.id, category.cname)" v-bind:key="category.id">{{category.cname}}</a-select-option>
 						</a-select>
 					</a-form-model-item>
-					<a-form-model-item label="组照关键词">
+					<a-form-model-item label="组照关键词" prop="groupKeywords">
 						<div class="keywords_border MuiInputBase-root MuiOutlinedInput-root jss207 jss210 MuiInputBase-formControl MuiInputBase-adornedStart MuiOutlinedInput-adornedStart">
 							<div
 								v-for="(keyword, index) in uploadInfoForm.groupKeywordArr"
@@ -88,7 +88,7 @@
 								</svg>
 							</div>
 							
-							<a-input size="large" @pressEnter="createKeywordLabel('groupKeywords')" @change="changeKeywords($event, 'groupKeywords')" v-model="uploadInfoForm.groupKeywords" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @blur="createKeywordLabel('groupKeywords')" @pressEnter="createKeywordLabel('groupKeywords')" @change="changeKeywords($event, 'groupKeywords')" v-model="uploadInfoForm.groupKeywords" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 					
@@ -102,10 +102,21 @@
 						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].signature" placeholder="请输入署名"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="拍摄地点">
+						<a-select default-value="0" v-model="firstCityIndex" style="width: 120px;margin-right: 4px">
+							<a-select-option v-for="(province, index) in provinceData" :key="index">
+								{{ province.label }}
+							</a-select-option>
+						</a-select>
+						<a-select default-value="0" v-model="secondCityIndex"
+							style="width: 120px">
+							<a-select-option v-for="(city, index) in provinceData[firstCityIndex].children" :key="index">
+								{{ city.label }}
+							</a-select-option>
+						</a-select>
 						<a-input size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].location" placeholder="请输入拍摄地点"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="拍摄时间">
-						<a-date-picker size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].shootTime" placeholder="请输入拍摄时间" valueFormat="YYYY-MM-DD" />
+						<a-date-picker size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].shootTime" placeholder="请输入拍摄时间" valueFormat="x" />
 					</a-form-model-item>
 					<a-form-model-item label="图片说明">
 						<a-textarea :rows="2" size="large" v-model="uploadInfoForm.assetsList[selectedImageIndex].caption" placeholder="点击输入说明(1000字以内)说明需要包括年、月、日、地点，画面本身的内容"></a-textarea>
@@ -122,7 +133,7 @@
 								</svg>
 							</div>
 							
-							<a-input size="large" @pressEnter="createAssetKeywordLabel('keywords', 'keywordArr')" @change="changeAssetKeywords($event, 'keywords', 'keywordArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].keywords" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @blur="createAssetKeywordLabel('keywords', 'keywordArr')" @pressEnter="createAssetKeywordLabel('keywords', 'keywordArr')" @change="changeAssetKeywords($event, 'keywords', 'keywordArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].keywords" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 					<a-form-model-item label="人物关键词">
@@ -137,7 +148,7 @@
 								</svg>
 							</div>
 							
-							<a-input size="large" @pressEnter="createAssetKeywordLabel('people', 'peopleArr')" @change="changeAssetKeywords($event, 'people', 'peopleArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].people" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @blur="createAssetKeywordLabel('people', 'peopleArr')" @pressEnter="createAssetKeywordLabel('people', 'peopleArr')" @change="changeAssetKeywords($event, 'people', 'peopleArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].people" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 				</a-form-model>
@@ -150,10 +161,23 @@
 	import { mapGetters } from 'vuex'
 	import { upload, submitResGroup } from '@/api/user'
 	import { categories } from '@/api/index'
+	import city from '@/store/area'
+	
+	city.unshift({
+		"value": "0",
+		"label": "请选择",
+		"children": [{
+			"value": "-1",
+			"label": "请选择"
+		}]
+	})
 	
 	export default { 
 		data() {
 			return {
+				provinceData: city,
+				firstCityIndex: 0,
+				secondCityIndex: 0,
 				categoryList: [],
 				canCommit: false,
 				uploadInfoForm: {
@@ -167,6 +191,20 @@
 					tagPath: '',
 					assetType: 1,
 					assetsList: []
+				},
+				uploadInfoFormRules: {
+					groupTitle: [
+						{required: true, message: '组照标题不能为空'}
+					],
+					groupCaption: [
+						{required: true, message: '组照说明不能为空'}
+					],
+					categoryId: [
+						{required: true, message: '请选择一个组照分类'}
+					],
+					groupKeywords: [
+						{required: true, message: '请填写组照关键词'}
+					],
 				},
 				loading: false,
 				listObj: {},
@@ -213,11 +251,14 @@
 					}
 				}
 				this.uploadInfoForm.groupKeywords = this.uploadInfoForm.groupKeywordArr.join(',')
-				this.uploadInfoForm.assetsList.forEach(item => {
+				this.uploadInfoForm.assetsList.forEach((item, index) => {
 					item.keywords = item.keywordArr.join(',')
 					item.people = item.peopleArr.join(',')
+					item.groupIndex = index
+					item.assetType = 1
 				})
-				this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
+				// this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
+				this.uploadInfoForm.onlineState = 2
 				submitResGroup(this.uploadInfoForm).then(res => {
 					this.$message.success('上传成功')
 					this.uploadInfoForm.groupKeywords = ''
@@ -265,13 +306,14 @@
 					  this.uploadInfoForm.assetsList[0].ossYuantu = url
 					  this.fileList[0].isSurface = true
 					  this.uploadInfoForm.assetsList[0].isSurface = true
+					  this.canCommit = true
 				  } else {
 					  this.uploadInfoForm.assetsList.push({
 						  creditLine: this.name,
 						  signature: this.name,
 						  shootTime: '',
 						  location: '',
-						  area: "中国/浙江省/温州市",
+						  area: "中国/" + this.provinceData[this.firstCityIndex].label + "/" + this.provinceData[this.firstCityIndex].children[this.secondCityIndex].label,
 						  caption: '',
 						  keywords: '',
 						  people: '',
@@ -300,6 +342,7 @@
 					  ossYuantu: ''
 					})
 					this.selectedImageIndex = 0
+					this.canCommit = false
 				}
 			},
 			rmImage(index) {
