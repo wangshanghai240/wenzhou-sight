@@ -24,7 +24,7 @@ export function activityDetail(id) {
 
 export function hotTopicList() {
 	return request({
-	  url: 'index/hotListMore',
+	  url: 'index/hotList',
 	  method: 'get'
 	})
 }
