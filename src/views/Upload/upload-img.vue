@@ -31,7 +31,7 @@
 							<a-button class="pre_file_upload_btn" alt="上传源文件" @click="triggerSourceUpload(image.uid)">
 								<a-icon type="upload" :style="{color: '#ffffff'}" alt="上传源文件"></a-icon>
 							</a-button>
-							<input style="display: none; z-index: -1;" type="file" :ref="'sourceFile' + image.uid" @change="setSourceFile($event, index)"/>
+							<input style="display: none; z-index: -1;" type="file" :ref="'sourceFile' + image.uid" @change="setSourceFile($event, index)" />
 						</a-popover>
 						 <img class="vector" v-if="resourceType==='vector'" :src="image.url"/>
 						<!-- <button v-if="resourceType==='vector'" class="MuiButtonBase-root MuiButton-root MuiButton-text coverButton isCover MuiButton-textSizeSmall MuiButton-sizeSmall MuiButton-disableElevation Mui-disabled Mui-disabled" tabindex="-1" type="button" disabled="">
@@ -88,9 +88,7 @@
 						<a-input size="large" v-model="uploadInfoForm.groupCaption" placeholder="请输入组照说明"></a-input>
 					</a-form-model-item>
 					<a-form-model-item label="组照分类" prop="categoryId">
-						<a-select size="large" v-model="uploadInfoForm.categoryId">
-							<a-select-option v-for="category in categoryList" @click="setGroupCategory(category.id, category.cname)" v-bind:key="category.id">{{category.cname}}</a-select-option>
-						</a-select>
+						<a-cascader placeholder="请选择分类" :options="categoryList" change-on-select @change="changeCategoryId($event)"></a-cascader>
 					</a-form-model-item>
 					<a-form-model-item label="组照关键词" prop="groupKeywords">
 						<div class="keywords_border MuiInputBase-root MuiOutlinedInput-root jss207 jss210 MuiInputBase-formControl MuiInputBase-adornedStart MuiOutlinedInput-adornedStart">
@@ -179,18 +177,20 @@
 
 <script>
 	import { mapGetters } from 'vuex'
-	import { upload, submitResGroup, myUploads } from '@/api/user'
-	import { categories } from '@/api/index'
+	import { upload, submitResGroup, myUploads, uploadResourceV2 } from '@/api/user'
+	import { categoryTree } from '@/api/index'
 	import city from '@/store/area'
 	
-	city.unshift({
-		"value": "0",
-		"label": "请选择",
-		"children": [{
-			"value": "-1",
-			"label": "请选择"
-		}]
-	})
+	if(city[0].label!=='请选择') {
+		city.unshift({
+			"value": "0",
+			"label": "请选择",
+			"children": [{
+				"value": "-1",
+				"label": "请选择"
+			}]
+		})
+	}
 	
 	const resourceTypeInfos = {
 		picture: {
@@ -198,7 +198,7 @@
 			cname: '图片' 
 		},
 		vector: {
-			assetType: 2,
+			assetType: 11,
 			cname: '设计素材' 
 		},
 		video: {
@@ -229,7 +229,8 @@
 					groupKeywordArr: [],
 					tagPath: '',
 					assetType: 1,
-					assetsList: []
+					assetsList: [],
+					categoryId: ''
 				},
 				uploadInfoFormRules: {
 					groupTitle: [
@@ -266,6 +267,18 @@
 			// 		console.log('done')
 			// 	}
 			// }
+			changeCategoryId(event) {
+				console.log(event)
+				if(event.length > 0) {
+					this.uploadInfoForm.categoryId = event[event.length - 1]
+					this.uploadInfoForm.sortStr = event.join(',')
+				} else {
+					this.uploadInfoForm.categoryId = null
+					this.uploadInfoForm.sortStr = null
+				}
+				console.log(this.uploadInfoForm.categoryId)
+				// this.uploadInfoForm.sortName = categoryName
+			},
 			triggerSourceUpload(uid) {
 				this.$refs['sourceFile' + uid][0].click()
 			},
@@ -273,11 +286,19 @@
 				if(event.target.files.length > 0) {
 					var file  = event.target.files[0]
 					upload({file: file}).then(res => {
+						console.log(file)
+						var fileName = file.name
 						const { code, msg, data } = res
 						if (code == 200) {
-						  this.uploadInfoForm.assetsList[index].source = data
+						  console.log(this.uploadInfoForm.assetsList)
+						  this.uploadInfoForm.assetsList[index].assetFileList = [{
+							  assetFormat: fileName.substring(fileName.indexOf('.') + 1),
+							  fileName: fileName,
+							  fileUrl: this.uploadedFilePrefix + data
+						  }]
+						  console.log(this.uploadInfoForm.assetsList)
 						} else {
-						  this.$message.error('上传失败:' + m)
+						  this.$message.error('上传失败:' + msg)
 						}
 					})
 				}
@@ -310,9 +331,12 @@
 						}
 						
 						const assetType = resourceTypeInfos[this.resourceType].assetType
-						this.uploadInfoForm.assetsList.forEach((item, index) => {
+						var uploadInfoForm = this.deepClone(this.uploadInfoForm)
+						uploadInfoForm.assetsList.forEach((item, index) => {
 							item.keywords = item.keywordArr.join(',')
 							item.people = item.peopleArr.join(',')
+							delete item.keywordArr
+							delete item.peopleArr
 							item.groupIndex = index
 							item.assetType = assetType
 							item.area = "中国"
@@ -326,21 +350,22 @@
 							}
 						})
 						// this.uploadInfoForm.createTime = this.uploadInfoForm.shootTime
-						this.uploadInfoForm.onlineState = 2
-						submitResGroup(this.uploadInfoForm).then(res => {
-							this.$message.success('上传成功')
-							this.uploadInfoForm.groupKeywords = ''
-							this.uploadInfoForm.assetsList.forEach(item => {
-								item.keywords = ''
-								item.people = ''
+						uploadInfoForm.onlineState = 2
+						if(assetType === 11) {
+							uploadInfoForm.uploadAssetsVOS = uploadInfoForm.assetsList
+							delete uploadInfoForm.assetsList
+							uploadResourceV2(uploadInfoForm).then(res => {
+								this.$message.success('上传成功')
+								this.uploadInfoForm.groupKeywords = ''
 							})
-						})
+						} else {
+							submitResGroup(uploadInfoForm).then(res => {
+								this.$message.success('上传成功')
+								this.uploadInfoForm.groupKeywords = ''
+							})
+						}
 					}
 				})
-			},
-			setGroupCategory(categoryId, categoryName) {
-				this.uploadInfoForm.sortStr = categoryId
-				this.uploadInfoForm.sortName = categoryName
 			},
 			selectImage(uid, index) {
 				this.selectedImageUid = uid
@@ -352,7 +377,7 @@
 			    if (code == 200) {
 			      this.handleAvatarSuccess(data, file.file)
 			    } else {
-			      this.$message.error('上传失败:' + m)
+			      this.$message.error('上传失败:' + msg)
 			    }
 			  })
 			},
@@ -604,12 +629,21 @@
 			removeAssetKeyword(keywordField, keywordArrField, index) {
 				var asset = this.uploadInfoForm.assetsList[this.selectedImageIndex]
 				asset[keywordArrField].splice(index, 1)
+			},
+			fillCascaderProps(list) {
+				list.forEach(item => {
+					item.label = item.cname
+					item.value = item.id
+					if(item.children && item.children.length > 0) {
+						this.fillCascaderProps(item.children)
+					}
+				})
 			}
-			
 		},
 		created() {
-			categories().then(res => {
+			categoryTree().then(res => {
 				this.categoryList = res.data
+				this.fillCascaderProps(this.categoryList)
 			})
 			this.assureOneAsset()
 			if(this.$route.query.resourceType) {
@@ -966,7 +1000,7 @@
 			
 	    }
 		
-		.vector{
+		.vector {
 			height: 200px;
 			position: relative;
 			border: 1px dashed #d9d9d9;
@@ -982,6 +1016,8 @@
 				border: 2px;
 				img {
 					height: 97%;
+					min-width: 200px;
+					background-color: gray;
 					margin: auto;
 					margin-top: 1%;
 					object-fit: contain;

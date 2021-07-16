@@ -24,7 +24,8 @@ const store = new Vuex.Store({
 		token: state => state.token,
 		name: state => state.name,
 		fileUpload: state => 'http://wenzhou-sight.52br.net/api/upload/',
-		uploadedFilePrefix: state => state.uploadedFilePrefix
+		uploadedFilePrefix: state => state.uploadedFilePrefix,
+		needLoginPaths: state => ['/upload-picture']
 	},
     mutations: {
 		RESET_STATE: (state) => {

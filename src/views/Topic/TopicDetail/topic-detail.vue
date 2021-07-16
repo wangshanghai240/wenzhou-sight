@@ -1,7 +1,7 @@
 <template>
   <div class="topic-detail-wrapper">
     <div class="topic-intro-wrapper">
-      <img alt="" class="topic-img" :src="topic.picture"/>
+      <img alt="" class="topic-img" :src="topic.backgroundPic"/>
       <span class="topic-name">-{{topic.title}}-</span>
       <span class="topic-intro">{{topic.details}}</span>
       <span class="back-button" @click="backToTopcList()">返回热门专题</span>
@@ -14,7 +14,7 @@
 
 <script>
 import PicGroupSearchViewer from '@c/PicGroupSearchViewer'
-import { hotTopicDetail } from '@/api/index'
+import { hotTopicByHotId } from '@/api/index'
 
 export default {
   name: "topic-detail",
@@ -41,15 +41,18 @@ export default {
   },
   created() {
 	var hotId = this.$route.query.hotId
-	var picture = this.$route.query.picture
-	var title = this.$route.query.title
-	this.topic = {
-		hotId: hotId,
-		picture: picture,
-		title: title
-	}
+	// var picture = this.$route.query.picture
+	// var title = this.$route.query.title
+	// this.topic = {
+	// 	hotId: hotId,
+	// 	picture: picture,
+	// 	title: title
+	// }
+	hotTopicByHotId(hotId).then(res => {
+		this.topic = res.data
+	})
 	this.otherParams={
-		ids: [this.topic.hotId]
+		ids: [hotId]
 	}
 	this.$nextTick(() => {
 		this.$refs.topicPics.changePicGroupPage(1)

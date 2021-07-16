@@ -58,6 +58,14 @@ Vue.mixin({
 	} else {
 		this.selectedCategoryId = -1
 	}
+	this.needLogin = this.$store.getters.needLoginPaths.indexOf(to.path) !== -1
+	
+	// chrome
+	document.body.scrollTop = 0
+	// firefox
+	document.documentElement.scrollTop = 0
+	// safari
+	window.pageYOffset = 0
 	next()
   }
 });

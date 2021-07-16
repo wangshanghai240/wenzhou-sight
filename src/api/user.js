@@ -12,6 +12,17 @@ export function submitResGroup(data) {
 	})
 }
 
+export function uploadResourceV2(data) {
+	return request({
+		url: '/upload/uploadResourceV2',
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json'
+		},
+		data: JSON.stringify(data)
+	})
+}
+
 export function myUploads() {
 	return request({
 		url: '/upload/myUploads',

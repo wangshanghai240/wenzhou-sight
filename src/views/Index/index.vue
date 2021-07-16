@@ -6,7 +6,7 @@
              src="@/assets/img/logo.png" alt=""/>
         <img class="head-logo" style="cursor:pointer;" @click="toHome()" v-else src="@/assets/img/home/logo-color.png"
              alt=""/>
-        <div class="head-menu-list">
+        <div class="head-menu-list" v-show="!needLogin">
          <!-- <span class="head-menu" @click="$router.push('/index')">大美温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/672')">动感温州</span>
           <span class="head-menu" @click="redirect('http://wenzhou.vcgvip.com/844')">魅力温州</span> -->
@@ -96,7 +96,8 @@ export default {
 		categoryList: [],
 		selectedCategoryId: -1,
 		hoverCategoryId: -1,
-		headType: 'other'
+		headType: 'other',
+		needLogin: false
 	}
   },
   computed: {
@@ -131,8 +132,14 @@ export default {
 	}
   },
   created() {
+	  this.needLogin = this.$store.getters.needLoginPaths.indexOf(this.$route.path) !== -1
+	  // if(!this.needLogin) {
+		 //  categories().then(res => {
+			// this.categoryList = res.data
+		 //  })
+	  // }
 	  categories().then(res => {
-		  this.categoryList = res.data
+	  	this.categoryList = res.data
 	  })
   }
 }

@@ -213,7 +213,8 @@ export default {
 	  this.$router.push("/search-result");
 	},
     seeTopicDetail:function (hotTopicId, title, picture){
-      this.$router.push("/topic-detail?hotId=" + hotTopicId + "&title=" + title + "&picture=" + picture)
+      this.$router.push("/topic-detail?hotId=" + hotTopicId)
+	   // + "&title=" + title + "&picture=" + picture)
     },
     seeTopicMore:function(){
       this.$router.push("/topic-list")
