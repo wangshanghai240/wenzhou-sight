@@ -786,11 +786,11 @@
 						border-radius: 3px;
 						border: solid 1px #d9d9d9;
 						
-						input {
-							background:#ffffff !important;
-							border: none !important;
-							outline: none !important;
-						}
+						// input {
+						// 	background:#ffffff !important;
+						// 	border: none !important;
+						// 	outline: none !important;
+						// }
 						// input:focus {
 						// 	background:#ffffff !important;
 						// 	border: none !important;
@@ -823,9 +823,6 @@
 					}
 					.keywords_border .ant-input:focus{
 						border-color:#cf4529;
-					}
-					.ant-input:focus{
-						box-shadow: none;
 					}
 				}
 			}

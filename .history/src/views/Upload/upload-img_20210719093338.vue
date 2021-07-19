@@ -721,6 +721,10 @@
 					    padding-top: 8px;
 					}
 					
+					.MuiOutlinedInput-adornedStart {
+					    padding-left: 14px;
+					}
+					
 					.jss221 {
 					    float: left;
 					    margin: 6px 8px 8px 0;
@@ -784,48 +788,44 @@
 					.keywords_border {
 						width: 100%;
 						border-radius: 3px;
-						border: solid 1px #d9d9d9;
+						border: solid 1px #c4c4c4;
 						
 						input {
 							background:#ffffff !important;
 							border: none !important;
 							outline: none !important;
 						}
-						// input:focus {
-						// 	background:#ffffff !important;
-						// 	border: none !important;
-						// 	outline: none !important;
-						// }
+						input:focus {
+							background:#ffffff !important;
+							border: none !important;
+							outline: none !important;
+						}
 						
-						// input::selection { 
-						//     background:#ffffff !important;
-						//     color: #ffffff !important;
-						// 	border: none !important;
-						// 	outline: none !important;
-						//     // color: var(--antd-wave-shadow-color); // ant design vue,可根据主题色修改
-						// }
-						// input::-moz-selection { 
-						//     background:#ffffff; 
-						// 	color: #ffffff;
-						// 	border: none;
-						// 	outline: none;
-						// }
-						// input::-webkit-selection { 
-						//     background:#ffffff; 
-						// 	color: #ffffff;
-						// 	border: none;
-						// 	outline: none;
-						// }
+						input::selection { 
+						    background:#ffffff !important;
+						    color: #ffffff !important;
+							border: none !important;
+							outline: none !important;
+						    // color: var(--antd-wave-shadow-color); // ant design vue,可根据主题色修改
+						}
+						input::-moz-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
+							border: none;
+							outline: none;
+						}
+						input::-webkit-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
+							border: none;
+							outline: none;
+						}
 					}
-					.keywords_border:hover{
-						border-color:#cf4529;
-						transition:all .3s;
+					.ant-input-keyword{
+						outline:none;
 					}
-					.keywords_border .ant-input:focus{
-						border-color:#cf4529;
-					}
-					.ant-input:focus{
-						box-shadow: none;
+					.ant-input-personal{
+						outline:none;
 					}
 				}
 			}

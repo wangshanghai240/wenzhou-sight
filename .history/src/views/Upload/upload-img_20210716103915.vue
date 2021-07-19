@@ -149,7 +149,7 @@
 								</svg>
 							</div>
 							
-							<a-input class="ant-input-keyword" size="large" @blur="createAssetKeywordLabel('keywords', 'keywordArr')" @pressEnter="createAssetKeywordLabel('keywords', 'keywordArr')" @change="changeAssetKeywords($event, 'keywords', 'keywordArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].keywords" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @blur="createAssetKeywordLabel('keywords', 'keywordArr')" @pressEnter="createAssetKeywordLabel('keywords', 'keywordArr')" @change="changeAssetKeywords($event, 'keywords', 'keywordArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].keywords" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 					<a-form-model-item label="人物关键词">
@@ -164,7 +164,7 @@
 								</svg>
 							</div>
 							
-							<a-input class='ant-input-personal' size="large" @blur="createAssetKeywordLabel('people', 'peopleArr')" @pressEnter="createAssetKeywordLabel('people', 'peopleArr')" @change="changeAssetKeywords($event, 'people', 'peopleArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].people" placeholder="请输入关键词,并空格或回车"></a-input>
+							<a-input size="large" @blur="createAssetKeywordLabel('people', 'peopleArr')" @pressEnter="createAssetKeywordLabel('people', 'peopleArr')" @change="changeAssetKeywords($event, 'people', 'peopleArr')" v-model="uploadInfoForm.assetsList[selectedImageIndex].people" placeholder="请输入关键词,并空格或回车"></a-input>
 						</div>
 					</a-form-model-item>
 				</a-form-model>
@@ -721,6 +721,10 @@
 					    padding-top: 8px;
 					}
 					
+					.MuiOutlinedInput-adornedStart {
+					    padding-left: 14px;
+					}
+					
 					.jss221 {
 					    float: left;
 					    margin: 6px 8px 8px 0;
@@ -784,48 +788,38 @@
 					.keywords_border {
 						width: 100%;
 						border-radius: 3px;
-						border: solid 1px #d9d9d9;
+						border: solid 1px #c4c4c4;
 						
 						input {
 							background:#ffffff !important;
 							border: none !important;
 							outline: none !important;
 						}
-						// input:focus {
-						// 	background:#ffffff !important;
-						// 	border: none !important;
-						// 	outline: none !important;
-						// }
+						input:focus {
+							background:#ffffff !important;
+							border: none !important;
+							outline: none !important;
+						}
 						
-						// input::selection { 
-						//     background:#ffffff !important;
-						//     color: #ffffff !important;
-						// 	border: none !important;
-						// 	outline: none !important;
-						//     // color: var(--antd-wave-shadow-color); // ant design vue,可根据主题色修改
-						// }
-						// input::-moz-selection { 
-						//     background:#ffffff; 
-						// 	color: #ffffff;
-						// 	border: none;
-						// 	outline: none;
-						// }
-						// input::-webkit-selection { 
-						//     background:#ffffff; 
-						// 	color: #ffffff;
-						// 	border: none;
-						// 	outline: none;
-						// }
-					}
-					.keywords_border:hover{
-						border-color:#cf4529;
-						transition:all .3s;
-					}
-					.keywords_border .ant-input:focus{
-						border-color:#cf4529;
-					}
-					.ant-input:focus{
-						box-shadow: none;
+						input::selection { 
+						    background:#ffffff !important;
+						    color: #ffffff !important;
+							border: none !important;
+							outline: none !important;
+						    // color: var(--antd-wave-shadow-color); // ant design vue,可根据主题色修改
+						}
+						input::-moz-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
+							border: none;
+							outline: none;
+						}
+						input::-webkit-selection { 
+						    background:#ffffff; 
+							color: #ffffff;
+							border: none;
+							outline: none;
+						}
 					}
 				}
 			}
@@ -833,6 +827,8 @@
 			
 		}
 	}
+	
+	
 	
 	.header {
 		// padding: 0 25px;
@@ -1072,5 +1068,9 @@
 		.isCover {
 			display: block;
 		}
+		
 	}
+	
+	
+	
 </style>

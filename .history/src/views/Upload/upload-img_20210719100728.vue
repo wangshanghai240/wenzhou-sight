@@ -824,9 +824,6 @@
 					.keywords_border .ant-input:focus{
 						border-color:#cf4529;
 					}
-					.ant-input:focus{
-						box-shadow: none;
-					}
 				}
 			}
 			
