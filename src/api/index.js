@@ -29,10 +29,31 @@ export function hotTopicList() {
 	})
 }
 
+// export function hotTopicDetail(id) {
+// 	return request({
+// 		url: 'index/hotTopic/' + id,
+// 		method: 'get'
+// 	})
+// }
+
+export function hotTopicByHotId(hotId) {
+	return request({
+		url: 'index/hotTopicByHotId/' + hotId,
+		method: 'GET'
+	})
+}
+
 export function categories() {
 	return request({
 		url: 'index/categories',
 		method: 'get'
+	})
+}
+
+export function categoryTree() {
+	return request({
+		url: 'index/categoryTree',
+		method: 'GET'
 	})
 }
 

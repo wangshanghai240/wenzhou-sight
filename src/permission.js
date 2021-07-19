@@ -5,8 +5,6 @@ import store from "@/store";
 
 NProgress.configure({showSpinner: false})
 
-const needLoginPaths = ['/upload-picture']
-
 router.beforeEach(async(to, from, next) => {
     // store.commit("setMenuByRoute", to);
     NProgress.start();
@@ -17,7 +15,7 @@ router.beforeEach(async(to, from, next) => {
 	NProgress.done();
 	
 	//不属于需要登录的页面
-	if (needLoginPaths.indexOf(to.path) === -1) {
+	if (store.getters.needLoginPaths.indexOf(to.path) === -1) {
 	  // in the free login whitelist, go directly
 	  next()
 	  return
@@ -43,7 +41,7 @@ router.beforeEach(async(to, from, next) => {
 	        // remove token and go to login page to re-login
 	        await store.dispatch('resetToken')
 	        // Message.error(error || 'Has Error')
-	        next(`/login?redirect=${to.path}`)
+	        next(`/login?redirect=${to.fullPath}`)
 	        NProgress.done()
 	      }
 	    }
@@ -51,11 +49,11 @@ router.beforeEach(async(to, from, next) => {
 	} else {
 	  /* has no token*/
 	  // other pages that do not have permission to access are redirected to the login page.
-	  next(`/login?redirect=${to.path}`)
+	  next(`/login?redirect=${to.fullPath}`)
 	  NProgress.done()
 	}
 })
 
 router.afterEach(() => {
     NProgress.done()
-})
+});
