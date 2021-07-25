@@ -114,7 +114,7 @@ export function hotSearchs() {
 		url: '/index/hotSearch',
 		method: 'get'
 	})
-} 
+}
 
 export function hotSearch(id) {
 	return request({

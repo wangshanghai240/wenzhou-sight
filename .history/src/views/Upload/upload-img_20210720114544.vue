@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="content">
-        <div class="upload-container"> 
+        <div class="upload-container">
           <div
             v-for="(image, index) in fileList"
             v-bind:key="image.uid"

@@ -1166,7 +1166,11 @@ export default {
     width: 200px;
     height: 200px;
   }
-
+  .el-upload__input:hover{
+    box-shadow:none;
+    border-color:none;
+    outline:none;
+  }
   .el-upload-list--picture-card .el-upload-list__item {
     float: left;
   }
