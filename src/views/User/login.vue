@@ -45,9 +45,14 @@
 				this.loginForm.validateFields((err, values) => {
 					if(!err) {
 						this.$store.dispatch('login', values).then(() => {
-						  this.$router.push({ path: this.$route.query.redirect || '/' })
+						  var redirectUrl = this.$route.query.redirect
+						  if(!redirectUrl || redirectUrl==='/login') {
+							  redirectUrl = '/index'
+						  }
+						  this.$router.push({ path:  redirectUrl })
 						}).catch(e => {
-							console.log(e)
+							console.log(typeof(e))
+							console.log(e.message)
 						})
 						// login(values).then(res => {
 						// 	console.log(res)

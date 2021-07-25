@@ -7,8 +7,13 @@ import VueRouter from "vue-router";
 import './permission';
 import store from "@/store";
 // import VueLazyload from 'vue-lazyload'
+<<<<<<< HEAD
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+=======
+import { ElUpload } from 'element-plus'
+
+>>>>>>> b467e0659575e4b3bb6c29e31b7b150d88fe6710
 
 Vue.config.productionTip = false
 Vue.use(Antd);
@@ -59,6 +64,10 @@ function deepClone(data) {
   return obj;
 }
 Vue.prototype.deepClone = deepClone
+
+const app = Vue.createApp(App)
+app.component(ElUpload.name, ElUpload)
+
 
 Vue.prototype.copy = function(text) {
   let url = text

@@ -36,5 +36,15 @@ module.exports = {
 
         config.optimization.runtimeChunk("single");
     },
-
+	css: {
+		loaderOptions: {
+			less: {
+				lessOptions: {
+					javascriptEnabled: true
+					// ,
+					// strictMath: true
+				}
+			}
+		}
+	}
 }

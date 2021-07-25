@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 const qs = require('qs')
 
+<<<<<<< HEAD
 export function submitResGroup(data) {
 	return request({
 		url: '/upload/submitResGroup',
@@ -30,6 +31,8 @@ export function myUploads() {
 	})
 }
 
+=======
+>>>>>>> b467e0659575e4b3bb6c29e31b7b150d88fe6710
 export function upload(file) {
   let param = new FormData()
   param.append('file',file.file)
@@ -43,12 +46,15 @@ export function upload(file) {
   })
 }
 
+<<<<<<< HEAD
 export function getInfo() {
 	return request({
 		url: 'userInfo',
 		method: 'GET'
 	})
 }
+=======
+>>>>>>> b467e0659575e4b3bb6c29e31b7b150d88fe6710
 
 export function login(params) {
 	return request({

@@ -23,8 +23,13 @@ const constantRouterMap = [{
 			{path: '/activity-detail', name:'活动详情', component:()=> import('@/views/Activity/activity-detail')},
 			{path: '/group-pictures', name: '分组图片', component:()=> import('@/views/Search/SearchDetail/group-pictures')},
 			{path: '/picture-detail', name: '图片详情', component:()=> import('@/views/Search/SearchDetail/picture-detail')},
+<<<<<<< HEAD
             {path: '/master', name:'大师推荐',component:()=> import('@/views/Master/master')},
 			{path: '/upload-picture', name: '图片上传' ,component: () => import('@/views/Upload/upload-img')},
+=======
+            {path: '/master', name:'大师推荐', component:()=> import('@/views/Master/master')},
+			{path: '/upload-picture', name: '图片上传', component:()=>import('@/views/Upload/upload-img') }
+>>>>>>> b467e0659575e4b3bb6c29e31b7b150d88fe6710
         ]
     },
     {
